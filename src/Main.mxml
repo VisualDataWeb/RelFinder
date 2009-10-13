@@ -41,14 +41,14 @@ You should have received a copy of the GNU General Public License along with thi
 							<mx:Repeater id="inputFieldRepeater" dataProvider="{inputFields}" width="100%" >
 								<mx:FormItem width="100%" label="({inputFieldRepeater.currentIndex + 1})" paddingRight="0">	<!-- label="{(inputFieldRepeater.currentIndex >= 1) ? 'and:' : 'Between:'}" -->
 									<mx:HBox width="100%" verticalGap="2" horizontalGap="2">
-										<hc:AutoComplete id="inputField" width="{findRelationPanel.width - 88}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart" 
+										<hc:AutoComplete id="inputField" width="{(inputFields.length > 2) ? findRelationPanel.width - 88 : findRelationPanel.width - 68}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart" 
 												prompt="Relations between what?" 
 												searchChange="handleAutoCompleteSearchChange(event.currentTarget)"
 												isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus" 
 												isBrowseable="false" isMultiSelect="false" allowDuplicates="false" areNewItemsEditable="true"
 												dropDownItemRenderer="AutoCompleteDDRenderer" />
 										
-										<mx:Button id="removeInputFieldButton" toolTip="Remove Input Field" click="removeInputField(event.currentTarget.repeaterIndex)" skin="skin.CloseButtonSkin" />
+										<mx:Button id="removeInputFieldButton" toolTip="Remove Input Field" click="removeInputField(event.currentTarget.repeaterIndex)" skin="skin.CloseButtonSkin" visible="{(inputFields.length > 2)}" width="{(inputFields.length > 2) ? 20 : 0}" />
 									</mx:HBox>
 	
 								</mx:FormItem>

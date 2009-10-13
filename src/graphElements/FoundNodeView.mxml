@@ -14,7 +14,6 @@ You should have received a copy of the GNU General Public License along with thi
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:flexlib="http://code.google.com/p/flexlib/" 
 	xmlns:ext="classes.extenders.*"
-	xmlns:nimer="com.mikenimer.components.datagrid.*"
 	xmlns:local="*"
 	
 	creationComplete="setup()"
@@ -87,7 +86,7 @@ You should have received a copy of the GNU General Public License along with thi
 				
 				if (showLoadingAnimation) {
 					if (_data == null || _data.element == null) {
-						if ((data.element != null) && data.element.isLoading) {
+						if (la && (data.element != null) && data.element.isLoading) {
 							la.startRotation();
 						}else {
 							la.stopRotation();
