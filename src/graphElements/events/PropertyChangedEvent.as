@@ -13,6 +13,7 @@ package graphElements.events {
 	import flash.events.Event;
 	
 	public class PropertyChangedEvent extends Event {
+		
 		private var _origin:Object = null;
 		private var _property:String = "";
 		
@@ -23,6 +24,7 @@ package graphElements.events {
         public function PropertyChangedEvent(type:String, origin:Object, property:String) {
                 // Call the constructor of the superclass.
                 super(type);
+				//this._id = id;
                 this._origin = origin;
 				this._property = property;
         }

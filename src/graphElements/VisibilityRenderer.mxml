@@ -36,8 +36,10 @@
             
 			private function handleImageClick(event:Event):void {
 				//trace("clicked: " + data.isVisible+" c: "+data.id);
-				app().delayedDrawing = false;	//!!
+				//app().delayedDrawing = false;	//!!
 				//TODO: Unterscheiden, ob Element Instance oder Predicate!!!
+				
+				//data.currentUserAction = new UserAction(data, "isVisible");
 				
 				if (data.canBeChanged) {
 					if (data.isVisible) {

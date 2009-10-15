@@ -57,15 +57,29 @@ package graphElements
 			return _isVisible;
 		}
 		
+		/*public function set currentUserAction(newUserAction:UserAction):void {
+			_currentUserAction = newUserAction;
+			if (_currentUserAction.property == "isVisible") {
+				if (this.canBeChanged) {
+					if (this.isVisible) {
+						this.isVisible = false;
+					}else {
+						this.isVisible = true;
+					}
+				}
+			}
+		}*/
+		
 		public function set isVisible(b:Boolean):void {
 			/*if (app().delayedDrawing) {
 				app().delayedDrawing = false;
 			}*/
+			trace("in isVisible of relType: " + id);
 			if (_isVisible != b) {
 				trace("set relType("+id+") visible: "+b);
 				_isVisible = b;
-				var event:PropertyChangedEvent = new PropertyChangedEvent(RelType.VCHANGE, this, "isVisible");
-				dispatchEvent(event);
+				dispatchEvent(new Event(RelType.VCHANGE));
+				//dispatchEvent(new PropertyChangedEvent(RelType.VCHANGE, this, "isVisible", _currentUserAction));
 			}
 		}
 		
@@ -80,11 +94,11 @@ package graphElements
 		}
 		
 		public function set numVisibleRelations(n:int):void {
-			if (this._numVisibleRelations != n) {
+			//if (this._numVisibleRelations != n) {
 				this._numVisibleRelations = n;
 				this._stringNumOfRelations = this._numVisibleRelations.toString() + "/" + this._relations.length.toString();
 				dispatchEvent(new Event(RelType.NUMVRCHANGE));
-			}
+			//}
 		}
 		
 		public function addRelation(r:Relation):void {
@@ -92,6 +106,8 @@ package graphElements
 				this._relations.addItem(r);
 				if (r.isVisible) {
 					numVisibleRelations = _numVisibleRelations + 1;
+				}else {
+					numVisibleRelations = _numVisibleRelations;	//just a workaround to update also the total number of relations!
 				}
 				r.addEventListener(Relation.VCHANGE, relationVChangeHandler);
 				

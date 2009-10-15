@@ -59,6 +59,18 @@ package graphElements {
 			return _isVisible;
 		}
 		
+		public function handleUserAction(event:Event):void {
+			if (this.canBeChanged) {
+				if (this.isVisible) {
+					this.isVisible = false;	//nicht hier! // warum nicht?
+					//app().hideNode(app().getInstanceNode(data.id, data as Element));
+				}else {
+					this.isVisible = true;	//nicht hier! // warum nicht?
+					//app().showNode(app().getInstanceNode(data.id, data as Element));
+				}
+			}
+		}
+		
 		public function set isVisible(b:Boolean):void {
 			if (app().delayedDrawing) {
 				//app().emptyToDrawPaths();
@@ -68,9 +80,8 @@ package graphElements {
 			if (_isVisible != b) {
 				trace("set concept("+id+") visible: "+b);
 				_isVisible = b;
-				var event:PropertyChangedEvent = new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible");
-				dispatchEvent(event);
-				//dispatchEvent(new Event(Concept.VCHANGE));
+				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
+				dispatchEvent(new Event(Concept.VCHANGE));
 				//trace("event dispatched "+id);
 			}
 			/*for each(var e:Element in _elements) {
@@ -93,6 +104,8 @@ package graphElements {
 				this._elements.addItem(e);
 				if (e.isVisible) {
 					numVisibleElements = _numVisibleElements + 1;
+				}else {
+					numVisibleElements = _numVisibleElements;	//just a workaround to update also the total number of elements!
 				}
 				e.addEventListener(Element.VCHANGE, elementVChangeHandler);
 				//e.addEventListener(Element.NEWRCHANGE, elementNewRestrictionChange);
@@ -113,11 +126,11 @@ package graphElements {
 		}
 		
 		public function set numVisibleElements(n:int):void {
-			if (this._numVisibleElements != n) {
+			//if (this._numVisibleElements != n) {
 				this._numVisibleElements = n;
 				this._stringNumOfElements = this._numVisibleElements.toString() + "/" + this._elements.length.toString();
 				dispatchEvent(new Event(Concept.NUMVECHANGE));
-			}
+			//}
 		}
 		
 		/*private function propertyChangedHandler(event:PropertyChangedEvent):void {

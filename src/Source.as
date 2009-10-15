@@ -441,7 +441,8 @@ public function getRelType(uri:String, label:String):RelType {
 	newR.addEventListener(RelType.VCHANGE, relTypeChangeListener);
 	
 	if (_graphIsFull) {
-		//newR.isVisible = false;
+		trace("------------------graphISFULLL -> relType setVisible=false");
+		newR.isVisible = false;
 	}
 	return newR;
 }

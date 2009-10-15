@@ -30,6 +30,8 @@ package graphElements
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVPCHANGE:String = "numberOfVisiblePathsChange";
 		
+		//private var _currentUserAction:UserAction = null;
+		
 		public function PathLength(_id:String, _num:int) {
 			this._id = _id;
 			this._label = _num.toString();
@@ -73,6 +75,18 @@ package graphElements
 			return _isVisible;
 		}
 		
+		/*public function handleUserAction(event:Event):void {
+			if (this.canBeChanged) {
+				if (this.isVisible) {
+					this.isVisible = false;	//nicht hier! // warum nicht?
+					//app().hideNode(app().getInstanceNode(data.id, data as Element));
+				}else {
+					this.isVisible = true;	//nicht hier! // warum nicht?
+					//app().showNode(app().getInstanceNode(data.id, data as Element));
+				}
+			}
+		}*/
+		
 		public function set isVisible(b:Boolean):void {
 			/*if (app().delayedDrawing) {
 				app().delayedDrawing = false;
@@ -81,8 +95,8 @@ package graphElements
 			if (_isVisible != b) {
 				//trace("set pathLength("+id+") visible: "+b);
 				_isVisible = b;
-				var event:PropertyChangedEvent = new PropertyChangedEvent(PathLength.VCHANGE, this, "isVisible");
-				dispatchEvent(event);
+				//dispatchEvent(new PropertyChangedEvent(PathLength.VCHANGE, this, "isVisible", _currentUserAction));
+				dispatchEvent(new Event(PathLength.VCHANGE));
 			}
 		}
 		
@@ -92,11 +106,11 @@ package graphElements
 		}
 		
 		public function set numVisiblePaths(n:int):void {
-			if (this._numVisiblePaths != n) {
+			//if (this._numVisiblePaths != n) {
 				this._numVisiblePaths = n;
 				this._stringNumOfPaths = this._numVisiblePaths.toString() + "/" + this._paths.length.toString();
 				dispatchEvent(new Event(PathLength.NUMVPCHANGE));
-			}
+			//}
 		}
 		
 		public function addPath(p:Path):void {
@@ -105,6 +119,8 @@ package graphElements
 				//trace("add path "+p.isVisible);
 				if (p.isVisible) {
 					numVisiblePaths = _numVisiblePaths + 1;
+				}else {
+					numVisiblePaths = _numVisiblePaths;	//just a workaround to update also the total number of paths!
 				}
 				p.addEventListener(Path.VCHANGE, pathVChangeHandler);
 				
