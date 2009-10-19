@@ -208,7 +208,7 @@ private function preInitHandler(event:Event):void {
 	
 	configLoader.addEventListener(ResultEvent.RESULT, xmlCompleteHandler);
 	configLoader.addEventListener(FaultEvent.FAULT, xmlCompleteHandler);
-	configLoader.url = "config/Config.xml";
+	configLoader.url = "config/config.relfinder.semanticweb.org.xml"; //Config.xml";	//TODO: unterscheiden zwischen dbpedia und semanticweb.org
 	configLoader.send();
    
 }
