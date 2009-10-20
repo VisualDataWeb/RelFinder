@@ -32,8 +32,8 @@ You should have received a copy of the GNU General Public License along with thi
                 <![CDATA[
 <div><b><font size="12">RelFinder</font></b>
 RelFinder is a tool based on Adobe Flex that automatically reveals relationships within a set of known objects via arbitrary SPARQL endpoints and displays them as graph visualization. The relationships are found by an algorithm that can be applied to large RDF knowledge bases, such as DBpedia or the whole LOD-Cloud. Since the graph that visualizes the relationships can still become large, we added interactive features and filtering options to the user interface that enable a reduction of displayed nodes and facilitate understanding.<br/>
-The source code is published under the GNU General Public License and hosted on Google Code under <font color="#0000FF"><a href="http://code.google.com/p/relfinder/">http://code.google.com/p/relfinder/</a></font>.<br/>
-The current version of RelFinder is accessible at <font color="#0000FF"><a href="http://relfinder.semanticweb.org/">http://relfinder.semanticweb.org/</a></font>.<br/>
+The source code is published under the GNU General Public License and hosted on Google Code under <font color="#0000FF"><a href="http://code.google.com/p/relfinder/" target="_blank">http://code.google.com/p/relfinder/</a></font>.<br/>
+The current version of RelFinder is accessible at <font color="#0000FF"><a href="http://relfinder.semanticweb.org/" target="_blank">http://relfinder.semanticweb.org/</a></font>.<br/>
 <b>Related Publications:</b> 
 Heim, P.; Hellmann, S.; Lehmann, J.; Lohmann, S.; Stegemann, T.: RelFinder: Revealing Relationships in RDF Knowledge Bases. (to appear) In: Proceedings of the 4th International Conference on Semantic and Digital Media Technologies (SAMT 2009), Springer. <br/>
 <b>Contact and Copyright (C) 2009:</b>
