@@ -22,7 +22,6 @@ package graphElements {
 		private var _inRange:Boolean = false;
 		private var _allRelsVisible:Boolean = false;
 		
-		//private var _pathLength:int = -1;	//to count only the instances in between and not the relations
 		private var _layout:Object = new Object();
 		private var _isHighlighted:Boolean = false;
 		
@@ -48,25 +47,20 @@ package graphElements {
 			}
 			
 			pathLength.dispatchEvent(new Event(PathLength.VCHANGE)); //to get the current state
-			
-			//this.addListener();
-			//app().addEventListener(app().MINPLCHANGE, selectedPathLengthRangeChangeHandler );
-			//app().addEventListener(app().HPATHSCHANGE, hPathsChangeHandler );
-			
-			//app().dispatchEvent(new Event(app().PLRCHANGE));	//to get the current state
-			//app().dispatchEvent(new Event(app().MINPLCHANGE));
 		}
-		
-		/*private function addListener():void {
-			app().addEventListener(app().PLRCHANGE, selectedPathLengthRangeChangeHandler);
-		}*/
 		
 		public function removeListener():void {
 			this.pathLength.removeEventListener(PathLength.VCHANGE, pathLengthVChangeHandler);
 			for each(var r:Relation in _relations) {
-				//r.removeEventListener(Relation.VCHANGE, relationIsVisibleChangeHandler);
-				//r.relType.removeEventListener(RelType.VCHANGE, relTypeIsVisibleChangeHandler);
-				//TODO!
+				r.relType.removeEventListener(RelType.VCHANGE, checkVisibility);
+				r.subject.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+				if (r.subject.concept != null) {
+					r.subject.concept.removeEventListener(Concept.VCHANGE, checkVisibility);
+				}
+				r.object.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+				if (r.object.concept != null) {
+					r.object.concept.removeEventListener(Concept.VCHANGE, checkVisibility);
+				}
 			}
 			
 		}
@@ -131,10 +125,6 @@ package graphElements {
 			}
 		}
 		
-		/*public function get pathLength():int {
-			return _pathLength;
-		}*/
-		
 		public function addRelation(r:Relation):void {
 			//trace("addRelation: " + r.id + " , to path: " + id);
 			_relations.addItem(r);
@@ -148,31 +138,12 @@ package graphElements {
 			r.object.addEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
 			
 			trace("dispatch event, relType.visible: " + r.relType.isVisible + ", " + r.relType.id);
-			//var event:PropertyChangedEvent = new PropertyChangedEvent(RelType.VCHANGE, r.relType, "isVisible");
-			//r.relType.dispatchEvent(event);
-			
-			//relType.dispatchEvent(new Event(RelType.VCHANGE)); //to get the current state
-				
-			//r.relType.dispatchEvent(new Event(RelType.VCHANGE));	//to get the current state
-			//_pathLength++;
 		}
 		
 		private function conceptChangeHandler(event:Event):void {
 			var e:Element = event.target as Element;
 			e.concept.addEventListener(Concept.VCHANGE, checkVisibility);
 		}
-		
-		/*private function relTypeIsVisibleChangeHandler(event:PropertyChangedEvent):void {
-			trace("relTypeVChange: in Path");
-			if ((event.target as RelType).isVisible) {
-				//if (this.inRange && this._allRelsVisible) {	//is handled in relation class
-					//this.isVisible = true;
-				//}
-			}else {
-				//trace("is not visible");
-				this.isVisible = false;
-			}
-		}*/
 		
 		[Bindable(event=Path.RCHANGE)]
 		public function get inRange():Boolean {	//TODO inRange is obsolete
@@ -189,55 +160,6 @@ package graphElements {
 				//dispatchEvent(new PropertyChangedEvent(Path.RCHANGE, this, "inRange", _currentUserAction));	//ORIGIN1
 			}
 		}
-		
-		/*private function selectedPathLengthRangeChangeHandler(event:Event):void {	//TODO inRange is obsolete
-			if ((this._pathLength.num < app().selectedMinPathLength) || (this._pathLength.num > app().selectedMaxPathLength)) {
-				inRange = false;
-				this.isVisible = false;
-			}else {
-				inRange = true;
-				if (this._allRelsVisible) {
-					this.isVisible = true;
-				}
-			}
-		}*/
-		
-		/**
-		 * Relation visibility change based possible change of visibility
-		 * @param	event
-		 */
-		/*private function relationIsVisibleChangeHandler(event:Event):void {
-			//trace("relationIsVChange");
-			var allCV:Boolean = true;
-			var allCRTV:Boolean = true; // all concepts and relTypes are visible
-			for each(var r:Relation in this._relations) {
-				if (!r.bothConceptsAreVisible()) {
-					allCV = false;
-					allCRTV = false;
-					
-					//trace("rel with concepts not visible: " + r.id);
-					break;
-				}
-				if (!r.relType.isVisible) {
-					allCRTV = false;
-					break;
-				}
-			}
-			this._allRelsVisible = allCRTV; //allCV;
-			
-			if (this.isVisible) {
-				//trace("test isVisble ???");
-				if (!this._allRelsVisible) {
-					this.isVisible = false;
-				}
-			}else {	//this is invisible
-				//trace("allRelsVis: " + _allRelsVisible);
-				if (this._allRelsVisible && this._inRange) {
-					this.isVisible = true;
-				}
-			}
-			//trace("relation changed visiblity");
-		}*/
 		
 		public function set isHighlighted(b:Boolean):void {
 			//trace("set is highlighted " + b);
@@ -261,18 +183,6 @@ package graphElements {
 		public function get isHighlighted():Boolean {
 			return _isHighlighted;
 		}
-		
-		/*private function hPathsChangeHandler(event:Event):void {
-			if (app().highlightedPaths.contains(this) && !_isHighlighted) {	//has not been contained but is now!
-				_isHighlighted = true;
-				_layout.settings = { alpha: 1, color: 0xFF0000, thickness: 2 };
-				app().drawPath(this);
-			}else if(!app().highlightedPaths.contains(this) && _isHighlighted) {	//has been contained!
-				_isHighlighted = false;
-				_layout.settings = { alpha: 1, color: 0xcccccc, thickness: 1 }; 
-				app().drawPath(this);
-			}
-		}*/
 		
 		/**
 		 * Checks all the requirements to the path to be visible or invisible

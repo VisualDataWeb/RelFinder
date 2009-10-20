@@ -22,28 +22,11 @@ package graphElements
 		public function RelationNode(id:String, relation:Relation) {
 			super(id, relation.predicate);	//the predicate represents the RelationNode!
 			this._relation = relation;
-			//app().addEventListener(app().HPATHSCHANGE, hPathListener);
 		}
 		
 		public function get relation():Relation {
 			return _relation;
 		}
-		
-		/*private function hPathListener(event:Event):void {
-			if (_relation.isVisible) {
-				var layout:Object = new Object();
-				layout.settings = { alpha: 1, color: 0xcccccc, thickness: 1 };
-				for each(var p:Path in _relation.paths) {
-					if (app().highlightedPaths.contains(p)) {
-						layout.settings = { alpha: 1, color: 0xFF3333, thickness: 2 };
-						break;
-					}
-				}
-				
-				//app().drawRelation(_relation, layout);
-			}
-			
-		}*/
 	}
 	
 }

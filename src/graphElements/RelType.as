@@ -57,19 +57,6 @@ package graphElements
 			return _isVisible;
 		}
 		
-		/*public function set currentUserAction(newUserAction:UserAction):void {
-			_currentUserAction = newUserAction;
-			if (_currentUserAction.property == "isVisible") {
-				if (this.canBeChanged) {
-					if (this.isVisible) {
-						this.isVisible = false;
-					}else {
-						this.isVisible = true;
-					}
-				}
-			}
-		}*/
-		
 		public function set isVisible(b:Boolean):void {
 			/*if (app().delayedDrawing) {
 				app().delayedDrawing = false;

@@ -68,12 +68,7 @@ package graphElements {
 		
 		private var _isVisible:Boolean = false;
 		
-		
-		//private var _concepts:ArrayCollection = new ArrayCollection();
-			
 		private var _concept:Concept = null;
-		//private var _conceptURI:String = "";
-		//private var _conceptLabel:String = "";
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var CONCEPTCHANGE:String = "conceptChange";
@@ -142,8 +137,14 @@ package graphElements {
 		}
 		
 		public function removeListener():void {
-			for each(var r:Relation in _relations) {
+			if (_pages != null) {
+				_pages.removeEventListener(CollectionEvent.COLLECTION_CHANGE, dispatchPagesChange);
+			}
+			/*for each(var r:Relation in _relations) {
 				//r.removeEventListener(Relation.VCHANGE, relationVChangeHandler);
+			}*/
+			for each(var p:Path in _paths) {
+				p.removeEventListener(Path.VCHANGE, checkVisibility);
 			}
 			//TODO more
 		}
@@ -208,13 +209,6 @@ package graphElements {
 				}
 			}
 		}
-		
-		/*public function set newRestriction(e:PropertyChangedEvent):void {
-			if (_newRestriction != e) {
-				_newRestriction = e;
-				dispatchEvent(new PropertyChangedEvent(Element.NEWRCHANGE, this, "newRrestrictionChange"));
-			}
-		}*/
 		
 		public function set isGiven(b:Boolean):void {
 			_isGiven = b;
@@ -443,28 +437,6 @@ package graphElements {
 					if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://xmlns.com/foaf/0.1/depiction") {
 						imageURL = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
 					}
-					
-					/*if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
-						 var conceptURI:String = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
-						 //Alert.show(conceptURI);
-						 if ((conceptURI != "http://dbpedia.org/ontology/Resource") && (!this._isGiven)){	//given nodes cannot be filtered at all!
-							 var cLabel:String =
-								conceptURI.replace("http://dbpedia.org/ontology/", "db:")
-								.replace("http://dbpedia.org/class/yago/", "yago:")
-								.replace("http://sw.opencyc.org/2008/06/10/concept/", "cyc:")
-								.replace("http://xmlns.com/foaf/0.1/", "foaf:")
-								.replace("http://umbel.org/umbel/sc/", "umb:");
-							 
-							//temp, please change (Sebastian, Jens):
-							if (this.concept == null) {
-								var c:Concept = app().getConcept(conceptURI, cLabel);
-								//this.addConcept(c);
-								//bitte nur ein Konzept!!
-								this.concept = c;
-							}
-							
-						}
-					}*/
 				}
 			}
 			
@@ -530,9 +502,6 @@ package graphElements {
 		
 		public function addRelation(rel:Relation):void {
 			this._relations.push(rel);
-			//rel.addEventListener(Relation.VCHANGE, relationVChangeHandler);
-			//rel.addEventListener(Relation.VCHANGE, relationVChangeHandler);
-			//rel.addEventListener(Relation.NEWRCHANGE, relationNewRestrictionHandler);
 		}
 		
 		public function addPath(p:Path):void {
@@ -542,15 +511,6 @@ package graphElements {
 				checkVisibility(null);	//just to check
 			}
 		}
-		
-		/*private function pathsChangeHandler(event:Event):void {
-			var r:Relation = event.target as Relation;
-			for each(var p:Path in r.paths) {
-				if(
-				
-			}
-			
-		}*/
 		
 		/**
 		 * Checks all the requirements to the element to be visible or invisible
@@ -580,86 +540,15 @@ package graphElements {
 			}
 		}
 		
-		/*private function propertyChangedHandler(event:PropertyChangedEvent):void {
-			if (event.origin is Relation) {
-				if (event.propery == "isVisible") {
-					var r:Relation = event.origin as Relation;
-					if (this.isVisible) {
-						if (!r.isVisible) {
-							if (!oneRelationIsVisible()) {	//if no relation is visible!
-								var i:MyNode = app().getInstanceNode(id, this);
-								if (i is FoundNode) {	//only if foundNode!!
-									isVisible = false;
-								}
-							}
-						}
-					}else {
-						if (r.isVisible) {
-							if ((concept == null) || (concept.isVisible)) {
-								isVisible = true;	
-							}
-						}
-					}
-				}
-			}
-		}*/
-		
-		/*private function relationVChangeHandler(event:PropertyChangedEvent):void {
-			var r:Relation = event.target as Relation;
-			if (this.isVisible) {
-				if (!r.isVisible) {
-					if (!oneRelationIsVisible()) {	//if no relation is visible!
-						var i:MyNode = app().getInstanceNode(id, this);
-						if (i is FoundNode) {	//only if foundNode!!
-							isVisible = false;
-						}
-					}
-				}
-			}else {
-				if (r.isVisible) {
-					if ((concept == null) || (concept.isVisible)) {
-						isVisible = true;	
-					}
-				}else {
-					
-					//TEST
-					//isVisible = false;
-				}
-			}
-		}*/
-		
-		/*private function relationNewRestrictionHandler(event:PropertyChangedEvent):void {
-			trace("newRestriction in " + this.id);
-			var r:Relation = event.target as Relation;
-			newRestriction = event;
-			if (r.newRestriction.origin is Path) {	//only
-				//TODO: Testen ob eigenständige Restriction!! Heißt, bleibt invisible bis diese Restriction wieder aufgehoben!
-				
-			}
-		}*/
-		
 		public function get relations():Array {
 			return this._relations;
 		}
 		
 		public function set concept(c:Concept):void {
-			//schwachsinn bei mehreren concepts!!! -> remove former event listener
-			//if(_concept != null) _concept.removeEventListener(Concept.VCHANGE, conceptVChangeHandler);
-			
 			_concept = c;
 			_concept.addElement(this);
 			
 			dispatchEvent(new Event(Element.CONCEPTCHANGE));
-			
-			//dispatchEvent(new PropertyChangedEvent(Element.CONCEPTCHANGE, this, "concept", _currentUserAction));
-			//dispatchEvent(new Event("conceptChange"));
-			//_concept.addEventListener(Concept.VCHANGE, conceptVChangeHandler);
-			/*for each(var r:Relation in _relations) {
-				_concept.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, r);
-				//_concept.addEventListener(Concept.VCHANGE, r.conceptVChangeHandler);
-			}*/
-			//_concept.dispatchEvent(new Event(Concept.VCHANGE));	//to inform about its visibility
-			//_concept.dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, _concept, "isVisible", _currentUserAction));
 		}
 		
 		[Bindable(event=Element.CONCEPTCHANGE)]
@@ -667,62 +556,10 @@ package graphElements {
 			return _concept;
 		}
 		
-		/*[Bindable(event="conceptsChange")]
-		public function get concepts():ArrayCollection {
-			return _concepts;
-		}
-		
-		public function addConcept(c:Concept):void {
-			if (!_concepts.contains(c)) {
-				c.addElement(this);
-				_concepts.addItem(c);
-				dispatchEvent(new Event("conceptsChange"));
-				//c.addEventListener(Concept.VCHANGE, conceptVChangeHandler);
-				
-				for each(var r:Relation in _relations) {
-					c.addEventListener(Concept.VCHANGE, r.elementVConceptChangeHandler);
-				}
-			}
-		}
-		
-		public function oneConceptIsVisible():Boolean {
-			for each(var c:Concept in _concepts) {
-				if (c.isVisible) {
-					return true;
-				}
-			}
-			return false;
-		}*/
-		
-		/*private function conceptVChangeHandler(event:Event):void {
-			//trace("conceptVChange: " + _concept.id + ", v: " + _concept.isVisible);
-			if (!_concept.isVisible) {
-				if (isVisible) {
-					isVisible = false;
-				}else {
-					//newRestriction = event;
-				}
-			}else {
-				isVisible = true;
-				//TODO: wenn aber über die maxLength eigentlich nicht visible!! Backpropagation über path!!
-			}
-		}*/
-		
 		override public function toString():String 
 		{
 			return "Element " + id;
 		}
-		
-		/*private function oneRelationIsVisible():Boolean {
-			for each(var r:Relation in relations) {
-				//trace("path: " + p.id + " v: " + p.isVisible);
-				if (r.isVisible) {
-					return true;
-				}
-			}
-			//trace(("all relations are invisible!");
-			return false;
-		}*/
 		
 		private function app(): Main {
 			return Application.application as Main;

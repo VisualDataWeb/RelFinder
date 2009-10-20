@@ -34,6 +34,16 @@ package graphElements
 			dispatchEvent(new Event("elementChange"));
 		}
 		
+		public function removeListener():void {
+			if (_element != null) {
+				_element.removeEventListener("rdfLabelChange", rdfLabelChangeHandler);
+				_element.removeEventListener("isLoadingChange", isLoadingChangeHandler);
+			}
+			if (_node != null) {
+				_node.removeEventListener("fixedChange", fixedChangeHandler);
+			}
+		}
+		
 		private function isLoadingChangeHandler(event:Event):void {
 			trace("loading change handler");
 			dispatchEvent(new Event("isLoadingChange"));

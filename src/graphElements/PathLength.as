@@ -30,16 +30,10 @@ package graphElements
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVPCHANGE:String = "numberOfVisiblePathsChange";
 		
-		//private var _currentUserAction:UserAction = null;
-		
 		public function PathLength(_id:String, _num:int) {
 			this._id = _id;
 			this._label = _num.toString();
-			/*if (_num == 1) {
-				this._label += " node in between";
-			}else {
-				this._label += " nodes in between";
-			}*/
+			
 			this._num = _num;
 		}
 		
@@ -75,22 +69,7 @@ package graphElements
 			return _isVisible;
 		}
 		
-		/*public function handleUserAction(event:Event):void {
-			if (this.canBeChanged) {
-				if (this.isVisible) {
-					this.isVisible = false;	//nicht hier! // warum nicht?
-					//app().hideNode(app().getInstanceNode(data.id, data as Element));
-				}else {
-					this.isVisible = true;	//nicht hier! // warum nicht?
-					//app().showNode(app().getInstanceNode(data.id, data as Element));
-				}
-			}
-		}*/
-		
 		public function set isVisible(b:Boolean):void {
-			/*if (app().delayedDrawing) {
-				app().delayedDrawing = false;
-			}*/
 			//trace("set PathLenght isVisible");
 			if (_isVisible != b) {
 				//trace("set pathLength("+id+") visible: "+b);

@@ -22,17 +22,11 @@ package graphElements
 		public var object:Element;
 		
 		public static var VCHANGE:String = "isVisibleChange";
-		//public static var NEWRCHANGE:String = "newRestrictionChange";
-		//public static var PATHSCHANGE:String = "pathsChange";
-		
-		//public static var RREQCHANGE:String = "relationRequirementsChange";
 		
 		private var _paths:Array = new Array();
 		private var _isVisible:Boolean = false;
 		
 		private var _relType:RelType = null;
-		
-		//private var _currentUserAction:UserAction = null;
 		
 		public function Relation(_id:String, _sub:Element, _pred:Element, _obj:Element, rT:RelType = null){
 			this.id = _id;
@@ -46,18 +40,13 @@ package graphElements
 			
 			this.subject.addRelation(this);
 			this.object.addRelation(this);
-			
-			//this.subject.addEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
-			//this.object.addEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
-			//this.subject.addEventListener(Element.VCHANGE, elementVChangeHandler);
-			//this.object.addEventListener(Element.VCHANGE, elementVChangeHandler);
 		}
 		
 		public function removeListener():void {
-			this.subject.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
-			this.object.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+			//this.subject.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+			//this.object.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
 			for each(var p:Path in _paths) {
-				//p.removeEventListener(Path.VCHANGE, pathVChangeHandler);
+				p.removeEventListener(Path.VCHANGE, checkVisibility);
 				//p.removeEventListener(Path.RCHANGE, pathInRangeChangeHandler);
 			}
 			//this._relType.removeEventListener(RelType.VCHANGE, relTypeVChangeHandler);
@@ -72,11 +61,7 @@ package graphElements
 				paths.push(p);
 				this.subject.addPath(p);
 				this.object.addPath(p);
-				//dispatchEvent(new Event(Relation.PATHSCHANGE));
-				//trace("addeventlistener");
-				//p.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChangedHandler);
-				//p.addEventListener(Path.VCHANGE, pathVChangeHandler);
-				//p.addEventListener(Path.RCHANGE, pathInRangeChangeHandler);
+				
 				p.addEventListener(Path.VCHANGE, checkVisibility);
 				
 				checkVisibility(null);	//just to check
@@ -121,156 +106,10 @@ package graphElements
 			}
 		}
 		
-		/*private function relTypeVChangeHandler(event:Event):void {
-			trace("relTypeVChange: in Relation");
-			if (_relType.isVisible) {
-				if (((subject.concept == null) || subject.concept.isVisible) && ((object.concept == null) || object.concept.isVisible)) {	//if both concepts are visible or null
-					this.isVisible = true;	//todo path visible setzen?!
-				}
-			}//else {	//is handled in path class
-				//if (this.isVisible) {
-					//set all paths that are running via this relation invisible
-					
-					//isVisible = false;
-				//}
-			//}
-		}*/
-		
-		/*private function pathVChangeHandler(event:Event):void {
-			//trace("pathVchange "+id+", rel: "+id);
-			if (_isVisible) {
-				if (!onePathIsVisible()) {	//if all paths are invisible
-					isVisible = false;
-				}
-			}else {
-				if ((event.target as Path).isVisible) {	//this is the first visible path!
-					//trace("set relation visible: " + id);
-					isVisible = true;
-				}else {
-					
-				}
-			}
-			
-		}*/
-		
-		/*private function pathInRangeChangeHandler(event:PropertyChangedEvent):void {
-			var p:Path = event.origin as Path;
-			//trace("pathRangeChange: "+p.inRange);
-			if (p.inRange) {
-				if (((subject.concept == null) || subject.concept.isVisible) && ((object.concept == null) || object.concept.isVisible)) {	//if both concepts are visible or null
-					this.isVisible = true;
-				}else {	//if at least one concept is invisible
-					//trace("subject or object have invisible concepts");
-				}
-			}else {
-				if (_isVisible) {
-					if (!onePathInRange()) {	//if all paths are not in range
-						isVisible = false;
-						
-					}
-				}else {	//if invisible and path not in range! -> new restriction
-					//TEST
-					//newRestriction = event;
-					//if (!onePathInRange()) {	//if all paths are not in range
-						//isVisible = false;
-						
-					//}
-					
-				}
-			}
-		}*/
-		
-		/*public function set newRestriction(e:PropertyChangedEvent):void {
-			if (_newRestriction != e) {
-				_newRestriction = e;
-				dispatchEvent(new PropertyChangedEvent(Relation.NEWRCHANGE, this, "newRestriction"));
-			}
-		}*/
-		
-		/*public function get newRestriction():PropertyChangedEvent {
-			return _newRestriction;
-		}*/
-		
-		/*private function propertyChangedHandler(event:PropertyChangedEvent):void {
-			if (event.origin is Concept) {
-				if (event.propery == "isVisible") {
-					if (bothConceptsAreVisible()) {
-						//trace("both concepts are visible");
-						if (onePathInRange()) {	//if at least on of the paths is in the current range
-							this.isVisible = true;
-						}else {
-							//trace("paths not in range");
-						}
-					}else { //one concept has become invisible
-						this.isVisible = false;
-						
-						
-					}
-				}
-			}else if (event.origin is Path) {
-				if (event.propery == "inRange") {
-					var p:Path = event.origin as Path;
-					//trace("pathRangeChange: "+p.inRange);
-					if (p.inRange) {
-						if (((subject.concept == null) || subject.concept.isVisible) && ((object.concept == null) || object.concept.isVisible)) {	//if both concepts are visible or null
-							this.isVisible = true;
-						}else {	//if at least one concept is invisible
-							//trace("subject or object have invisible concepts");
-						}
-					}else {
-						if (_isVisible) {
-							if (!onePathInRange()) {	//if all paths are not in range
-								isVisible = false;
-								
-							}
-						}else {	//if invisible
-							
-							
-						}
-					}
-				}else if (event.propery == "isVisible") {
-					//trace("pathVchange "+id+", rel: "+id);
-					if (_isVisible) {
-						if (!onePathIsVisible()) {	//if all paths are invisible
-							isVisible = false;
-						}
-					}else {
-						if ((event.target as Path).isVisible) {	//this is the first visible path!
-							//trace("set relation visible: " + id);
-							isVisible = true;
-						}
-					}
-				}
-			}else if (event.origin is Element) {
-				if (event.propery == "concept") {	// if a concept has been set
-					var e:Element = event.origin as Element;
-					e.concept.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChangedHandler);
-				}
-			}
-		}*/
-		
-		
-		
 		private function conceptChangeHandler(event:PropertyChangedEvent):void {
 			var e:Element = event.origin as Element;
 			//e.concept.addEventListener(Concept.VCHANGE, conceptVChangeHandler);
 		}
-		
-		/*private function conceptVChangeHandler(event:Event):void {
-			if (bothConceptsAreVisible()) {
-				//trace("both concepts are visible");
-				if (onePathInRange()) {	//if at least on of the paths is in the current range
-					this.isVisible = true;
-				}else {
-					//trace("paths not in range "+this.id);
-				}
-			}else { //one concept has become invisible
-				//trace("one of the concepts is still invisible! "+id);
-				this.isVisible = false;
-				
-				
-			}
-		}*/
 		
 		public function bothConceptsAreVisible():Boolean {
 			if (((object.concept == null) || object.concept.isVisible) && ((subject.concept == null) || this.subject.concept.isVisible)) {
@@ -279,55 +118,6 @@ package graphElements
 				return false;
 			}
 		}
-		
-		/*private function elementVChangeHandler(event:Event):void {
-			var e:Element = event.target as Element;
-			//trace(("elementVChange " + e.id + ", v: " + e.isVisible);
-			if (e.isVisible) {	//the element has become visible
-				//TODO: testen, ob diese relation visible werden muss!
-				if (onePathIsVisible()) {	//at least one path over this relation is visible
-					//trace(("one path is visible");
-					if (e.id == this.object.id) {
-						if (this.subject.isVisible) {
-							//isVisible = true;
-							
-							//app().drawRelation(this);
-						}
-					}else {
-						if (this.object.isVisible) {
-							//isVisible = true;
-							
-							//app().drawRelation(this);
-						}
-					}
-				}
-			}else {
-				this.isVisible = false;
-				app().hideNode(app().getRelationNode(id, this));
-			}
-		}
-		
-		private function onePathIsVisible():Boolean {
-			for each(var p:Path in paths) {
-				//trace(("path: " + p.id + " v: " + p.isVisible);
-				if (p.isVisible) {
-					return true;
-				}
-			}
-			//trace(("all paths are invisible!");
-			return false;
-		}
-		
-		private function onePathInRange():Boolean {
-			for each(var p:Path in paths) {
-				//trace(("path: " + p.id + " v: " + p.isVisible);
-				if (p.inRange) {
-					return true;
-				}
-			}
-			//trace(("all paths are invisible!");
-			return false;
-		}*/
 		
 		/**
 		 * Checks all the requirements to the relation to be visible or invisible

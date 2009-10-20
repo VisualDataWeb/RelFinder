@@ -4,7 +4,7 @@
   <output>
     <movie disabled="False" />
     <movie input="" />
-    <movie path="bin\RelationFinder2.swf" />
+    <movie path="bin\RelFinderBeta.swf" />
     <movie fps="30" />
     <movie width="800" />
     <movie height="600" />
