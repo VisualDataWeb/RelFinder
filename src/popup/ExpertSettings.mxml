@@ -234,8 +234,8 @@ You should have received a copy of the GNU General Public License along with thi
 				config.description = conf.description;
 				config.endpointURI = conf.endpointURI;
 				config.defaultGraphURI = conf.defaultGraphURI;
-				config.isVirtuoso = conf.isVirtuoso;
-				config.useProxy = conf.useProxy;
+				config.isVirtuoso = (conf.isVirtuoso.toString().toLowerCase() == "true") ? true : false;
+				config.useProxy = (conf.useProxy.toString().toLowerCase() == "true") ? true : false;
 				if (conf.autocompleteURIs != null) {
 					for each (var autocomplete:String in conf.autocompleteURIs.autocompleteURI) {
 						if (config.autocompleteURIs == null) {

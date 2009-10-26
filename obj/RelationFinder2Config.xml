@@ -5,23 +5,22 @@
   <target-player>10.0.0</target-player>
   <compiler>
     <source-path append="true">
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\src</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\SpringGraph</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\dataStructures</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\AutoComplete2\src</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\ButtonBarPanel</path-element>
-      <path-element>C:\Program Files\FlashDevelop\Library\AS3\classes</path-element>
+      <path-element>U:\GoogleCode\relfinder\src</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\SpringGraph</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\dataStructures</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\AutoComplete2\src</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\ButtonBarPanel</path-element>
+      <path-element>C:\Programme\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\lib\SpringGraph_20061210\SpringGraph\bin\SpringGraph.swc</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\SpringGraph\bin\SpringGraph.swc</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\flexlib-.2.4\bin\flexlib.swc</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\Base64\build\as3base64.swc</path-element>
-      <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\lib\dataStructures\as3ds.swc</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\SpringGraph\bin\SpringGraph.swc</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\flexlib-.2.4\bin\flexlib.swc</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\Base64\build\as3base64.swc</path-element>
+      <path-element>U:\GoogleCode\relfinder\lib\dataStructures\as3ds.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
-    <path-element>E:\EigeneDateien\Dokumente\UniStuttgart\Tools\Flash\RelFinder\src\Main.mxml</path-element>
+    <path-element>U:\GoogleCode\relfinder\src\Main.mxml</path-element>
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>
