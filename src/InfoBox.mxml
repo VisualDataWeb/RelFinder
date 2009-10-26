@@ -11,6 +11,7 @@
 		<![CDATA[
 			import components.ButtonBarPanel;
 			import flash.events.Event;
+			import flash.xml.XMLDocument;
 			import global.Languages;
 			import graphElements.Element;
 			import mx.containers.Panel;
@@ -76,6 +77,16 @@
 				field.minHeight = ta_height;
 			}
 			
+			public function htmlUnescape(str:String):String {
+				var output:String = new XMLDocument(str).firstChild.nodeValue;
+				
+				output = output.split("&ndash;").join("&#8211;");
+				
+				return output;
+				
+				//http://de.selfhtml.org/html/referenz/zeichen.htm
+			}
+			
 		]]>
 	</mx:Script>
 	
@@ -93,5 +104,5 @@
 	</mx:Form>
 	
 	<local:ImageView id="imageView" width="{findRelationPanel.width - 24 - 20}" image_path="{selectedElement.imageURL}" />
-	<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{findRelationPanel.width - 28 - 20}" htmlText="{selectedElement.abstract}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
+	<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{findRelationPanel.width - 28 - 20}" htmlText="{htmlUnescape(selectedElement.abstract)}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
 </mx:VBox>

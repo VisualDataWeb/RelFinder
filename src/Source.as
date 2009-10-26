@@ -15,6 +15,7 @@ import connection.config.Config;
 import connection.config.IConfig;
 import connection.model.LookUpCache;
 import mx.core.Repeater;
+import mx.events.CloseEvent;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.http.HTTPService;
 import mx.utils.ObjectUtil;
@@ -197,7 +198,7 @@ private function setupParams():void {
 			}
 		}
 		
-		callLater(findRelations);
+		callLater(findRelationsImmediately);
 	}
 }
 
@@ -550,13 +551,22 @@ public function getGivenNode(_uri:String, _element:Element):GivenNode {
 		var angle:Number = 360 / givenNodesArray.length;
 		var centerX:Number = this.sGraph.width / 2;
 		var centerY:Number = this.sGraph.height / 2
-		var radius:Number = Math.min(centerX - 120, centerY - 80);
+		//var radius:Number = Math.min(centerX - 80, centerY - 40);
+		var a:Number = centerX - 120;
+		var b:Number = centerY - 60;
 		
 		for (var i:int = 0; i < givenNodesArray.length; i++) {
 			if ((givenNodesArray[i].node as GivenNode).getX() == 0 && (givenNodesArray[i].node as GivenNode).getY() == 0) {
-				(givenNodesArray[i].node as GivenNode).setPosition( (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, (-radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
+				// Ellipse
+				(givenNodesArray[i].node as GivenNode).setPosition(a * Math.cos((i * angle - 180) * (Math.PI / 180)) + centerX, b * Math.sin((i * angle - 180) * (Math.PI / 180)) + centerY);
+				
+				// Circle
+				//(givenNodesArray[i].node as GivenNode).setPosition( (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, (-radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
 			}else {
-				moveNodeToPosition((givenNodesArray[i].node as GivenNode), (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, ( -radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
+				// Ellipse
+				moveNodeToPosition((givenNodesArray[i].node as GivenNode), a * Math.cos((i * angle - 180) * (Math.PI / 180)) + centerX, b * Math.sin((i * angle - 180) * (Math.PI / 180)) + centerY);
+				// Circle
+				//moveNodeToPosition((givenNodesArray[i].node as GivenNode), (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, ( -radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
 			}
 		}
 		
@@ -584,9 +594,11 @@ public function moveNodeToPosition(node:GivenNode, x:Number, y:Number):void {
 
 public function addNewInputField():void {
 	inputCache = new ArrayCollection();
+	var searchTextCache:ArrayCollection = new ArrayCollection();
 	
 	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
 		if (inputField[i] is AutoComplete) {
+			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
 			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
 		}
 	}
@@ -596,7 +608,11 @@ public function addNewInputField():void {
 	(inputFieldRepeater as Repeater).validateNow();
 	
 	for (var j:int = 0; j < inputCache.length; j++) {
-		(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+		}else {
+			(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+		}
 	}
 	
 	(inputFieldRepeater as Repeater).validateNow();
@@ -611,9 +627,11 @@ public function removeInputField(index:int):void {
 	}
 	
 	inputCache = new ArrayCollection();
+	var searchTextCache:ArrayCollection = new ArrayCollection();
 	
 	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
 		if (i != index && inputField[i] is AutoComplete) {
+			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
 			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
 		}
 	}
@@ -623,10 +641,19 @@ public function removeInputField(index:int):void {
 	(inputFieldRepeater as Repeater).validateNow();
 	
 	for (var j:int = 0; j < inputCache.length; j++) {
-		(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+		
+		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+		}else {
+			(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+		}
 	}
 	
 	(inputFieldRepeater as Repeater).validateNow();
+}
+
+public function addTextToInputField(inputField:AutoComplete, searchText:String):void {
+	inputField.searchText = searchText;
 }
 
 public function getInstanceNode(_id:String, _element:Element):MyNode {
@@ -950,6 +977,97 @@ private function clear():void {
 	trace("paths: " + _paths.size);
 }
 
+public function clearGraph():void {
+	trace("clear");
+	
+	ConnectionModel.getInstance().lastClear = new Date();
+	
+	//TODO: clear slider, clear input fields
+	
+	//TODO: Stop SPARQL queries, clear all the connection stuff! 
+	//(resultParser as SPARQLResultParser).clear();
+	
+	/**
+	 * REMOVE ALL LISTENER ----------------
+	 */
+	var iter:Iterator = _paths.getIterator();
+	while (iter.hasNext()) {
+		var p:Path = iter.next();
+		p.removeListener();
+	}
+	
+	var iter2:Iterator = relations.getIterator();
+	while (iter2.hasNext()) {
+		var r:Relation = iter2.next();
+		r.removeListener();
+	}
+	
+	var iter4:Iterator = elements.getIterator();
+	while (iter4.hasNext()) {
+		var e:Element = iter4.next();
+		e.removeListener();
+	}
+	
+	for each(var c:Concept in _concepts) {
+		c.removeListener();
+	}
+	
+	for each(var pL:PathLength in _pathLengths) {
+		pL.removeListener();
+	}
+	
+	for each(var rT:RelType in _relTypes) {
+		rT.removeListener();
+	}
+	
+	/**
+	 * RESET VARIABLES -----------------------
+	 */
+	graph = new Graph();
+	selectedElement = null;
+	_selectedConcept = null;
+	_selectedPathLength = null;
+	_selectedRelType = null;
+	_graphIsFull = false;	//whether the graph is overcluttered already!
+	_delayedDrawing = true;
+	
+	_relationNodes = new HashMap();
+	foundNodes = new HashMap();
+	givenNodes = new HashMap();
+
+	toDrawPaths = new ArrayedQueue(1000);
+	timer.stop();
+	timer.delay = 2000;
+	StatusModel.getInstance().queueIsEmpty = true;
+	
+	//trace("before",_paths.size);
+	_pathLengths = new ArrayCollection();
+	_paths = new HashMap();
+	//trace("after", _paths.size);
+	_relTypes = new ArrayCollection();
+	relations = new HashMap();
+	_concepts = new ArrayCollection();
+	elements = new HashMap();
+	
+	//_maxPathLength = 0;
+	//_selectedMinPathLength = 0;
+	//_selectedMaxPathLength = 0;
+	
+	
+	
+	myConnection = new SPARQLConnection();
+	
+	StatusModel.getInstance().clear();
+	
+	Languages.getInstance().clear();
+	
+	_selectedElement = null;	//so ist es besser!
+	
+	sparqlEndpoint = "";
+	basicGraph = "";
+	resultParser = new SPARQLResultParser();
+}
+
 //--Expert-Settings + Info-------------------------------------
 
 private var _settingsButton:Object;
@@ -1171,7 +1289,7 @@ private function loadExample(o1:Object, o2:Object, ep:Object):void {
 	}
 	
 	if (searchPossible) {
-		clear();
+		//clear();
 		tn.selectedChild = tab1;	//set current tab
 		(inputField[0] as AutoComplete).selectedItem = o1;
 		(inputField[1] as AutoComplete).selectedItem = o2;
@@ -1190,23 +1308,34 @@ private function autoDisambiguate(ac:AutoComplete):Boolean {
 	
 	trace("auto disambiguate: " + input);
 	trace("searching for direct match");
-	//for each (var obj:Object in dp) {
-		//if ((StringUtil.trim(obj.label)).toLowerCase() == (StringUtil.trim(input)).toLowerCase()) {
-			//ac.selectedItem = obj;
+	for each (var obj:Object in dp) {
+		if ((StringUtil.trim(obj.label)).toLowerCase() == (StringUtil.trim(input)).toLowerCase()) {
+			
+			//check if count from matching object is high enaugh for a dirct match
+			var o:Object = dp.getItemAt(0);
+			if (o != null && o.hasOwnProperty("count") && obj != null && obj.hasOwnProperty("count")) {
+				 //if count of obj is not much lower than count of o, take obj as selected item
+				if (o.count / obj.count < 5) {
+					ac.selectedItem = obj;
+					ac.validateNow();
+					trace("disambiguated by direct match. relation between found item and 1st item in list = " + o.count / obj.count + " found item will be taken as selected object");
+					return true;
+				}else {
+					trace("no disambiguation by direct match. relation between found item and 1st item to low = " + o.count / obj.count);
+					return false;
+				}
+			}
+		}
+	}
+	// directly match only the first element
+	//if (dp.length > 0) {
+		//if ((StringUtil.trim(dp.getItemAt(0).label)).toLowerCase() == (StringUtil.trim(input)).toLowerCase()) {
+			//ac.selectedItem = dp.getItemAt(0);
 			//ac.validateNow();
 			//trace("direct match found");
 			//return true;
 		//}
 	//}
-	// directly match only the first element
-	if (dp.length > 0) {
-		if ((StringUtil.trim(dp.getItemAt(0).label)).toLowerCase() == (StringUtil.trim(input)).toLowerCase()) {
-			ac.selectedItem = dp.getItemAt(0);
-			ac.validateNow();
-			trace("direct match found");
-			return true;
-		}
-	}
 	trace("no direct match found");
 	
 	// results of this method weren't really satisfying, so it was disabled
@@ -1234,7 +1363,73 @@ private function autoDisambiguate(ac:AutoComplete):Boolean {
 	return false;
 }
 
+private function removeEmptyInputFields():void {
+	
+	if (inputFieldRepeater.dataProvider.length <= 2) {
+		return;
+	}
+	
+	inputCache = new ArrayCollection();
+	var searchTextCache:ArrayCollection = new ArrayCollection();
+	
+	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
+		if (inputField[i] is AutoComplete) {
+			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
+			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
+		}
+	}
+	
+	var toRemove:Array = new Array();
+	
+	for (var k:int = inputFieldRepeater.dataProvider.length - 1; k >= 0; k--) {
+		if ((inputField[k] as AutoComplete).selectedItem == null &&
+			((inputField[k] as AutoComplete).searchText == null || (inputField[k] as AutoComplete).searchText == "")) {
+			toRemove.push(k);
+		}
+	}
+	
+	for (var l:int = 0; l < toRemove.length; l++) {
+		inputFields.removeItemAt(toRemove[l]);
+	}
+	
+	(inputFieldRepeater as Repeater).validateNow();
+	
+	for (var j:int = 0; j < inputCache.length; j++) {
+		
+		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+		}else {
+			//(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+		}
+	}
+	
+	(inputFieldRepeater as Repeater).validateNow();
+}
+
 private function findRelations():void {
+	
+	//removeEmptyInputFields();
+	
+	if (givenNodes.isEmpty()) {
+		findRelationsImmediately();
+	}else {
+		Alert.show("Do you want to clear all old results before searching for new relations?", "Clear", Alert.YES + Alert.NO, this, dispatchCloseEvent);
+	}
+}
+		
+private function dispatchCloseEvent(event:CloseEvent):void {
+	if (event.detail == Alert.YES) {
+		
+		clearGraph();
+		
+		callLater(findRelationsImmediately);
+		
+	}else if (event.detail == Alert.NO) {
+		findRelationsImmediately();
+	}
+}	
+
+private function findRelationsImmediately():void {
 	
 	if (!isInputValid()) {
 		for (var j:int = 0; j < inputFieldRepeater.dataProvider.length; j++) {
@@ -1329,13 +1524,13 @@ private function getInputFromAC(acIndex:int):Object {
 }
 
 private function inputDisambiguationWindowHandler(event:Event):void {
-	findRelations();
+	findRelationsImmediately();
 }
 
 private function inputSelectionWindowHandler(event:InputSelectionEvent):void {
 	(inputField[event.autoCompleteIndex] as AutoComplete).selectedItem = event.selectedItem;
 	(inputField[event.autoCompleteIndex] as AutoComplete).validateNow();
-	findRelations();
+	findRelationsImmediately();
 }
 
 private function isInputUnique():Boolean {
