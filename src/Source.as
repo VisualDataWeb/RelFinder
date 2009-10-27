@@ -121,14 +121,6 @@ private var _showOptions:Boolean = false;	//flag to set filters and infos visibl
 [Embed(source="../assets/img/show.gif")]
 public var filterSign:Class;
 
-private function getFilterSign(list:ArrayCollection):Class {
-	for each(var obj:Object in list) {
-		if ((!obj.isVisible) && obj.canBeChanged) {	//if not visible but can be changed
-			return filterSign;
-		}
-	}
-	return null;
-}
 
 private function setup(): void {
 	
@@ -417,6 +409,24 @@ public function getConcept(uri:String, label:String):Concept {
 private function conceptChangeListener(event:Event):void {
 	var c:Concept = event.target as Concept;
 	_concepts.itemUpdated(c);
+	
+	//check filter sign
+	if (tab2.icon == null) {
+		if ((!c.isVisible) && c.canBeChanged) {
+			tab2.icon = filterSign;
+		}
+	}else {
+		var noFilters:Boolean = true;
+		for each(var c1:Concept in _concepts) {
+			if ((!c1.isVisible) && c1.canBeChanged) {
+				noFilters = false;	//there is at least one filter!
+				break;
+			}
+		}
+		if (noFilters) {
+			tab2.icon = null;
+		}
+	}
 }
 
 [Bindable]
@@ -466,6 +476,24 @@ private function relTypeChangeListener(event:Event):void {
 	var rT:RelType = event.target as RelType;
 	//trace("relTypes update : " +rT.numVisibleRelations);
 	_relTypes.itemUpdated(rT);
+	
+	//check filter sign
+	if (tab3.icon == null) {
+		if ((!rT.isVisible) && rT.canBeChanged) {
+			tab3.icon = filterSign;
+		}
+	}else {
+		var noFilters:Boolean = true;
+		for each(var rT1:RelType in _relTypes) {
+			if ((!rT1.isVisible) && rT1.canBeChanged) {
+				noFilters = false;	//there is at least one filter!
+				break;
+			}
+		}
+		if (noFilters) {
+			tab3.icon = null;
+		}
+	}
 }
 
 [Bindable]
@@ -512,6 +540,24 @@ public function getPathLength(uri:String, length:int):PathLength {
 private function pathLengthChangeListener(event:Event):void {
 	var pL:PathLength = event.target as PathLength;
 	_pathLengths.itemUpdated(pL);
+	
+	//check filter sign
+	if (tab11.icon == null) {
+		if ((!pL.isVisible) && pL.canBeChanged) {
+			tab1.icon = filterSign;
+		}
+	}else {
+		var noFilters:Boolean = true;
+		for each(var pL1:RelType in _pathLengths) {
+			if ((!pL1.isVisible) && pL1.canBeChanged) {
+				noFilters = false;	//there is at least one filter!
+				break;
+			}
+		}
+		if (noFilters) {
+			tab1.icon = null;
+		}
+	}
 }
 
 [Bindable]
