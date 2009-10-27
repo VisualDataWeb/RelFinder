@@ -411,9 +411,9 @@ private function conceptChangeListener(event:Event):void {
 	_concepts.itemUpdated(c);
 	
 	//check filter sign
-	if (tab2.icon == null) {
+	if (tab12.icon == null) {
 		if ((!c.isVisible) && c.canBeChanged) {
-			tab2.icon = filterSign;
+			tab12.icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -424,7 +424,7 @@ private function conceptChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab2.icon = null;
+			tab12.icon = null;
 		}
 	}
 }
@@ -478,9 +478,9 @@ private function relTypeChangeListener(event:Event):void {
 	_relTypes.itemUpdated(rT);
 	
 	//check filter sign
-	if (tab3.icon == null) {
+	if (tab13.icon == null) {
 		if ((!rT.isVisible) && rT.canBeChanged) {
-			tab3.icon = filterSign;
+			tab13.icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -491,7 +491,7 @@ private function relTypeChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab3.icon = null;
+			tab13.icon = null;
 		}
 	}
 }
@@ -544,18 +544,18 @@ private function pathLengthChangeListener(event:Event):void {
 	//check filter sign
 	if (tab11.icon == null) {
 		if ((!pL.isVisible) && pL.canBeChanged) {
-			tab1.icon = filterSign;
+			tab11.icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
-		for each(var pL1:RelType in _pathLengths) {
+		for each(var pL1:PathLength in _pathLengths) {
 			if ((!pL1.isVisible) && pL1.canBeChanged) {
 				noFilters = false;	//there is at least one filter!
 				break;
 			}
 		}
 		if (noFilters) {
-			tab1.icon = null;
+			tab11.icon = null;
 		}
 	}
 }

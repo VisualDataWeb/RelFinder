@@ -94,7 +94,7 @@ You should have received a copy of the GNU General Public License along with thi
 										  showTrackHighlight="true" tickInterval="1" />-->
 									</mx:VBox>
 									
-									<mx:VBox id="tab2" label="concepts">
+									<mx:VBox id="tab12" label="concepts">
 										<mx:DataGrid id="dgC" height="100%" width="100%" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="concept of nodes"></mx:DataGridColumn>
@@ -104,7 +104,7 @@ You should have received a copy of the GNU General Public License along with thi
 										</mx:DataGrid>
 									</mx:VBox>
 									
-									<mx:VBox id="tab3" label="types">
+									<mx:VBox id="tab13" label="types">
 										<mx:DataGrid id="dgT" height="100%" width="100%" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="relation type"></mx:DataGridColumn>
@@ -167,7 +167,7 @@ You should have received a copy of the GNU General Public License along with thi
 						
 					</mx:VBox>
 					
-					<mx:VBox label="examples" width="100%">
+					<mx:VBox id="tab2" label="examples" width="100%">
 						<mx:Form width="100%" paddingLeft="6" paddingRight="6" paddingTop="0" paddingBottom="0">
 							<mx:DataGrid id="dgExamples" width="100%" rowCount="10" dataProvider="{_examples}" doubleClickEnabled="true" doubleClick="loadExample(dgExamples.selectedItem.o1, dgExamples.selectedItem.o2, dgExamples.selectedItem.ep)" >
 								<mx:columns>
