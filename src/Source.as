@@ -117,6 +117,19 @@ private var inputCache:ArrayCollection = new ArrayCollection();
 [Bindable]
 private var _showOptions:Boolean = false;	//flag to set filters and infos visible or invisible
 
+[Bindable]
+[Embed(source="../assets/img/show.gif")]
+public var filterSign:Class;
+
+private function getFilterSign(list:ArrayCollection):Class {
+	for each(var obj:Object in list) {
+		if ((!obj.isVisible) && obj.canBeChanged) {	//if not visible but can be changed
+			return filterSign;
+		}
+	}
+	return null;
+}
+
 private function setup(): void {
 	
 	myConnection = new SPARQLConnection();
