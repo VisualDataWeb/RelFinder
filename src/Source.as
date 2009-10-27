@@ -1030,6 +1030,10 @@ private function clear():void {
 	//pathLengthRange.minimum = 0;
 	//pathLengthRange.maximum = 1;
 	
+	tab11.icon = null;
+	tab12.icon = null;
+	tab13.icon = null;
+	
 	
 	trace("check clear!!");
 	trace("graph: " + graph.nodeCount);
