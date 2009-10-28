@@ -411,9 +411,9 @@ private function conceptChangeListener(event:Event):void {
 	_concepts.itemUpdated(c);
 	
 	//check filter sign
-	if (tab12.icon == null) {
+	if (tab12.isVisible) {
 		if ((!c.isVisible) && c.canBeChanged) {
-			tab12.icon = filterSign;
+			tab12.isVisible = false; //.icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -424,7 +424,7 @@ private function conceptChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab12.icon = null;
+			tab12.isVisible = true; // icon = null;
 		}
 	}
 }
@@ -478,9 +478,9 @@ private function relTypeChangeListener(event:Event):void {
 	_relTypes.itemUpdated(rT);
 	
 	//check filter sign
-	if (tab13.icon == null) {
+	if (tab13.isVisible) {
 		if ((!rT.isVisible) && rT.canBeChanged) {
-			tab13.icon = filterSign;
+			tab13.isVisible = false; // icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -491,7 +491,7 @@ private function relTypeChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab13.icon = null;
+			tab13.isVisible = true; // icon = null;
 		}
 	}
 }
@@ -542,9 +542,9 @@ private function pathLengthChangeListener(event:Event):void {
 	_pathLengths.itemUpdated(pL);
 	
 	//check filter sign
-	if (tab11.icon == null) {
+	if (tab11.isVisible) {	//no filters are registered
 		if ((!pL.isVisible) && pL.canBeChanged) {
-			tab11.icon = filterSign;
+			tab11.isVisible = false;	// icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -555,7 +555,7 @@ private function pathLengthChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab11.icon = null;
+			tab11.isVisible = true; //tab11.icon = null;
 		}
 	}
 }
@@ -1030,9 +1030,9 @@ private function clear():void {
 	//pathLengthRange.minimum = 0;
 	//pathLengthRange.maximum = 1;
 	
-	tab11.icon = null;
-	tab12.icon = null;
-	tab13.icon = null;
+	tab11.isVisible = true;// icon = null;
+	tab12.isVisible = true;// .icon = null;
+	tab13.isVisible = true;// icon = null;
 	
 	
 	trace("check clear!!");
@@ -1736,4 +1736,10 @@ public function set delayedDrawing(b:Boolean):void {
 
 public function emptyToDrawPaths():void {
 	 //toDrawPaths.clear();
+}
+
+public function setIsVisibleOfAll(list:ArrayCollection, value:Boolean):void {
+	for each(var o:Object in list) {
+		o.isVisible = value;
+	}
 }

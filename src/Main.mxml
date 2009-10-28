@@ -79,7 +79,8 @@ You should have received a copy of the GNU General Public License along with thi
 								<!-- FILTER OPTIONS -->
 								<mx:Label fontWeight="bold" text='Filter by: '/>
 								<mx:TabNavigator width="100%" height="100%" id="tn2" tabWidth="{tn2.width/3}" cornerRadius="0" borderThickness="0" horizontalAlign="center" >
-									<mx:VBox id="tab11" label="lengths">
+									<local:FilterTab id="tab11" label="lengths" list="{_pathLengths}" >
+									<!--<mx:VBox id="tab11" label="lengths">-->
 										<mx:DataGrid id="dgL" height="100%" width="100%" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" wordWrap="true" headerStyleName="myHeader" headerText="number of nodes in between"></mx:DataGridColumn>
@@ -92,9 +93,10 @@ You should have received a copy of the GNU General Public License along with thi
 										  liveDragging="true" lockRegionsWhileDragging="true"
 										  change="emptyToDrawPaths(); delayedDrawing = false; pathLengthRangeChanged(pathLengthRange.values[0], pathLengthRange.values[1]);" width="100%" 
 										  showTrackHighlight="true" tickInterval="1" />-->
-									</mx:VBox>
+									<!-- </mx:VBox>  -->
+									</local:FilterTab>
 									
-									<mx:VBox id="tab12" label="concepts">
+									<local:FilterTab id="tab12" label="concepts"  list="{_concepts}">
 										<mx:DataGrid id="dgC" height="100%" width="100%" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="concept of nodes"></mx:DataGridColumn>
@@ -102,9 +104,9 @@ You should have received a copy of the GNU General Public License along with thi
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
 										</mx:DataGrid>
-									</mx:VBox>
+									</local:FilterTab>
 									
-									<mx:VBox id="tab13" label="types">
+									<local:FilterTab id="tab13" label="types" list="{_relTypes}">
 										<mx:DataGrid id="dgT" height="100%" width="100%" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="relation type"></mx:DataGridColumn>
@@ -112,7 +114,7 @@ You should have received a copy of the GNU General Public License along with thi
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
 										</mx:DataGrid>
-									</mx:VBox>
+									</local:FilterTab>
 									
 								</mx:TabNavigator>
 							</mx:VBox>
