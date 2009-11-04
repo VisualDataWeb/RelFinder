@@ -49,7 +49,6 @@
 			<abbreviation>lodd</abbreviation>
 			<description>Endpoint for the Linking Open Drug Data project</description>
 			<endpointURI>http://hcls.deri.org/sparql</endpointURI>
-			<defaultGraphURI>http://hcls.deri.org/resource/graph/drugbank</defaultGraphURI>
 			<isVirtuoso>false</isVirtuoso>
 			<useProxy>true</useProxy>
 			<autocompleteURIs>
