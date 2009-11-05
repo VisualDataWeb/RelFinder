@@ -63,6 +63,7 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			public function apply():void {
 				
+				config.abbreviation = inAbbreviation.text;
 				config.autocompleteURIs = tempACDP;
 				config.defaultGraphURI = inDefaultGraphURI.text;
 				config.description = inDescription.text;
@@ -136,6 +137,9 @@ You should have received a copy of the GNU General Public License along with thi
 		
 		<mx:FormItem width="100%" label="Name:">
 			<mx:TextInput id="inName" width="100%" text="{config.name}" />
+		</mx:FormItem>
+		<mx:FormItem width="100%" label="ID:">
+			<mx:TextInput id="inAbbreviation" width="100%" text="{config.abbreviation}" />
 		</mx:FormItem>
 		<mx:FormItem width="100%" label="Description:">
 			<mx:TextArea id="inDescription" width="100%" text="{config.description}" />

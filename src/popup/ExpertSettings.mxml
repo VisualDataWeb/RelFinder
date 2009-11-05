@@ -121,6 +121,9 @@ You should have received a copy of the GNU General Public License along with thi
 												if (ep.name != null && ep.name != "") {
 													data += "<name>" + ep.name + "</name>";
 												}
+												if (ep.abbreviation != null && ep.abbreviation != "") {
+													data += "<abbreviation>" + ep.abbreviation + "</abbreviation>";
+												}
 												if (ep.description != null && ep.description != "") {
 													data += "<description>" + ep.description + "</description>";
 												}
@@ -159,6 +162,9 @@ You should have received a copy of the GNU General Public License along with thi
 												data += "<endpoint>";
 												if (ep.name != null && ep.name != "") {
 													data += "<name>" + ep.name + "</name>";
+												}
+												if (ep.abbreviation != null && ep.abbreviation != "") {
+													data += "<abbreviation>" + ep.abbreviation + "</abbreviation>";
 												}
 												if (ep.description != null && ep.description != "") {
 													data += "<description>" + ep.description + "</description>";
@@ -231,6 +237,7 @@ You should have received a copy of the GNU General Public License along with thi
 				
 				var config:Config = new Config();
 				config.name = conf.name;
+				config.abbreviation = conf.abbreviation;
 				config.description = conf.description;
 				config.endpointURI = conf.endpointURI;
 				config.defaultGraphURI = conf.defaultGraphURI;

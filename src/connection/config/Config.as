@@ -18,6 +18,8 @@
 		
 		private var _endpointURI:String;
 		
+		private var _abbreviation:String;
+		
 		private var _defaultGraphURI:String;
 		
 		private var _isVirtuoso:Boolean;
@@ -34,13 +36,14 @@
 		
 		private var _useProxy:Boolean = true;
 		
-		public function Config(name:String = "", description:String = "",
+		public function Config(name:String = "", abbreviation:String = "", description:String = "",
 					endpointURI:String = "", defaultGraphURI:String = "", isVirtuoso:Boolean = false,
 					ignoredProperties:ArrayCollection = null, useProxy:Boolean = true,
 					autocompleteURIs:ArrayCollection = null,
 					lookUp:ILookUp = null) {
 			
 			this.name = (name == null || name == "") ? "New Config" : name;
+			this.abbreviation = abbreviation;
 			this.description = description;
 			this.endpointURI = endpointURI;
 			this.defaultGraphURI = defaultGraphURI;
@@ -59,6 +62,16 @@
 		public function set endpointURI(value:String):void {
 			_endpointURI = value;
 			dispatchEvent(new Event("endpointURIChange"));
+		}
+		
+		[Bindable(event="abbreviationChange")]
+		public function get abbreviation():String {
+			return _abbreviation;
+		}
+		
+		public function set abbreviation(value:String):void {
+			_abbreviation = value;
+			dispatchEvent(new Event("abbreviationChange"));
 		}
 		
 		[Bindable(event="defaultGraphURIChange")]

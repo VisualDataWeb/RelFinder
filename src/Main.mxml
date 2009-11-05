@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License along with thi
 				xmlns:code="http://code.google.com/p/flexlib/"
 				xmlns:bbp="components.*"
 				xmlns:local="*"
+				xmlns:tab="positionedTabNavigator.*"
 				layout="absolute" verticalAlign="middle" backgroundColor="white" 
 				paddingLeft="2" paddingBottom="2" paddingRight="2" paddingTop="2"
 				fontFamily="Verdana" fontSize="9"
@@ -72,13 +73,13 @@ You should have received a copy of the GNU General Public License along with thi
 							
 						</mx:HBox>
 						
-						<mx:HRule width="100%"/> -->
+						<mx:HRule width="100%"/>visible="{_showOptions}"-->
 							
-						<mx:VDividedBox id="vdivbox" visible="{_showOptions}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
+						<mx:VDividedBox id="vdivbox" visible="{true}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
 							<mx:VBox id="filterOptions" width="100%" height="100%" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" horizontalGap="2">
 								<!-- FILTER OPTIONS -->
 								<mx:Label fontWeight="bold" text='Filter by: '/>
-								<mx:TabNavigator width="100%" height="100%" id="tn2" tabWidth="{tn2.width/3}" cornerRadius="0" borderThickness="0" horizontalAlign="center" >
+								<tab:PositionedTabNavigator width="100%" height="100%" id="tn2" tabWidth="{tn2.width/3}" cornerRadius="0" borderThickness="0"  >
 									<local:FilterTab id="tab11" label="lengths" list="{_pathLengths}" >
 									<!--<mx:VBox id="tab11" label="lengths">-->
 										<mx:DataGrid id="dgL" height="100%" width="100%" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
@@ -116,7 +117,7 @@ You should have received a copy of the GNU General Public License along with thi
 										</mx:DataGrid>
 									</local:FilterTab>
 									
-								</mx:TabNavigator>
+								</tab:PositionedTabNavigator>
 							</mx:VBox>
 							
 							<!--<mx:VBox id="filterOptions"  width="100%" height="100%" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" horizontalGap="2">

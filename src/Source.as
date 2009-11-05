@@ -14,6 +14,7 @@ import com.hillelcoren.components.AutoComplete;
 import connection.config.Config;
 import connection.config.IConfig;
 import connection.model.LookUpCache;
+import mx.containers.TabNavigator;
 import mx.core.Repeater;
 import mx.events.CloseEvent;
 import mx.rpc.events.FaultEvent;
@@ -139,6 +140,23 @@ private function setupParams():void {
 	
 	var conf:Config = new Config();
 	
+	if (param.hasOwnProperty("id")) {
+		var id:String = param["id"];
+		
+		for (var k:int = 0; k < ConnectionModel.getInstance().sparqlConfigs.length; k++) {
+			if ((ConnectionModel.getInstance().sparqlConfigs.getItemAt(k) as IConfig).abbreviation == id) {
+				ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(k) as IConfig;
+				
+				return;
+			}
+		}
+		
+		// Config is not in config file
+		Alert.show("Config " + id + " is not known");
+		return;
+		
+	}
+	
 	for (var key:String in param) {
 		
 		if (key.substring(0, 3) == "obj") {
@@ -204,6 +222,24 @@ private function setupParams():void {
 		}
 		
 		callLater(findRelationsImmediately);
+	}else {
+		if (conf.endpointURI != null && conf.endpointURI != "") {
+			var found2:Boolean = false;
+			
+			for (var j:int = 0; j < ConnectionModel.getInstance().sparqlConfigs.length; j++) {
+				if (!found2 && conf.equals(ConnectionModel.getInstance().sparqlConfigs.getItemAt(j) as IConfig)) {
+					found2 = true;
+					
+					ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(j) as IConfig;
+					
+				}
+			}
+			
+			if (!found2) {
+				ConnectionModel.getInstance().sparqlConfigs.addItem(conf);
+				ConnectionModel.getInstance().sparqlConfig = conf;
+			}
+		}
 	}
 }
 
@@ -253,6 +289,7 @@ public function getConfig(conf:Object):Config {
 	var config:Config = new Config();
 	
 	config.name = conf.name;
+	config.abbreviation = conf.abbreviation;
 	config.description = conf.description;
 	config.endpointURI = conf.endpointURI;
 	config.defaultGraphURI = conf.defaultGraphURI;

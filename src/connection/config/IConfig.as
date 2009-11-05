@@ -15,6 +15,11 @@
 		
 		function set endpointURI(value:String):void;
 		
+		[Bindable(event="abbreviationURIChange")]
+		function get abbreviation():String;
+		
+		function set abbreviation(value:String):void;
+		
 		[Bindable(event="defaultGraphURIChange")]
 		function get defaultGraphURI():String;
 		

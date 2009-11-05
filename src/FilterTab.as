@@ -13,11 +13,18 @@ package
 	import flash.events.MouseEvent;
 	import mx.collections.ArrayCollection;
 	import mx.containers.VBox;
+	import mx.controls.Button;
 	import mx.controls.Image;
 	import mx.controls.tabBarClasses.Tab;
 	import mx.core.Application;
 	
-	public class FilterTab extends VBox{
+	public class FilterTab extends VBox {
+		
+		public static const LABEL_TYPES:String = "types";
+		public static const LABEL_CONCEPTS:String = "concepts";
+		public static const LABEL_LENGTHS:String = "lengths";
+		
+		
 		[Bindable]
 		[Embed(source="../assets/img/hide.gif")]
 		private var Hide:Class;
@@ -34,23 +41,43 @@ package
 		[Embed(source="../assets/img/show_inactive.gif")]
 		private var ShowInactive:Class;
 		
-		private var _img:Image = new Image();
+		//private var _img:Image = new Image();
 		private var _isVisible:Boolean = true;
 		private var _list:ArrayCollection;
 		
 		public function FilterTab() {
 			super();
-			_img.buttonMode = true;
-			_img.useHandCursor = true;
-			_img.source = Hide;
-			_img.addEventListener(MouseEvent.CLICK, handleImageClick);
+			//_img.buttonMode = true;
+			//_img.useHandCursor = true;
+			//_img.source = Hide;
+			//_img.addEventListener(MouseEvent.CLICK, handleImageClick);
 		}
 		
-		override protected function createChildren():void {
-			super.createChildren();
-			//icon = _img;
-			addChild(_img);
+		private var _button:Button;
+		
+		public function set filterButton(value:Button):void {
+			_button = value;
+			_button.setStyle("icon", Hide);
+			_button.addEventListener(MouseEvent.CLICK, buttonClickHandler);
+			_button.addEventListener(MouseEvent.ROLL_OVER, buttonRollOver);
 		}
+		
+		private function buttonRollOver(event:MouseEvent):void {
+			
+		}
+		
+		private function buttonClickHandler(event:MouseEvent):void {
+			var value:Boolean = (!_isVisible);
+			for each(var o:Object in _list) {
+				o.isVisible = value;
+			}
+		}
+		
+		//override protected function createChildren():void {
+			//super.createChildren();
+			//icon = _img;
+			//addChild(_img);
+		//}
 		
 		public function set list(l:ArrayCollection):void {
 			_list = l;
@@ -59,9 +86,11 @@ package
 		public function set isVisible(b:Boolean):void {
 			_isVisible = b;
 			if (_isVisible) {
-				_img.source = Hide;
+				//_img.source = Hide;
+				_button.setStyle("icon", Hide);
 			}else {
-				_img.source = Show;
+				//_img.source = Show;
+				_button.setStyle("icon", Show);
 			}
 		}
 		
@@ -69,12 +98,12 @@ package
 			return _isVisible;
 		}
 		
-		private function handleImageClick(event:Event):void {
-			var value:Boolean = (!_isVisible);
-			for each(var o:Object in _list) {
-				o.isVisible = value;
-			}
-		}
+		//private function handleImageClick(event:Event):void {
+			//var value:Boolean = (!_isVisible);
+			//for each(var o:Object in _list) {
+				//o.isVisible = value;
+			//}
+		//}
 		
 		private function app(): Main {
 			return Application.application as Main;
