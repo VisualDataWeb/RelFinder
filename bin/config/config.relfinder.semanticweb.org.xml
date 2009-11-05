@@ -23,6 +23,7 @@
 				<ignoredProperty>http://www.w3.org/2004/02/skos/core#subject</ignoredProperty>
 				<ignoredProperty>http://dbpedia.org/property/wikiPageUsesTemplate</ignoredProperty>
 				<ignoredProperty>http://dbpedia.org/property/wordnet_type</ignoredProperty>
+				<ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
 			</ignoredProperties>
 		</defaultEndpoint>
 		
@@ -41,6 +42,7 @@
 				<ignoredProperty>http://www.w3.org/2004/02/skos/core#subject</ignoredProperty>
 				<ignoredProperty>http://dbpedia.org/property/wikiPageUsesTemplate</ignoredProperty>
 				<ignoredProperty>http://dbpedia.org/property/wordnet_type</ignoredProperty>
+				<ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
 			</ignoredProperties>
 		</endpoint>
 		
