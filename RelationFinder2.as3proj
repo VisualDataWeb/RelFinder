@@ -48,7 +48,6 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="..\lib\SpringGraph_20061210\SpringGraph\bin\SpringGraph.swc" />
-    <element path="lib\SpringGraph\bin\SpringGraph.swc" />
     <element path="lib\flexlib-.2.4\bin\flexlib.swc" />
     <element path="lib\Base64\build\as3base64.swc" />
     <element path="lib\dataStructures\as3ds.swc" />

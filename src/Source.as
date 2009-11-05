@@ -1770,13 +1770,3 @@ public function set delayedDrawing(b:Boolean):void {
 		toDrawPaths.clear();*/
 	}
 }
-
-public function emptyToDrawPaths():void {
-	 //toDrawPaths.clear();
-}
-
-public function setIsVisibleOfAll(list:ArrayCollection, value:Boolean):void {
-	for each(var o:Object in list) {
-		o.isVisible = value;
-	}
-}

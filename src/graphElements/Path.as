@@ -143,6 +143,7 @@ package graphElements {
 		private function conceptChangeHandler(event:Event):void {
 			var e:Element = event.target as Element;
 			e.concept.addEventListener(Concept.VCHANGE, checkVisibility);
+			
 		}
 		
 		[Bindable(event=Path.RCHANGE)]

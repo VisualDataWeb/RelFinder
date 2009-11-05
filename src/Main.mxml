@@ -75,7 +75,7 @@ You should have received a copy of the GNU General Public License along with thi
 						
 						<mx:HRule width="100%"/>visible="{_showOptions}"-->
 							
-						<mx:VDividedBox id="vdivbox" visible="{true}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
+						<mx:VDividedBox id="vdivbox" visible="{_showOptions}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
 							<mx:VBox id="filterOptions" width="100%" height="100%" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" horizontalGap="2">
 								<!-- FILTER OPTIONS -->
 								<mx:Label fontWeight="bold" text='Filter by: '/>

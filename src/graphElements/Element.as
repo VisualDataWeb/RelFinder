@@ -214,6 +214,10 @@ package graphElements {
 			_isGiven = b;
 		}
 		
+		public function get isGiven():Boolean {
+			return _isGiven;
+		}
+		
 		public function addRDFLabel(value:String, languageCode:String = "en"):void {
 			Languages.getInstance().addLanguageCode(languageCode);
 			if (value == null || value == "") {
