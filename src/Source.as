@@ -1071,6 +1071,7 @@ private function clear():void {
 	tab12.isVisible = true;// .icon = null;
 	tab13.isVisible = true;// icon = null;
 	
+	_showOptions = false;
 	
 	trace("check clear!!");
 	trace("graph: " + graph.nodeCount);
