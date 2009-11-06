@@ -50,7 +50,7 @@
 			<name>Linking Open Drug Data (LODD)</name>
 			<abbreviation>lodd</abbreviation>
 			<description>Endpoint for the Linking Open Drug Data project</description>
-			<endpointURI>http://hcls.deri.org/sparql</endpointURI>
+			<endpointURI>http://bio2rdf.semanticscience.org:8017/sparql</endpointURI>
 			<isVirtuoso>false</isVirtuoso>
 			<useProxy>true</useProxy>
 			<autocompleteURIs>
