@@ -11,6 +11,7 @@
 import com.adobe.flex.extras.controls.springgraph.Graph;
 import com.dynamicflash.util.Base64;
 import com.hillelcoren.components.AutoComplete;
+import com.hillelcoren.components.autoComplete.classes.SelectedItem;
 import connection.config.Config;
 import connection.config.IConfig;
 import connection.model.LookUpCache;
@@ -55,6 +56,7 @@ import mx.core.Application;
 import mx.managers.PopUpManager;
 import mx.rpc.events.ResultEvent;
 
+import popup.EditSearchInput;
 import popup.ExpertSettings;
 import popup.Infos;
 import popup.InputDisambiguation;
@@ -1770,4 +1772,21 @@ public function set delayedDrawing(b:Boolean):void {
 		}
 		toDrawPaths.clear();*/
 	}
+}
+
+public function selectedItemClicked(event:Event):void {
+	if (event.currentTarget is AutoComplete) {
+		var ac:AutoComplete = event.currentTarget as AutoComplete;
+		if (ac.selectedItem) {
+			var si:Object = ac.selectedItem;
+			var edit:EditSearchInput = PopUpManager.createPopUp(Application.application as DisplayObject, EditSearchInput, true) as EditSearchInput;
+			edit.inputText = si.label;
+			edit.autoComplete = ac;
+			edit.dataProvider = ac.dataProvider;
+		}
+	}
+	//if (event.target is SelectedItem) {
+		//var si:* = event.target as SelectedItem;
+		//trace(event.currentTarget);
+	//}
 }

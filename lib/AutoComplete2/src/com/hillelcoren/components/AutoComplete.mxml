@@ -15,10 +15,16 @@
 		 * Dispatched when the text in the search field is changed
 		 */
 		[Event(name="searchChange")]
+		
+		/**
+		 * Dispatched when the selected item in search field is clicked
+		 */
+		[Event(name="itemClick")]
 	</mx:Metadata>
 	
 	<mx:Script>
 		<![CDATA[
+			import flash.events.MouseEvent;
 			import mx.events.CollectionEventKind;
 			import mx.events.FlexEvent;
 			import com.hillelcoren.components.autoComplete.interfaces.IBrowser;

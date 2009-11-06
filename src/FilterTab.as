@@ -58,6 +58,7 @@ package
 		public function set filterButton(value:Button):void {
 			_button = value;
 			_button.setStyle("icon", Hide);
+			_button.toolTip = "Hide all";
 			_button.addEventListener(MouseEvent.CLICK, buttonClickHandler);
 			_button.addEventListener(MouseEvent.ROLL_OVER, buttonRollOver);
 		}
@@ -88,9 +89,11 @@ package
 			if (_isVisible) {
 				//_img.source = Hide;
 				_button.setStyle("icon", Hide);
+				_button.toolTip = "Hide all";
 			}else {
 				//_img.source = Show;
 				_button.setStyle("icon", Show);
+				_button.toolTip = "Show all";
 			}
 		}
 		

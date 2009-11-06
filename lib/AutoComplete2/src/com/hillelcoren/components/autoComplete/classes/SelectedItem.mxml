@@ -15,6 +15,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import flash.events.Event;
 			import mx.core.UITextField;
 			import com.hillelcoren.components.AutoComplete;
 			import mx.events.FlexEvent;
@@ -201,6 +202,8 @@
 			
 			private function handleMouseDown( event:Event ):void
 			{
+				dispatchEvent(new Event("itemClick", true));
+				
 				if (textInput.contains( event.target as DisplayObject ))
 				{
 					return;
