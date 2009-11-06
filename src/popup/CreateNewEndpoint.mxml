@@ -157,20 +157,20 @@ You should have received a copy of the GNU General Public License along with thi
 			<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
 		</mx:FormItem>
 		<mx:FormItem width="100%" label="Autocomplete URIs:">
-			<mx:HBox width="100%">
-				<mx:List id="inAutocompleteURIs" width="100%" dataProvider="{tempACDP}" />
+			<mx:HBox width="100%" height="60">
+				<mx:List id="inAutocompleteURIs" width="100%" height="100%" dataProvider="{tempACDP}" />
 				<mx:VBox>
-					<mx:Button id="bAddACURI" label="+" click="{addACURI();}" />
-					<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" />
+					<mx:Button id="bAddACURI" label="+" click="{addACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
 				</mx:VBox>
 			</mx:HBox>
 		</mx:FormItem>
 		<mx:FormItem width="100%" label="Ignored Properties:">
-			<mx:HBox width="100%">
-				<mx:List id="inIgnoredProperties" width="100%" dataProvider="{tempIgPropDP}" />
+			<mx:HBox width="100%" height="100">
+				<mx:List id="inIgnoredProperties" width="100%" height="100%" dataProvider="{tempIgPropDP}" />
 				<mx:VBox>
-					<mx:Button id="bAddIgPropURI" label="+" />
-					<mx:Button id="bRemoveIgPropURI" label="-" />
+					<mx:Button id="bAddIgPropURI" label="+" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" />
+					<mx:Button id="bRemoveIgPropURI" label="-" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
 				</mx:VBox>
 			</mx:HBox>
 		</mx:FormItem>
