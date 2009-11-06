@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+Copyright (C) 2009 Philipp Heim, Sebastian Hellmann, Jens Lehmann, Steffen Lohmann and Timo Stegemann
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.	
+-->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="300" height="400" borderAlpha="0.7" creationComplete="{init();}" >
+	<mx:Script>
+		<![CDATA[
+			
+			import flash.events.Event;
+			import flash.events.KeyboardEvent;
+			import flash.ui.Keyboard;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.List;
+			import mx.core.IToolTip;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.managers.ToolTipManager;
+			import mx.utils.ObjectUtil;
+			import popup.InputSelectionEvent;
+			
+			private function init():void {
+				this.x = 200;
+				this.y = 40;
+				setStyle("borderColor", getStyle("themeColor"));
+				addEventListener("dpChange", dpChangeHandler);
+
+			}
+			
+			private var _dataProvider:ArrayCollection = new ArrayCollection();
+			
+			private function dpChangeHandler(e:Event):void {
+				inputList.selectedIndex = 0;
+			}
+			
+			[Bindable(event="dpChange")]
+			public function get dataProvider():ArrayCollection {
+				callLater(selectFirstElement);
+				return _dataProvider;
+			}
+			
+			public function set dataProvider(value:ArrayCollection):void {
+				_dataProvider = value;
+				callLater(selectFirstElement);
+				dispatchEvent(new Event("dpChange"));
+			}
+			
+			
+			private function selectFirstElement():void {
+				inputList.selectedIndex = 0;
+			}
+			
+			public function ok():void {
+				if (inputList.selectedItem != null) {
+					openResource();
+					
+					cancel();
+				}
+			}
+			
+			public function cancel():void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function openResource():void{
+				
+				var uri:String = inputList.selectedItem.toString();
+				
+				if (uri && uri.length > 0) {
+					var newLink:URLRequest = new URLRequest(uri);
+					navigateToURL(newLink,"_blank");
+				}
+				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:VBox width="100%" height="100%">
+
+		<mx:Label text="Select an URI:" />
+		
+		<mx:List id="inputList" width="100%" height="100%" dataProvider="{dataProvider}"
+				doubleClickEnabled="true" itemDoubleClick="{ok();}"  />
+		
+		<mx:HBox horizontalAlign="right" width="100%">
+			<mx:Button id="okButton" label="Open" click="{ok();}" />
+			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
+		</mx:HBox>
+	</mx:VBox>
+</mx:TitleWindow>

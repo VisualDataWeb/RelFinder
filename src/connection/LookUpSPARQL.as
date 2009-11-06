@@ -266,60 +266,66 @@
 			if (resultSend.time >= lastSend.time && lastInput && currentInput && lastInput == currentInput) {
 				
 				var results:ArrayCollection = new ArrayCollection();
-				var result:XML = new XML(e.result);
-				var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
-				
-				var contains:Boolean = false;
-				var containsLabel:Boolean = false;
-				
-				if (result..resultNS::results != "") {
-					for each (var res:XML in result..resultNS::results.resultNS::result) {
-						
-						var newLabel:String = res.resultNS::binding.(@name == 'l').resultNS::literal;
-						var newUri:String = res.resultNS::binding.(@name == 's').resultNS::uri;
-						var newCount:int = new int(res.resultNS::binding.(@name == 'count').resultNS::literal);
-						
-						contains = false;
-						containsLabel = false;
-						
-						var oldObject:Object;
-						
-						for each (var entry:Object in results) {
-							if (entry.label.toString() == newLabel.toString()) {
-								containsLabel = true;
-								for each (var uri:String in (entry.uris as Array)) {
-									if (uri == newUri) {
-										contains = true;
-									}
-								}
-								if (!contains){
-									(entry.uris as Array).push(newUri);
-								}
-								continue;
-							}
-						}
-						
-						if (!contains) {
+				var result:XML;
+				try {
+					result = new XML(e.result);
+					var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
+					
+					var contains:Boolean = false;
+					var containsLabel:Boolean = false;
+					
+					if (result..resultNS::results != "") {
+						for each (var res:XML in result..resultNS::results.resultNS::result) {
 							
-							if (!containsLabel){
-								var ob:Object;
-								ob = new Object();
-								ob.label = newLabel;
-								ob.count = newCount;
-								ob.uris = new Array(newUri);
-								results.addItem(ob);
+							var newLabel:String = res.resultNS::binding.(@name == 'l').resultNS::literal;
+							var newUri:String = res.resultNS::binding.(@name == 's').resultNS::uri;
+							var newCount:int = new int(res.resultNS::binding.(@name == 'count').resultNS::literal);
+							
+							contains = false;
+							containsLabel = false;
+							
+							var oldObject:Object;
+							
+							for each (var entry:Object in results) {
+								if (entry.label.toString() == newLabel.toString()) {
+									containsLabel = true;
+									for each (var uri:String in (entry.uris as Array)) {
+										if (uri == newUri) {
+											contains = true;
+										}
+									}
+									if (!contains){
+										(entry.uris as Array).push(newUri);
+									}
+									continue;
+								}
+							}
+							
+							if (!contains) {
+								
+								if (!containsLabel){
+									var ob:Object;
+									ob = new Object();
+									ob.label = newLabel;
+									ob.count = newCount;
+									ob.uris = new Array(newUri);
+									results.addItem(ob);
+								}
 							}
 						}
 					}
+					
+					if (results.length == 0) {
+						var empty:Object = new Object();
+						empty.label = "No results found";
+						results.addItem(empty);
+					}
+					
+					target.dataProvider = results;
+				}catch (e:Error) {
+					
 				}
 				
-				if (results.length == 0) {
-					var empty:Object = new Object();
-					empty.label = "No results found";
-					results.addItem(empty);
-				}
-				
-				target.dataProvider = results;
 			}
 		}
 		
