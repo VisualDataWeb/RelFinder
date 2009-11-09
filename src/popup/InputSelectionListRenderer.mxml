@@ -21,6 +21,7 @@
 			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			import mx.managers.ToolTipManager;
+			import mx.utils.ObjectUtil;
 			import popup.InputSelectionEvent;
 			import popup.OpenResources;
 			
@@ -36,6 +37,7 @@
 				
 				if (listData && listData.owner) {
 					_list = listData.owner as List;
+					_list.addEventListener(MouseEvent.CLICK, selectionChangeHandler);
 				}
 			}
 			
@@ -64,6 +66,15 @@
 			public function set listData(value:BaseListData):void
 			{
 				_listData = value;
+				if (listData && listData.owner && listData.owner is List) {
+					_list = listData.owner as List;
+					_list.addEventListener(MouseEvent.CLICK, selectionChangeHandler);
+				}
+				
+			}
+			
+			private function selectionChangeHandler(event:MouseEvent):void {
+				setStyle("backgroundColor", getColor(mouseOver));
 			}
 			
 			public function get fontContext():IFlexModuleFactory
@@ -135,12 +146,27 @@
 			
 			private function mouseOverHandler(event:Event):void {
 				mouseOver = true;
+				setStyle("backgroundColor", getColor(mouseOver));
 				dispatchEvent(new Event("showButton"));
 			}
 			
 			private function mouseOutHandler(event:Event):void {
 				mouseOver = false;
+				setStyle("backgroundColor", getColor(mouseOver));
 				dispatchEvent(new Event("showButton"));
+			}
+			
+			private function getColor(mouseOver:Boolean):* {
+				
+				if (data == _list.selectedItem) {
+					return _list.getStyle("selectionColor");
+				}
+				
+				if (mouseOver) {
+					return _list.getStyle("rollOverColor");
+				}else {
+					return _list.getStyle("backgroundColor");
+				}
 			}
 			
 			[Bindable(event="showButton")]

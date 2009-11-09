@@ -15,9 +15,18 @@ import com.hillelcoren.components.autoComplete.classes.SelectedItem;
 import connection.config.Config;
 import connection.config.IConfig;
 import connection.model.LookUpCache;
+import flash.display.DisplayObject;
+import flash.geom.Point;
+import global.ToolTipModel;
+import mx.containers.HBox;
 import mx.containers.TabNavigator;
+import mx.controls.Menu;
+import mx.core.ClassFactory;
 import mx.core.Repeater;
 import mx.events.CloseEvent;
+import mx.events.FlexEvent;
+import mx.events.MenuEvent;
+import mx.managers.ToolTipManager;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.http.HTTPService;
 import mx.utils.ObjectUtil;
@@ -62,6 +71,8 @@ import popup.Infos;
 import popup.InputDisambiguation;
 import popup.InputSelection;
 import popup.InputSelectionEvent;
+
+import toolTip.SelectedItemToolTipRenderer;
 
 [Bindable]
 private var graph:Graph = new Graph();
@@ -1785,8 +1796,102 @@ public function selectedItemClicked(event:Event):void {
 			edit.dataProvider = ac.dataProvider;
 		}
 	}
-	//if (event.target is SelectedItem) {
-		//var si:* = event.target as SelectedItem;
-		//trace(event.currentTarget);
-	//}
+}
+
+
+private var selectedItemToolTip:Menu;
+
+private var si:Object;
+
+private function mouseOverSelectedItemHandler(event:Event):void {
+	if (event.currentTarget is AutoComplete) {
+		var ac:AutoComplete = event.currentTarget as AutoComplete;
+		if (ac.selectedItem) {
+			si = ac.selectedItem;
+			
+			if (selectedItemToolTip != null) {
+				if (selectedItemToolTip.visible && selectedItemToolTip.data == si) {
+					return;
+				}
+			}
+			
+			toolTipTimer = new Timer(1000, 1);
+			toolTipTimer.addEventListener(TimerEvent.TIMER, showToolTip);
+			toolTipTimer.start();
+			
+			showSelectedItemToolTip = true;
+		}
+	}
+}
+
+private function mouseOutSelectedItemHandler(event:Event):void {
+	
+}
+
+private function showToolTip(event:Event):void {
+	toolTipTimer.stop();
+	
+	if (!showSelectedItemToolTip) {
+		return;
+	}
+	
+	if (selectedItemToolTip && selectedItemToolTip.visible) {
+		selectedItemToolTip.hide();
+	}
+	
+	selectedItemToolTip = Menu.createMenu(this, si, false);
+	selectedItemToolTip.variableRowHeight = true;
+	selectedItemToolTip.selectable = false;
+	selectedItemToolTip.data = si;
+	selectedItemToolTip.itemRenderer = new ClassFactory(SelectedItemToolTipRenderer);
+	selectedItemToolTip.setStyle("openDuration", 100);
+	selectedItemToolTip.addEventListener(MenuEvent.MENU_HIDE, menuHideHandler);
+	var p:Point = new Point(acHBoxMouseX, acHBoxMouseY);
+	
+	p = acHBox.localToGlobal(p);
+	
+	ToolTipModel.getInstance().preventToolTipHide = false;
+	
+	selectedItemToolTip.show(p.x + 5, p.y + 5);
+	
+}
+
+private function menuHideHandler(event:MenuEvent):void {
+	trace("hide");
+	if (ToolTipModel.getInstance().preventToolTipHide) {
+		event.preventDefault();
+		event.menu.visible = true;
+	}
+}
+
+[Bindable]
+private var acHBoxMouseX:Number = 0;
+
+[Bindable]
+private var acHBoxMouseY:Number = 0;
+
+private var toolTipTimer:Timer;
+
+private var showSelectedItemToolTip:Boolean = false;
+
+private var acHBox:HBox;
+
+private function acHBoxMouseMove(event:Event):void {
+	acHBox = event.currentTarget as HBox;
+	
+	acHBoxMouseX = acHBox.mouseX;
+	acHBoxMouseY = acHBox.mouseY;
+	
+}
+
+private function acHBoxMouseOut(event:Event):void {
+	ToolTipManager.enabled = true;
+	showSelectedItemToolTip = false;
+	
+}
+
+private function acHBoxMouseOver(event:Event):void {
+	ToolTipManager.enabled = false;
+
+	
 }

@@ -180,17 +180,21 @@
 			
 			private function handleMouseOver( event:Event ):void
 			{
+				dispatchEvent(new Event("mouseOverSelectedItem", true));
+				
 				if (textInput.contains( event.target as DisplayObject ))
 				{
 					return;
 				}
 				
 				_isMouseOver = true;
-				redraw();	
+				redraw();
 			}
 			
 			private function handleMouseOut( event:Event ):void
 			{
+				dispatchEvent(new Event("mouseOutSelectedItem", true));
+				
 				if (textInput.contains( event.target as DisplayObject ))
 				{
 					return;

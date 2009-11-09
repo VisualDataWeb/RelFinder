@@ -20,6 +20,10 @@
 		 * Dispatched when the selected item in search field is clicked
 		 */
 		[Event(name="itemClick")]
+		
+		[Event(name="mouseOverSelectedItem")]
+		
+		[Event(name="mouseOutSelectedItem")]
 	</mx:Metadata>
 	
 	<mx:Script>
