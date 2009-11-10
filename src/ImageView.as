@@ -182,6 +182,15 @@ package
 		
 		//TODO: do real validation (Timo)
 		private function isValidURL(url:String):Boolean {
+			
+			//svg bug workaround
+			if (url.lastIndexOf(".svg") == url.length - 4) {
+				
+				trace("ImageView:isValidURL() blocked an svg file to load. This is just a workaround.");
+				
+				return false;
+			}
+			
 			return url != null && url != "" && url.search("http://") == 0;
 		}
 	}

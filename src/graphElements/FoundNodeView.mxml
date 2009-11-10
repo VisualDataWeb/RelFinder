@@ -105,7 +105,7 @@ You should have received a copy of the GNU General Public License along with thi
 					calcWidth -= 14;
 				}
 				
-				if (la.isRotating()) {
+				if (la && la.isRotating()) {
 					calcWidth -= 20;
 				}
 				

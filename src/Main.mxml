@@ -48,7 +48,7 @@ You should have received a copy of the GNU General Public License along with thi
 												prompt="Relations between what?" 
 												searchChange="handleAutoCompleteSearchChange(event.currentTarget)"
 												itemClick="{selectedItemClicked(event)}"
-												mouseOverSelectedItem="{mouseOverSelectedItemHandler(event)}" mouseOutSelectedItem="{mouseOverSelectedItemHandler(event)}"
+												mouseOverSelectedItem="{mouseOverSelectedItemHandler(event)}" mouseOutSelectedItem="{mouseOutSelectedItemHandler(event)}"
 												isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus" 
 												isBrowseable="false" isMultiSelect="false" allowDuplicates="false" areNewItemsEditable="true"
 												dropDownItemRenderer="AutoCompleteDDRenderer" />

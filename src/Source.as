@@ -1804,6 +1804,7 @@ private var selectedItemToolTip:Menu;
 private var si:Object;
 
 private function mouseOverSelectedItemHandler(event:Event):void {
+	ToolTipModel.getInstance().preventToolTipHide = true;
 	if (event.currentTarget is AutoComplete) {
 		var ac:AutoComplete = event.currentTarget as AutoComplete;
 		if (ac.selectedItem) {
@@ -1815,7 +1816,7 @@ private function mouseOverSelectedItemHandler(event:Event):void {
 				}
 			}
 			
-			toolTipTimer = new Timer(1000, 1);
+			toolTipTimer = new Timer(500, 1);
 			toolTipTimer.addEventListener(TimerEvent.TIMER, showToolTip);
 			toolTipTimer.start();
 			
@@ -1824,8 +1825,23 @@ private function mouseOverSelectedItemHandler(event:Event):void {
 	}
 }
 
+private var closeTimer:Timer;
+
 private function mouseOutSelectedItemHandler(event:Event):void {
+	ToolTipModel.getInstance().preventToolTipHide = false;
+			
+	if (closeTimer) {
+		closeTimer.stop();
+	}
 	
+	closeTimer = new Timer(2000, 1);
+	closeTimer.addEventListener(TimerEvent.TIMER,
+		function():void {
+			if (!ToolTipModel.getInstance().preventToolTipHide && selectedItemToolTip) {
+				selectedItemToolTip.hide();
+			}
+		});
+	closeTimer.start();
 }
 
 private function showToolTip(event:Event):void {
@@ -1836,6 +1852,7 @@ private function showToolTip(event:Event):void {
 	}
 	
 	if (selectedItemToolTip && selectedItemToolTip.visible) {
+		ToolTipModel.getInstance().preventToolTipHide = false;
 		selectedItemToolTip.hide();
 	}
 	
@@ -1844,13 +1861,13 @@ private function showToolTip(event:Event):void {
 	selectedItemToolTip.selectable = false;
 	selectedItemToolTip.data = si;
 	selectedItemToolTip.itemRenderer = new ClassFactory(SelectedItemToolTipRenderer);
-	selectedItemToolTip.setStyle("openDuration", 100);
 	selectedItemToolTip.addEventListener(MenuEvent.MENU_HIDE, menuHideHandler);
+	
 	var p:Point = new Point(acHBoxMouseX, acHBoxMouseY);
 	
 	p = acHBox.localToGlobal(p);
 	
-	ToolTipModel.getInstance().preventToolTipHide = false;
+	ToolTipModel.getInstance().preventToolTipHide = true;
 	
 	selectedItemToolTip.show(p.x + 5, p.y + 5);
 	

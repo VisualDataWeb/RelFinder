@@ -2,10 +2,13 @@
 {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import global.ToolTipModel;
 	import graphElements.Element;
 	import mx.controls.Button;
 	import mx.controls.ComboBox;
+	import mx.controls.Label;
 	import mx.controls.Menu;
 	import mx.controls.menuClasses.IMenuItemRenderer;
 	import mx.core.Application;
@@ -29,6 +32,7 @@
 		
 		private var _infoBox:ToolTipInfoBox;
 		
+		private var closeTimer:Timer;
 		
 		public function SelectedItemToolTipRenderer() 
 		{
@@ -48,6 +52,19 @@
 		
 		private function rollOutHandler(event:Event):void {
 			ToolTipModel.getInstance().preventToolTipHide = false;
+			
+			if (closeTimer) {
+				closeTimer.stop();
+			}
+			
+			closeTimer = new Timer(2000, 1);
+			closeTimer.addEventListener(TimerEvent.TIMER,
+				function():void {
+					if (!ToolTipModel.getInstance().preventToolTipHide) {
+						(parent.parent as Menu).hide();
+					}
+				});
+			closeTimer.start();
 		}
 		
 		private var _data:Object;
@@ -64,7 +81,7 @@
 			dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
 		}
 		
-		private function update(event:FlexEvent):void {
+		private function update(event:Event):void {
 			invalidateProperties();
 			invalidateSize();
 			invalidateDisplayList();
@@ -106,6 +123,8 @@
 		
 		private var forward:Button;
 		
+		private var text:Label;
+		
 		override protected function createChildren():void 
 		{
 			super.createChildren();
@@ -126,8 +145,16 @@
 				forward.addEventListener(MouseEvent.CLICK, forClick);
 			}
 			
+			//if (!text) {
+				//text = new Label();
+				//text.text = "Several resources with the same label exist";
+				//text.width = 20;
+				//text.height = 200;
+			//}
+			
 			addChild(backward);
 			addChild(forward);
+			//addChild(text);
 			addChild(infoBox);
 			
 		}
@@ -144,7 +171,7 @@
 			if (!_infoBox) {
 				_infoBox = new ToolTipInfoBox();
 				_infoBox.width = 300;
-				_infoBox.height = 400;
+				_infoBox.height = 300;
 			}
 			
 			return _infoBox;
@@ -166,21 +193,21 @@
 				forward.y = backward.y;
 				
 				infoBox.x = 0;
-				infoBox.y = 30;
+				infoBox.y = 29;
 			}else {
 				
 				backward.visible = false;
 				forward.visible = false;
 				
 				infoBox.x = 0;
-				infoBox.y = 0;
+				infoBox.y = -1;
 			}
 			
 			
 		}
 		
 		override public function get measuredHeight():Number {
-			measuredHeight = infoBox.height - 1 + ((showNavButtons) ? 30 : 0);
+			measuredHeight = infoBox.height - 2 + ((showNavButtons) ? 30 : 0);
 			return super.measuredHeight;
 		}
 		
@@ -190,7 +217,7 @@
 		}
 		
 		override public function get measuredWidth():Number {
-			measuredWidth = infoBox.width + 1;
+			measuredWidth = infoBox.width + 2;
 			return super.measuredWidth;
 		}
 		

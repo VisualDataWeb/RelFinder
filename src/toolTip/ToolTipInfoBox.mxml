@@ -18,6 +18,9 @@
 			private function init():void {
 				Languages.getInstance().addEventListener("eventSelectedLanguageChanged", selectedLanguageChangedHandler);
 				Languages.getInstance().addEventListener("eventLangsChanged", selectedLanguageChangedHandler);
+				
+				langCombo.selectedIndex = Languages.getInstance().selectedLanguageIndex;
+				
 			}
 			
 			private function selectedLanguageChangedHandler(event:Event):void {
@@ -34,6 +37,30 @@
 			
 			public function set selectedElement(value:Element):void {
 				_selectedElement = value;
+				_selectedElement.addEventListener("isLoadingChange", function():void {
+						
+						if (_selectedElement.isLoading) {
+							infoVBox.height = 0;
+							loadingVBox.percentHeight = 100;
+							la.startRotation();
+						}else {
+							infoVBox.percentHeight = 100;
+							loadingVBox.height = 0;
+							la.stopRotation();
+						}
+						
+					});
+					
+				if (_selectedElement.isLoading) {
+					infoVBox.height = 0;
+					loadingVBox.percentHeight = 100;
+					la.startRotation();
+				}else {
+					infoVBox.percentHeight = 100;
+					loadingVBox.height = 0;
+					la.stopRotation();
+				}
+					
 				dispatchEvent(new Event("selectedElementChange"));
 				
 				callLater(resizeTextArea, [abstarctText]);
@@ -73,30 +100,51 @@
 			}
 			
 			private function rollOverHandler(event:Event):void {
-				trace("roll");
 				ToolTipModel.getInstance().preventToolTipHide = true;
 			}
 			
 			private function rollOutHandler(event:Event):void {
-				ToolTipModel.getInstance().preventToolTipHide = false;
+				//ToolTipModel.getInstance().preventToolTipHide = false;
 			}
+			
+			private function dataChangeHandler(event:Event):void {
+				trace(langCombo.data);
+			}
+			
+			
+			
+			
 			
 		]]>
 	</mx:Script>
 	
 	<mx:HBox>
-		<mx:Label truncateToFit="true" width="{width - 24 - langCombo.width - 8 - 20}" fontWeight="bold" fontSize="16" text="{selectedElement.rdfLabel}" /> 
-		<mx:ComboBox id="langCombo" dataProvider="{Languages.getInstance().asDataProvider}" width="60" close="{changeLang();}" itemRollOver="rollOverHandler(event)" />
+		<mx:Label truncateToFit="true" width="{width - 24 - langCombo.width - 8 }" fontWeight="bold" fontSize="16" text="{selectedElement.rdfLabel}" /> 
+		<mx:ComboBox id="langCombo" dataProvider="{Languages.getInstance().asDataProvider}" width="60" close="{changeLang();}"
+			itemRollOver="rollOverHandler(event)" visible="{!selectedElement.isLoading}"/>
 	</mx:HBox>
+	
 	<mx:Form id="moreInfos" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0" indicatorGap="4">
 		<mx:FormItem label="More Infos:" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
 			<mx:VBox paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
-				<mx:Label id="resourceLink" truncateToFit="true"  width="{width - 100 - 20}" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
-				<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{width - 100 - 25}" />
+				<mx:Label id="resourceLink" truncateToFit="true"  width="{width - 100 }" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
+				<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{width - 100 - 5}" />
 			</mx:VBox>
 		</mx:FormItem>
 	</mx:Form>
+		
+	<mx:VBox id="infoVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%" visible="{!selectedElement.isLoading}">
+		
+		<local:ImageView id="imageView" width="{width - 24 }" image_path="{selectedElement.imageURL}" />
+		<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{width - 28 }"
+			visible="{selectedElement.abstract != 'no abstract available'}"
+			htmlText="{htmlUnescape(selectedElement.abstract)}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
+		
+	</mx:VBox>
 	
-	<local:ImageView id="imageView" width="{width - 24 - 20}" image_path="{selectedElement.imageURL}" />
-	<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{width - 28 - 20}" htmlText="{htmlUnescape(selectedElement.abstract)}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
+	<mx:VBox id="loadingVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%"
+		visible="{selectedElement.isLoading}" horizontalAlign="center" verticalAlign="center">
+		<local:LoadingAnimation id="la" circleRadius="12" dotSize="4" numberOfDots="8"/>
+	</mx:VBox>
+	
 </mx:VBox>
