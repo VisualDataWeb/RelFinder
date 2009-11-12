@@ -90,7 +90,7 @@ You should have received a copy of the GNU General Public License along with thi
 										<mx:DataGrid id="dgL" height="100%" width="100%" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" wordWrap="true" headerStyleName="myHeader" headerText="number of objects"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfPaths" headerStyleName="myHeader" headerText="#num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfPaths" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
 										</mx:DataGrid>
@@ -102,21 +102,11 @@ You should have received a copy of the GNU General Public License along with thi
 									<!-- </mx:VBox>  -->
 									</local:FilterTab>
 									
-									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityClasses}">
-										<mx:DataGrid id="dgCc" height="100%" width="100%" rowCount="4" dataProvider="{_connectivityClasses}" selectedItem="{selectedConnectivityClass}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityClass = dgCc.selectedItem}" variableRowHeight="true">
-											<mx:columns>
-												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="connectivity level"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="#num"></mx:DataGridColumn>
-												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
-											</mx:columns>
-										</mx:DataGrid>
-									</local:FilterTab>
-									
 									<local:FilterTab id="tab12" label="class"  list="{_concepts}">
 										<mx:DataGrid id="dgC" height="100%" width="100%" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="object class"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="#num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
 										</mx:DataGrid>
@@ -126,7 +116,17 @@ You should have received a copy of the GNU General Public License along with thi
 										<mx:DataGrid id="dgT" height="100%" width="100%" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="relation type"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="#num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
+											</mx:columns>
+										</mx:DataGrid>
+									</local:FilterTab>
+									
+									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityClasses}">
+										<mx:DataGrid id="dgCc" height="100%" width="100%" rowCount="4" dataProvider="{_connectivityClasses}" selectedItem="{selectedConnectivityClass}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityClass = dgCc.selectedItem}" variableRowHeight="true">
+											<mx:columns>
+												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="connectivity level"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
 										</mx:DataGrid>
