@@ -1,7 +1,8 @@
 .myTabStyle {
 	color: #3f3f3f;
 	fontSize: 9;
-	fontWeight: normal;
+	fontWeight: middle;
+	text-align: right;
 }
 
 .myButtonStyle3 {
