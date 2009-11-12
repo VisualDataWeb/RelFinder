@@ -18,6 +18,8 @@ import connection.model.LookUpCache;
 import flash.display.DisplayObject;
 import flash.geom.Point;
 import global.ToolTipModel;
+import mx.collections.Sort;
+import mx.collections.SortField;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.controls.Menu;
@@ -100,6 +102,9 @@ private var inputFields:ArrayCollection = new ArrayCollection(new Array(new Stri
 [Bindable]
 private var autoCompleteList:ArrayCollection = new ArrayCollection();
 
+private var filterSort:Sort = new Sort();
+private var sortByLabel:SortField = new SortField("label", true);
+
 [Bindable]
 private var _concepts:ArrayCollection = new ArrayCollection();
 private var _selectedConcept:Concept = null;
@@ -145,6 +150,12 @@ private function setup(): void {
 	myConnection = new SPARQLConnection();
 	
 	StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
+	
+	filterSort.fields = [sortByLabel];
+	_concepts.sort = filterSort;
+	_relTypes.sort = filterSort;
+	_pathLengths.sort = filterSort;
+	_connectivityClasses.sort = filterSort;
 	
 	callLater(setupParams);
 	
@@ -457,6 +468,7 @@ public function getConcept(uri:String, label:String):Concept {
 	_concepts.addItem(newC);
 	newC.addEventListener(Concept.NUMVECHANGE, conceptChangeListener);
 	newC.addEventListener(Concept.VCHANGE, conceptChangeListener);
+	_concepts.refresh();
 	return newC;
 }
 
@@ -522,6 +534,7 @@ public function getRelType(uri:String, label:String):RelType {
 		trace("------------------graphISFULLL -> relType setVisible=false");
 		newR.isVisible = false;
 	}
+	_relTypes.refresh();
 	return newR;
 }
 
@@ -608,6 +621,7 @@ public function getPathLength(uri:String, length:int):PathLength {
 		//set new pathLength invisible
 		newPL.isVisible = false;
 	}
+	_pathLengths.refresh();
 	return newPL;
 }
 
