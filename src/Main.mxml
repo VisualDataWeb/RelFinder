@@ -122,8 +122,8 @@ You should have received a copy of the GNU General Public License along with thi
 										</mx:DataGrid>
 									</local:FilterTab>
 									
-									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityClasses}">
-										<mx:DataGrid id="dgCc" height="100%" width="100%" rowCount="4" dataProvider="{_connectivityClasses}" selectedItem="{selectedConnectivityClass}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityClass = dgCc.selectedItem}" variableRowHeight="true">
+									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityLevels}">
+										<mx:DataGrid id="dgCc" height="100%" width="100%" rowCount="4" dataProvider="{_connectivityLevels}" selectedItem="{selectedConnectivityLevel}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityLevel = dgCc.selectedItem as ConnectivityLevel}" variableRowHeight="true">
 											<mx:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="connectivity level"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>

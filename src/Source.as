@@ -110,8 +110,8 @@ private var _concepts:ArrayCollection = new ArrayCollection();
 private var _selectedConcept:Concept = null;
 
 [Bindable]
-private var _connectivityClasses:ArrayCollection = new ArrayCollection();
-private var _selectedConnectivityClass:Object = null;
+private var _connectivityLevels:ArrayCollection = new ArrayCollection();
+private var _selectedConnectivityLevel:ConnectivityLevel = null;
 
 [Bindable]
 private var _relTypes:ArrayCollection = new ArrayCollection();
@@ -155,7 +155,7 @@ private function setup(): void {
 	_concepts.sort = filterSort;
 	_relTypes.sort = filterSort;
 	_pathLengths.sort = filterSort;
-	_connectivityClasses.sort = filterSort;
+	_connectivityLevels.sort = filterSort;
 	
 	callLater(setupParams);
 	
@@ -584,19 +584,19 @@ public function set selectedRelType(r:RelType):void {
 /** ConnectivityClasses **/
 
 [Bindable]
-public function get selectedConnectivityClass():Object {
-	return _selectedConnectivityClass;
+public function get selectedConnectivityLevel():ConnectivityLevel {
+	return _selectedConnectivityLevel;
 }
 
-public function set selectedConnectivityClass(cC:Object):void {
-	if (_selectedConnectivityClass != cC) {
+public function set selectedConnectivityLevel(cL:ConnectivityLevel):void {
+	if (_selectedConnectivityLevel != cL) {
 		//trace("selectedConcept change "+c.id);
 		
 		//deselect all other selections
 		selectedRelType = null;
 		selectedConcept = null;
 		
-		_selectedConnectivityClass = cC;
+		_selectedConnectivityLevel = cL;
 	}
 }
 
