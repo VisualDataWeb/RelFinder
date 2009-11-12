@@ -105,6 +105,10 @@ private var _concepts:ArrayCollection = new ArrayCollection();
 private var _selectedConcept:Concept = null;
 
 [Bindable]
+private var _connectivityClasses:ArrayCollection = new ArrayCollection();
+private var _selectedConnectivityClass:Object = null;
+
+[Bindable]
 private var _relTypes:ArrayCollection = new ArrayCollection();
 private var _selectedRelType:RelType = null;
 
@@ -564,6 +568,26 @@ public function set selectedRelType(r:RelType):void {
 	}
 }
 
+/** ConnectivityClasses **/
+
+[Bindable]
+public function get selectedConnectivityClass():Object {
+	return _selectedConnectivityClass;
+}
+
+public function set selectedConnectivityClass(cC:Object):void {
+	if (_selectedConnectivityClass != cC) {
+		//trace("selectedConcept change "+c.id);
+		
+		//deselect all other selections
+		selectedRelType = null;
+		selectedConcept = null;
+		
+		_selectedConnectivityClass = cC;
+	}
+}
+
+
 
 /** PathLenghts **/
 
@@ -592,9 +616,9 @@ private function pathLengthChangeListener(event:Event):void {
 	_pathLengths.itemUpdated(pL);
 	
 	//check filter sign
-	if (tab11.isVisible) {	//no filters are registered
+	if (tab10.isVisible) {	//no filters are registered
 		if ((!pL.isVisible) && pL.canBeChanged) {
-			tab11.isVisible = false;	// icon = filterSign;
+			tab10.isVisible = false;	// icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
@@ -605,7 +629,7 @@ private function pathLengthChangeListener(event:Event):void {
 			}
 		}
 		if (noFilters) {
-			tab11.isVisible = true; //tab11.icon = null;
+			tab10.isVisible = true; //tab10.icon = null;
 		}
 	}
 }
@@ -1080,7 +1104,8 @@ private function clear():void {
 	//pathLengthRange.minimum = 0;
 	//pathLengthRange.maximum = 1;
 	
-	tab11.isVisible = true;// icon = null;
+	tab10.isVisible = true;// icon = null;
+	tab11.isVisible = true;
 	tab12.isVisible = true;// .icon = null;
 	tab13.isVisible = true;// icon = null;
 	
