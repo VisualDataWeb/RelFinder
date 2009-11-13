@@ -359,6 +359,14 @@ private function statusChangedHandler(event:Event):void {
 	}else{
 		la.stopRotation();
 		delayedDrawing = false;
+		//build connectivityLevels
+		var iter:Iterator = elements.getIterator();
+		while (iter.hasNext()) {
+			var e:Element = iter.next();
+			if ((!e.isGiven)  && (!e.isPredicate)) {
+				e.computeConnectivityLevel();
+			}
+		}
 	}
 }
 
@@ -581,7 +589,56 @@ public function set selectedRelType(r:RelType):void {
 	}
 }
 
-/** ConnectivityClasses **/
+
+
+/** ConnectivityLevels **/
+
+public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
+	//trace("getConcept : " + uri);
+	for each(var cL:ConnectivityLevel in _connectivityLevels) {
+		if (cL.id == id) {
+			
+			return cL;
+		}
+	}
+	trace("build new conLevel " + id);
+	var newCL:ConnectivityLevel = new ConnectivityLevel(id, num);
+	_connectivityLevels.addItem(newCL);
+	newCL.addEventListener(ConnectivityLevel.NUMVECHANGE, conLevelChangeListener);
+	newCL.addEventListener(ConnectivityLevel.VCHANGE, conLevelChangeListener);
+	
+	/*if (_graphIsFull) {
+		trace("------------------graphISFULLL -> relType setVisible=false");
+		newR.isVisible = false;
+	}*/
+	_connectivityLevels.refresh();
+	return newCL;
+}
+
+private function conLevelChangeListener(event:Event):void {
+	var cL:ConnectivityLevel = event.target as ConnectivityLevel;
+	_connectivityLevels.itemUpdated(cL);
+	/*var pL:PathLength = event.target as PathLength;
+	_pathLengths.itemUpdated(pL);
+	
+	//check filter sign
+	if (tab10.isVisible) {	//no filters are registered
+		if ((!pL.isVisible) && pL.canBeChanged) {
+			tab10.isVisible = false;	// icon = filterSign;
+		}
+	}else {
+		var noFilters:Boolean = true;
+		for each(var pL1:PathLength in _pathLengths) {
+			if ((!pL1.isVisible) && pL1.canBeChanged) {
+				noFilters = false;	//there is at least one filter!
+				break;
+			}
+		}
+		if (noFilters) {
+			tab10.isVisible = true; //tab10.icon = null;
+		}
+	}*/
+}
 
 [Bindable]
 public function get selectedConnectivityLevel():ConnectivityLevel {
@@ -665,6 +722,8 @@ public function set selectedPathLength(p:PathLength):void {
 		//dispatchEvent(new Event("selectedConceptChange"));
 	}
 }
+
+
 
 public function getGivenNode(_uri:String, _element:Element):GivenNode {
 	if (!givenNodes.containsKey(_uri)) {
@@ -941,6 +1000,12 @@ public function getPath(pathId:String, pathRelations:Array):Path {
 	if (!_paths.containsKey(pathId)) {
 		var pL:PathLength = getPathLength(pathRelations.length.toString(), pathRelations.length - 1);
 		var newPath:Path = new Path(pathId, pathRelations, pL);
+		
+		/*var rS:Relation = pathRelations[0];	//start
+		newPath.startElement = rS.subject;
+		var rE:Relation = pathRelations[pathRelations.length - 1];	//end
+		newPath.endElement = rE.object;*/
+		
 		_paths.insert(pathId, newPath);
 		/*if (_maxPathLength < newPath.pathLength.num) {
 			maxPathLength = newPath.pathLength.num;
@@ -1067,6 +1132,7 @@ private function clear():void {
 	 */
 	graph = new Graph();
 	selectedElement = null;
+	_selectedConnectivityLevel = null;
 	_selectedConcept = null;
 	_selectedPathLength = null;
 	_selectedRelType = null;
@@ -1083,6 +1149,7 @@ private function clear():void {
 	StatusModel.getInstance().queueIsEmpty = true;
 	
 	//trace("before",_paths.size);
+	_connectivityLevels = new ArrayCollection();
 	_pathLengths = new ArrayCollection();
 	_paths = new HashMap();
 	//trace("after", _paths.size);
@@ -1090,6 +1157,7 @@ private function clear():void {
 	relations = new HashMap();
 	_concepts = new ArrayCollection();
 	elements = new HashMap();
+	
 	
 	//_maxPathLength = 0;
 	//_selectedMinPathLength = 0;

@@ -33,6 +33,9 @@ package graphElements {
 		
 		private var _pathLength:PathLength = null;
 		
+		public var startElement:Element = null;
+		public var endElement:Element = null;
+		
 		public function Path(id:String, rels:Array = null, pL:PathLength = null) {
 			_id = id;
 			_layout.settings = { alpha: 1, color: 0xcccccc, thickness: 1 };

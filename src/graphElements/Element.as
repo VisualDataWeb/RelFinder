@@ -69,6 +69,7 @@ package graphElements {
 		private var _isVisible:Boolean = false;
 		
 		private var _concept:Concept = null;
+		private var _connectivityLevel:ConnectivityLevel = null;
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var CONCEPTCHANGE:String = "conceptChange";
@@ -544,6 +545,24 @@ package graphElements {
 			}
 		}
 		
+		public function computeConnectivityLevel():void {
+			var list:HashMap = new HashMap();
+			for each(var p:Path in this._paths) {
+				var s:Element = p.startElement;
+				var e:Element = p.endElement;
+				if (!list.containsKey(s.id)) {
+					list.insert(s.id, s);
+				}
+				if (!list.containsKey(e.id)) {
+					list.insert(e.id, e);
+				}
+			}
+			var num:int = list.size;
+			trace("num: " + num + ", id: "+id);
+			var cL:ConnectivityLevel = app().getConnectivityLevel(num.toString(), num);
+			this.connectivityLevel = cL;
+		}
+		
 		public function get relations():Array {
 			return this._relations;
 		}
@@ -558,6 +577,15 @@ package graphElements {
 		[Bindable(event=Element.CONCEPTCHANGE)]
 		public function get concept():Concept {
 			return _concept;
+		}
+		
+		public function set connectivityLevel(cL:ConnectivityLevel):void {
+			_connectivityLevel = cL;
+			_connectivityLevel.addElement(this);
+		}
+		
+		public function get connectivityLevel():ConnectivityLevel {
+			return _connectivityLevel;
 		}
 		
 		override public function toString():String 

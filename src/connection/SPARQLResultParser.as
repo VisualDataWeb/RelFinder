@@ -107,6 +107,9 @@ package connection
 				var predicate:Element;
 				var object:Element;
 				
+				var startE:Element;
+				var endE:Element;
+				
 				var subjectBinding:String = "of0";
 				var objectBinding:String = "";
 				
@@ -114,6 +117,8 @@ package connection
 				var subLabel:String = getLabelFromURI(subURI);
 				subLabel = unescapeMultiByte(subLabel).split("_").join(" ");
 				subject = app().getElement(subURI, subURI, subLabel);
+				startE = subject.getCopy();
+				//trace("startO: " + subject.id);
 				
 				app().getGivenNode(subject.id, subject);	// addGivenElement(subject);
 				
@@ -166,6 +171,8 @@ package connection
 				
 				object = app().getElement(endURI, endURI, endLabel);
 				objectBinding = "os0";
+				endE = object.getCopy();
+				//trace("endO: "+object.id);
 				
 				app().getGivenNode(object.id, object);	// addGivenElement(object);
 				
@@ -178,8 +185,9 @@ package connection
 				pathRelations.push(r2);
 				pathId += r2.id;
 				
-				app().getPath(pathId, pathRelations);
-				
+				var p:Path = app().getPath(pathId, pathRelations);
+				p.startElement = startE;
+				p.endElement = endE;
 				//app().addRelation(subject, predicate, object);	// .getRelation(subURI, subLabel, predURI, predLabel, endNode.id, endNode.eLabel);
 				
 			}

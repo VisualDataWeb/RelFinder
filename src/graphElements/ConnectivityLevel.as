@@ -10,6 +10,7 @@
 
 package graphElements 
 {
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import mx.collections.ArrayCollection;
 	import mx.core.Application;
@@ -53,6 +54,130 @@ package graphElements
 		[Bindable(event=ConnectivityLevel.VCHANGE)]
 		public function get isVisible():Boolean {
 			return _isVisible;
+		}
+		
+		public function handleUserAction(event:Event):void {
+			if (this.canBeChanged) {
+				if (this.isVisible) {
+					this.isVisible = false;	
+				}else {
+					this.isVisible = true;
+				}
+			}
+		}
+		
+		public function set isVisible(b:Boolean):void {
+			if (app().delayedDrawing) {
+				//app().emptyToDrawPaths();
+				app().delayedDrawing = false;
+			}
+			//trace("Test"+b);
+			if (_isVisible != b) {
+				trace("set concept("+id+") visible: "+b);
+				_isVisible = b;
+				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
+				dispatchEvent(new Event(Concept.VCHANGE));
+				//trace("event dispatched "+id);
+			}
+			/*for each(var e:Element in _elements) {
+				if (_isVisible) {
+					app().showNode(app().getInstanceNode(e.id, e));
+				}else {
+					app().hideNode(app().getInstanceNode(e.id, e));
+				}
+			}*/
+		}
+		
+		/*[Bindable(event="elementsChange")]
+		public function get elements():ArrayCollection {
+			return this._elements;
+		}*/
+		
+		public function addElement(e:Element):void {
+			if (!_elements.contains(e)) {
+				//trace(">addElement to concept "+e.id);
+				this._elements.addItem(e);
+				if (e.isVisible) {
+					numVisibleElements = _numVisibleElements + 1;
+				}else {
+					numVisibleElements = _numVisibleElements;	//just a workaround to update also the total number of elements!
+				}
+				e.addEventListener(Element.VCHANGE, elementVChangeHandler);
+				//e.addEventListener(Element.NEWRCHANGE, elementNewRestrictionChange);
+				//dispatchEvent(new PropertyChangedEvent(PropertyChangedEvent.PROPERTY_CHANGED, this, "elementsChange"));
+				//e.addEventListener(Element.VCHANGE, elementVChangeHandler);
+				
+			}
+		}
+		
+		[Bindable(event=Concept.NUMVECHANGE)]
+		public function get stringNumOfElements():String {
+			return this._stringNumOfElements;
+		}
+		
+		//[Bindable(event=Concept.NUMVECHANGE)]
+		public function get numVisibleElements():int {
+			return this._numVisibleElements;
+		}
+		
+		public function set numVisibleElements(n:int):void {
+			//if (this._numVisibleElements != n) {
+				this._numVisibleElements = n;
+				this._stringNumOfElements = this._numVisibleElements.toString() + "/" + this._elements.length.toString();
+				dispatchEvent(new Event(Concept.NUMVECHANGE));
+			//}
+		}
+		
+		/*private function propertyChangedHandler(event:PropertyChangedEvent):void {
+			if (event.origin is Element) {
+				if (event.propery == "isVisible") {
+					if (allElementsAreInvisible()) {	//if the concept is visible but the elements are not
+						if (isVisible) {	//so it is not because of an invisible concept!!
+							_canBeChanged = false;
+						}else {
+							//_canBeChanged = true;
+						}
+					}else {
+						_canBeChanged = true;
+					}
+				}
+			}
+		}*/
+		
+		private function elementVChangeHandler(event:Event):void {
+			if (allElementsAreInvisible()) {	//if the concept is visible but the elements are not
+				if (isVisible) {	//so it is not because of an invisible concept!!
+					_canBeChanged = false;
+				}else {
+					//_canBeChanged = true;
+				}
+			}else {
+				_canBeChanged = true;
+			}
+		}
+		
+		/*private function elementNewRestrictionChange(event:PropertyChangedEvent):void {
+			trace("newRestriction " + this.id);
+			if (!isVisible) {
+				_canBeChanged = false;
+			}
+		}*/
+		
+		private function allElementsAreInvisible():Boolean {
+			var tempNum:int = 0;
+			for each(var e:Element in _elements) {
+				if (e.isVisible) {
+					tempNum++;
+				}
+			}
+			numVisibleElements = tempNum;
+			
+			if (numVisibleElements == 0) {
+				return true;
+			}else {
+				return false;
+			}
+			
 		}
 		
 		private function app(): Main {
