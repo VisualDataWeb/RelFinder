@@ -76,6 +76,17 @@ package connection
 				limit = 'LIMIT ' + options['limit'];
 			}	
 			completeQuery += '} ' + limit;
+			
+			// removing linebreaks workaround
+			if (true) { //TODO: add some value to config file
+				completeQuery = completeQuery.split("\n").join("");
+				var old:String = "";
+				while (old != completeQuery) {
+					old = completeQuery;
+					completeQuery = completeQuery.split("  ").join(" ");
+				}
+			}
+			
 			return completeQuery;
 		}
 		
