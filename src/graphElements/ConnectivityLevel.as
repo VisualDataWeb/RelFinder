@@ -67,16 +67,16 @@ package graphElements
 		}
 		
 		public function set isVisible(b:Boolean):void {
-			if (app().delayedDrawing) {
+			/*if (app().delayedDrawing) {
 				//app().emptyToDrawPaths();
-				app().delayedDrawing = false;
-			}
+				//app().delayedDrawing = false;
+			}*/
 			//trace("Test"+b);
 			if (_isVisible != b) {
-				trace("set concept("+id+") visible: "+b);
+				trace("set connectivityLevel("+id+") visible: "+b);
 				_isVisible = b;
 				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
-				dispatchEvent(new Event(Concept.VCHANGE));
+				dispatchEvent(new Event(ConnectivityLevel.VCHANGE));
 				//trace("event dispatched "+id);
 			}
 			/*for each(var e:Element in _elements) {

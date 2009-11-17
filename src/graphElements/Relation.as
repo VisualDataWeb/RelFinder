@@ -119,6 +119,14 @@ package graphElements
 			}
 		}
 		
+		public function oneConLevelIsVisible():Boolean {
+			if (((object.connectivityLevel != null) && object.connectivityLevel.isVisible) || ((subject.connectivityLevel != null) && this.subject.connectivityLevel.isVisible)) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+		
 		/**
 		 * Checks all the requirements to the relation to be visible or invisible
 		 */

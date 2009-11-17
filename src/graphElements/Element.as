@@ -73,6 +73,7 @@ package graphElements {
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var CONCEPTCHANGE:String = "conceptChange";
+		public static var CONLEVELCHANGE:String = "connectivityLevelChange";
 		//public static var NEWRCHANGE:String = "newRestrictionChange";
 		private var _isGiven:Boolean = false;	//whether this is given by the user or found via dbpedia
 		
@@ -582,6 +583,8 @@ package graphElements {
 		public function set connectivityLevel(cL:ConnectivityLevel):void {
 			_connectivityLevel = cL;
 			_connectivityLevel.addElement(this);
+			
+			dispatchEvent(new Event(Element.CONLEVELCHANGE));
 		}
 		
 		public function get connectivityLevel():ConnectivityLevel {

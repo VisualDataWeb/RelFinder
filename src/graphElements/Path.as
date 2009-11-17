@@ -57,10 +57,12 @@ package graphElements {
 			for each(var r:Relation in _relations) {
 				r.relType.removeEventListener(RelType.VCHANGE, checkVisibility);
 				r.subject.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+				r.subject.removeEventListener(Element.CONLEVELCHANGE, conceptChangeHandler);
 				if (r.subject.concept != null) {
 					r.subject.concept.removeEventListener(Concept.VCHANGE, checkVisibility);
 				}
 				r.object.removeEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+				r.object.removeEventListener(Element.CONLEVELCHANGE, conceptChangeHandler);
 				if (r.object.concept != null) {
 					r.object.concept.removeEventListener(Concept.VCHANGE, checkVisibility);
 				}
@@ -139,6 +141,9 @@ package graphElements {
 			//concepts of elements possibly not known yet.
 			r.subject.addEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
 			r.object.addEventListener(Element.CONCEPTCHANGE, conceptChangeHandler);
+			//connectivityLevels of elements are not known yet.
+			r.subject.addEventListener(Element.CONLEVELCHANGE, connectivityLevelChangeHandler);
+			r.object.addEventListener(Element.CONLEVELCHANGE, connectivityLevelChangeHandler);
 			
 			trace("dispatch event, relType.visible: " + r.relType.isVisible + ", " + r.relType.id);
 		}
@@ -147,6 +152,11 @@ package graphElements {
 			var e:Element = event.target as Element;
 			e.concept.addEventListener(Concept.VCHANGE, checkVisibility);
 			
+		}
+		
+		private function connectivityLevelChangeHandler(event:Event):void {
+			var e:Element = event.target as Element;
+			e.connectivityLevel.addEventListener(ConnectivityLevel.VCHANGE, checkVisibility);
 		}
 		
 		[Bindable(event=Path.RCHANGE)]
@@ -192,31 +202,42 @@ package graphElements {
 		 * Checks all the requirements to the path to be visible or invisible
 		 */
 		private function checkVisibility(event:Event = null):void {
+			trace("--------checkVisibility-------------");
 			if (this.isVisible) {	//check, if it should become invisible
+				var setVisible:Boolean = false;
 				if (!this.pathLength.isVisible) {	//if pathLenght is invisible
-					this.isVisible = false;
+					setVisible = false;
 				}else {	//check other requirements
 					for each(var r1:Relation in this._relations) {
+						if (r1.oneConLevelIsVisible()) {
+							setVisible = true;
+						}
 						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
-							this.isVisible = false;
+							setVisible = false;
 							break;
 						}
 					}
-				}				
+				}	
+				if (!setVisible) {
+					this.isVisible = false;
+				}
 			}else {	//check, if it should become visible
-				var setVisible:Boolean = true;
+				var setVisible2:Boolean = true;
 				if (!this.pathLength.isVisible) {
-					setVisible = false;
+					setVisible2 = false;
 				}else {
 					for each(var r2:Relation in this._relations) {
+						if (r2.oneConLevelIsVisible()) {
+							setVisible2 = true;
+						}
 						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
-							setVisible = false;
+							setVisible2 = false;
 							break;
 						}
 					}
 				}
 				
-				if (setVisible) {
+				if (setVisible2) {
 					this.isVisible = true;
 				}
 			}

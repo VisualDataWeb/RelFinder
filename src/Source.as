@@ -619,26 +619,24 @@ public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
 private function conLevelChangeListener(event:Event):void {
 	var cL:ConnectivityLevel = event.target as ConnectivityLevel;
 	_connectivityLevels.itemUpdated(cL);
-	/*var pL:PathLength = event.target as PathLength;
-	_pathLengths.itemUpdated(pL);
 	
 	//check filter sign
-	if (tab10.isVisible) {	//no filters are registered
-		if ((!pL.isVisible) && pL.canBeChanged) {
-			tab10.isVisible = false;	// icon = filterSign;
+	if (tab11.isVisible) {	//no filters are registered
+		if ((!cL.isVisible) && cL.canBeChanged) {
+			tab11.isVisible = false;	// icon = filterSign;
 		}
 	}else {
 		var noFilters:Boolean = true;
-		for each(var pL1:PathLength in _pathLengths) {
-			if ((!pL1.isVisible) && pL1.canBeChanged) {
+		for each(var cL1:ConnectivityLevel in _connectivityLevels) {
+			if ((!cL1.isVisible) && cL1.canBeChanged) {
 				noFilters = false;	//there is at least one filter!
 				break;
 			}
 		}
 		if (noFilters) {
-			tab10.isVisible = true; //tab10.icon = null;
+			tab11.isVisible = true; //tab10.icon = null;
 		}
-	}*/
+	}
 }
 
 [Bindable]
