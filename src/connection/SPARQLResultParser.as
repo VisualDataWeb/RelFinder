@@ -117,7 +117,7 @@ package connection
 				var subLabel:String = getLabelFromURI(subURI);
 				subLabel = unescapeMultiByte(subLabel).split("_").join(" ");
 				subject = app().getElement(subURI, subURI, subLabel);
-				startE = subject.getCopy();
+				startE = app().getElement(subURI, subURI, subLabel);	//important!
 				//trace("startO: " + subject.id);
 				
 				app().getGivenNode(subject.id, subject);	// addGivenElement(subject);
@@ -171,7 +171,7 @@ package connection
 				
 				object = app().getElement(endURI, endURI, endLabel);
 				objectBinding = "os0";
-				endE = object.getCopy();
+				endE = app().getElement(endURI, endURI, endLabel);	//important!
 				//trace("endO: "+object.id);
 				
 				app().getGivenNode(object.id, object);	// addGivenElement(object);

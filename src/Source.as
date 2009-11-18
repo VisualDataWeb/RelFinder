@@ -1130,6 +1130,10 @@ private function clear():void {
 		rT.removeListener();
 	}
 	
+	for each(var cL:ConnectivityLevel in _connectivityLevels) {
+		cL.removeListener();
+	}
+	
 	/**
 	 * RESET VARIABLES -----------------------
 	 */
@@ -1139,6 +1143,7 @@ private function clear():void {
 	_selectedConcept = null;
 	_selectedPathLength = null;
 	_selectedRelType = null;
+	_selectedConnectivityLevel = null;
 	_graphIsFull = false;	//whether the graph is overcluttered already!
 	_delayedDrawing = true;
 	

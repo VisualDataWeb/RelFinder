@@ -22,7 +22,7 @@ package graphElements
 		private var _num:int = -1;
 		
 		private var _isVisible:Boolean = true;
-		private var _canBeChanged:Boolean = true;	//whether the visibility of the concept can be changed! Or the change of the visibility has any effect on the graph!
+		private var _canBeChanged:Boolean = true;	//whether the visibility of the connectivityLevel can be changed! Or the change of the visibility has any effect on the graph!
 		
 		private var _elements:ArrayCollection = new ArrayCollection();
 		private var _numVisibleElements:int = 0;
@@ -54,6 +54,12 @@ package graphElements
 		[Bindable(event=ConnectivityLevel.VCHANGE)]
 		public function get isVisible():Boolean {
 			return _isVisible;
+		}
+		
+		public function removeListener():void {
+			for each(var e:Element in _elements) {
+				e.removeEventListener(Element.VCHANGE, elementVChangeHandler);
+			}
 		}
 		
 		public function handleUserAction(event:Event):void {

@@ -62,12 +62,12 @@ package graphElements
 				app().delayedDrawing = false;
 			}*/
 			trace("in isVisible of relType: " + id);
-			if (_isVisible != b) {
+			//if (_isVisible != b) {
 				trace("set relType("+id+") visible: "+b);
 				_isVisible = b;
 				dispatchEvent(new Event(RelType.VCHANGE));
 				//dispatchEvent(new PropertyChangedEvent(RelType.VCHANGE, this, "isVisible", _currentUserAction));
-			}
+			//}
 		}
 		
 		[Bindable(event = RelType.NUMVRCHANGE)]

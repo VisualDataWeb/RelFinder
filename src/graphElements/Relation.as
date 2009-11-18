@@ -120,7 +120,7 @@ package graphElements
 		}
 		
 		public function oneConLevelIsVisible():Boolean {
-			if (((object.connectivityLevel != null) && object.connectivityLevel.isVisible) || ((subject.connectivityLevel != null) && this.subject.connectivityLevel.isVisible)) {
+			if ((object.computeConnectivityLevel == null) || ((object.connectivityLevel != null) && object.connectivityLevel.isVisible) || ((subject.connectivityLevel != null) && this.subject.connectivityLevel.isVisible)) {
 				return true;
 			}else {
 				return false;
