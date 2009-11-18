@@ -209,11 +209,11 @@ package graphElements {
 					setVisible = false;
 				}else {	//check other requirements
 					for each(var r1:Relation in this._relations) {
-						if (!r1.bothConLevelsAreVisible()) {
+						/*if (!r1.bothConLevelsAreVisible()) {
 							setVisible = false;
 							break;
-						}
-						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
+						}*/
+						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible()) || (!r1.bothConLevelsAreVisible())) {	//if either the relType or one of the concepts are invisible
 							setVisible = false;
 							break;
 						}
@@ -228,10 +228,10 @@ package graphElements {
 					setVisible2 = false;
 				}else {
 					for each(var r2:Relation in this._relations) {
-						if (r2.bothConLevelsAreVisible()) {
+						/*if (r2.bothConLevelsAreVisible()) {
 							setVisible2 = true;
-						}
-						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
+						}*/
+						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible()) || (!r2.bothConLevelsAreVisible())) {	//if either the relType or one of the concepts are invisible
 							setVisible2 = false;
 							break;
 						}
