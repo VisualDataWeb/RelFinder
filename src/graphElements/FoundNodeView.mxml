@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License along with thi
 	creationComplete="setup()"
 	
 	
-	backgroundColor="{getBackgroundColor(app().selectedConcept)}"
+	backgroundColor="{getBackgroundColor(app().selectedConcept, app().selectedConnectivityLevel)}"
 	borderThickness="{getBorderThickness(app().selectedElement)}"
 	borderColor="{getColor(app().selectedElement)}"
 
@@ -50,6 +50,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import flash.events.MouseEvent;
 			import flash.utils.Timer;
 			import graphElements.Concept;
+			import graphElements.ConnectivityLevel;
 			import graphElements.Element;
 			import graphElements.FoundNode;
 			import graphElements.MyNode;
@@ -254,12 +255,14 @@ You should have received a copy of the GNU General Public License along with thi
 				return a;
 			}
 			
-			private function getBackgroundColor(selectedC:Concept):int {
+			private function getBackgroundColor(selectedC:Concept, selectedCL:ConnectivityLevel):int {
 				//trace("get BColor " + selectedC.id);
 				//trace("test" + data.concept);
 				if ((selectedC != null) && (data.element.concept != null) && (selectedC.id == data.element.concept.id)) {
 					return 0xCDFFC1;
-				}else {
+				}else if ((selectedCL != null) && (data.element.connectivityLevel != null) && (selectedCL.id == data.element.connectivityLevel.id)) {
+					return 0xCDFFC1;
+				}else{
 					return 0xf8f8f8;
 				}
 			}

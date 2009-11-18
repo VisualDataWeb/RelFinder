@@ -110,7 +110,7 @@ package graphElements
 			}
 		}
 		
-		[Bindable(event=Concept.NUMVECHANGE)]
+		[Bindable(event=ConnectivityLevel.NUMVECHANGE)]
 		public function get stringNumOfElements():String {
 			return this._stringNumOfElements;
 		}
@@ -124,7 +124,7 @@ package graphElements
 			//if (this._numVisibleElements != n) {
 				this._numVisibleElements = n;
 				this._stringNumOfElements = this._numVisibleElements.toString() + "/" + this._elements.length.toString();
-				dispatchEvent(new Event(Concept.NUMVECHANGE));
+				dispatchEvent(new Event(ConnectivityLevel.NUMVECHANGE));
 			//}
 		}
 		

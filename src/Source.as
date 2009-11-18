@@ -516,6 +516,7 @@ public function set selectedConcept(c:Concept):void {
 		//deselect all other selections
 		selectedRelType = null;
 		selectedPathLength = null;
+		selectedConnectivityLevel = null;
 		
 		_selectedConcept = c;
 		//dispatchEvent(new Event("selectedConceptChange"));
@@ -584,6 +585,7 @@ public function set selectedRelType(r:RelType):void {
 		//deselect all other selections
 		selectedConcept = null;
 		selectedPathLength = null;
+		selectedConnectivityLevel = null;
 		
 		_selectedRelType = r;
 		//dispatchEvent(new Event("selectedConceptChange"));
@@ -651,6 +653,7 @@ public function set selectedConnectivityLevel(cL:ConnectivityLevel):void {
 		//deselect all other selections
 		selectedRelType = null;
 		selectedConcept = null;
+		selectedPathLength = null;
 		
 		_selectedConnectivityLevel = cL;
 	}
@@ -716,6 +719,7 @@ public function set selectedPathLength(p:PathLength):void {
 		//deselect all other selections
 		selectedRelType = null;
 		selectedConcept = null;
+		selectedConnectivityLevel = null;
 		
 		_selectedPathLength = p;
 		//dispatchEvent(new Event("selectedConceptChange"));
