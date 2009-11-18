@@ -78,13 +78,13 @@ package graphElements
 				//app().delayedDrawing = false;
 			}*/
 			//trace("Test"+b);
-			if (_isVisible != b) {
+			//if (_isVisible != b) {
 				trace("set connectivityLevel("+id+") visible: "+b);
 				_isVisible = b;
 				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
 				dispatchEvent(new Event(ConnectivityLevel.VCHANGE));
 				//trace("event dispatched "+id);
-			}
+			//}
 			/*for each(var e:Element in _elements) {
 				if (_isVisible) {
 					app().showNode(app().getInstanceNode(e.id, e));
