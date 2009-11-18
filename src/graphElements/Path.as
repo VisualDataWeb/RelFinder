@@ -89,7 +89,7 @@ package graphElements {
 		
 		public function set isVisible(b:Boolean):void {
 			if (_isVisible != b) {
-				//trace("set path("+id+") visible: " + b);
+				trace("set path("+id+") visible: " + b);
 				_isVisible = b;
 				dispatchEvent(new Event(Path.VCHANGE));
 				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
@@ -204,13 +204,14 @@ package graphElements {
 		private function checkVisibility(event:Event = null):void {
 			trace("--------checkVisibility-------------");
 			if (this.isVisible) {	//check, if it should become invisible
-				var setVisible:Boolean = false;
+				var setVisible:Boolean = true;
 				if (!this.pathLength.isVisible) {	//if pathLenght is invisible
 					setVisible = false;
 				}else {	//check other requirements
 					for each(var r1:Relation in this._relations) {
-						if (r1.oneConLevelIsVisible()) {
-							setVisible = true;
+						if (!r1.bothConLevelsAreVisible()) {
+							setVisible = false;
+							break;
 						}
 						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
 							setVisible = false;
@@ -227,7 +228,7 @@ package graphElements {
 					setVisible2 = false;
 				}else {
 					for each(var r2:Relation in this._relations) {
-						if (r2.oneConLevelIsVisible()) {
+						if (r2.bothConLevelsAreVisible()) {
 							setVisible2 = true;
 						}
 						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible())) {	//if either the relType or one of the concepts are invisible
