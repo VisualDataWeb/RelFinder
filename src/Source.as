@@ -34,6 +34,7 @@ import mx.rpc.events.FaultEvent;
 import mx.rpc.http.HTTPService;
 import mx.utils.ObjectUtil;
 import mx.utils.StringUtil;
+import utils.ConfigUtil;
 
 import connection.ILookUp;
 import connection.ISPARQLResultParser;
@@ -287,20 +288,7 @@ private function preInitHandler(event:Event):void {
 private function xmlCompleteHandler(event:Event):void {
 	if (event is ResultEvent) {
 		
-		var result:Object = (event as ResultEvent).result.data;
-		
-		// set proxy
-		ConnectionModel.getInstance().proxy = result.proxy.url;
-		ConnectionModel.getInstance().defaultProxy = result.proxy.url;
-		
-		// set default endpoint
-		var defaultConfig:Config = getConfig(result.endpoints.defaultEndpoint);
-		ConnectionModel.getInstance().sparqlConfigs.addItem(defaultConfig);
-		ConnectionModel.getInstance().sparqlConfig = defaultConfig;
-		
-		for each (var obj:Object in result.endpoints.endpoint) {
-			ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(obj));
-		}
+		ConfigUtil.setConfigurationFromXML((event as ResultEvent).result.data);
 		
 	}else {
 		Alert.show((event as FaultEvent).fault.toString(), "Config file not found");
@@ -311,41 +299,6 @@ private function xmlCompleteHandler(event:Event):void {
 
 private function setInitialized():void {
 	super.initialized = true
-}
-
-public function getConfig(conf:Object):Config {
-	
-	var config:Config = new Config();
-	
-	config.name = conf.name;
-	config.abbreviation = conf.abbreviation;
-	config.description = conf.description;
-	config.endpointURI = conf.endpointURI;
-	config.defaultGraphURI = conf.defaultGraphURI;
-	config.isVirtuoso = conf.isVirtuoso;
-	config.useProxy = conf.useProxy;
-	if (conf.autocompleteURIs != null) {
-		for each (var autocomplete:Object in conf.autocompleteURIs) {
-			if (autocomplete is ArrayCollection) {
-				config.autocompleteURIs = autocomplete as ArrayCollection;
-			}else {
-				config.autocompleteURIs = new ArrayCollection([autocomplete]);
-			}
-		}
-	}
-	if (conf.ignoredProperties != null) {
-		for each (var ignoredProperty:Object in conf.ignoredProperties) {
-			if (ignoredProperty is ArrayCollection) {
-				config.ignoredProperties = ignoredProperty as ArrayCollection;
-			}else {
-				config.ignoredProperties = new ArrayCollection([ignoredProperty]);
-			}
-		}
-	}
-	//config.autocompleteURIs = (conf.autocompleteURIs != null) ? conf.autocompleteURIs.autocompleteURI : null;
-	//config.ignoredProperties = (conf.ignoredProperties != null) ? conf.ignoredProperties.ignoredProperty : null;
-	
-	return config;
 }
 
 override public function set initialized(value:Boolean):void{
