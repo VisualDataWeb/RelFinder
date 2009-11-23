@@ -343,26 +343,10 @@ private function validateParamters(key:String, value:String):Boolean {
 }
 
 private function inputToURL():String {
-	var str:String = "";
-	
-	str += Application.application.url.substring(0, Application.application.url.lastIndexOf(".swf") + 4) + "?";
-	
-	var i:int;
-	
-	for (i = 0; i < lastInputs.length; i++) {
-		str += "obj" + (i + 1) + "=" + encodeObjectParameter(lastInputs[i].label, lastInputs[i].uri);
-		if (i + 1 < lastInputs.length) {
-			str += "&";
-		}
-	}
-	
-	str += ConnectionModel.getInstance().sparqlConfig.toURLParameters();
-	
-	return str;
-}
-
-private function encodeObjectParameter(label:String, url:String):String {
-	return Base64.encode(label + "|" + url);
+	return ConfigUtil.toURLParameters(
+		Application.application.url.substring(0, Application.application.url.lastIndexOf(".swf") + 4), 
+		lastInputs,
+		ConnectionModel.getInstance().sparqlConfig);
 }
 
 private function decodeObjectParameter(value:String):Object {
@@ -1671,7 +1655,7 @@ private function findRelationsImmediately():void {
 			
 			var between:ArrayCollection = new ArrayCollection(betArr);
 			
-			myConnection.findRelations(between, 10, 3, resultParser);
+			myConnection.findRelations(between, 10, ConnectionModel.getInstance().sparqlConfig.maxRelationLength + 1, resultParser);
 			
 			delayedDrawing = true;
 			

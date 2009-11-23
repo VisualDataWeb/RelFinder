@@ -103,9 +103,17 @@
 			}
 			
 			public function htmlUnescape(str:String):String {
-				var output:String = new XMLDocument(str).firstChild.nodeValue;
+				var output:String;
 				
-				output = output.split("&ndash;").join("&#8211;");
+				try {
+					
+					output = new XMLDocument(str).firstChild.nodeValue;
+					output = output.split("&ndash;").join("&#8211;");
+					
+				}catch (e:Error) {
+					output = str.split("&ndash;").join("&#8211;");
+				}
+				
 				
 				return output;
 				

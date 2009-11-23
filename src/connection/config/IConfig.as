@@ -60,7 +60,30 @@
 		
 		function set useProxy(value:Boolean):void;
 		
-		function toURLParameters():String;
+		[Bindable(event="abstractURIsChange")]
+		function get abstractURIs():ArrayCollection;
+		
+		function set abstractURIs(value:ArrayCollection):void;
+		
+		[Bindable(event="imageURIsChange")]
+		function get imageURIs():ArrayCollection;
+		
+		function set imageURIs(value:ArrayCollection):void;
+		
+		[Bindable(event="linkURIsChange")]
+		function get linkURIs():ArrayCollection;
+		
+		function set linkURIs(value:ArrayCollection):void;
+		
+		//[Bindable(event="minRelationLengthChange")]
+		//function get minRelationLength():int;
+		//
+		//function set minRelationLength(value:int):void
+		
+		[Bindable(event="maxRelationLengthChange")]
+		function get maxRelationLength():int;
+		
+		function set maxRelationLength(value:int):void
 		
 		function equals(value:IConfig):Boolean
 	}

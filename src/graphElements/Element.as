@@ -10,6 +10,8 @@
 
 package graphElements {
 	
+	import connection.config.IConfig;
+	import connection.model.ConnectionModel;
 	import connection.SPARQLConnection;
 	import connection.SPARQLResultEvent;
 	import de.polygonal.ds.HashMap;
@@ -40,10 +42,9 @@ package graphElements {
 		private var _label:String = "";
 		private var _rdfLabel:Dictionary;
 		
+		private var _abstractLevels:Dictionary;
 		private var _abstract:Dictionary;
 		private var _loadAbstact:Boolean = true;
-		
-		private var _comment:Dictionary;
 		
 		private var _imageURL:String = "";
 		private var _loadImageURL:Boolean = true;
@@ -85,10 +86,10 @@ package graphElements {
 		 * @param	_imageURL	one URL to an image that illustrates the information that is represented by the element (foaf:img)
 		 * @param	_linkToWikipedia	the link to the corresponding articel on wikipedia.org
 		 */
-		public function Element(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = "", comment:Dictionary = null, pages:ArrayCollection = null/*, concept:Concept = null*/) {
+		public function Element(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = "", pages:ArrayCollection = null/*, concept:Concept = null*/) {
 			
+			this._abstractLevels = new Dictionary();
 			this._abstract = new Dictionary();
-			this._comment = new Dictionary();
 			this._rdfLabel = new Dictionary();
 			
 			this.pages = new ArrayCollection();
@@ -109,10 +110,6 @@ package graphElements {
 				this._loadAbstact = false;
 			}
 			
-			if (comment != null) {
-				this._comment = comment;
-			}
-			
 			if (pages != null) {
 				this._pages = pages;
 			}
@@ -122,14 +119,14 @@ package graphElements {
 				this.imageURL = _imageURL;
 				this._loadImageURL = false;
 			}else {
-				this.imageURL = "loading image for " + this._label;
+				this.imageURL = "";
 			}
 			
 			if (_linkToWikipedia != "") {
 				this.linkToWikipedia = _linkToWikipedia;
 				this._loadLinkToWikipedia = false;
 			}else {
-				this.linkToWikipedia = "loading link for " + this._label;
+				this.linkToWikipedia = "";
 			}
 			
 			Languages.getInstance().addEventListener("eventSelectedLanguageChanged", selectedLanguageChangedHandler);
@@ -294,12 +291,6 @@ package graphElements {
 			}else if (_abstract.hasOwnProperty(_defaultLang)) {
 				return _abstract[_defaultLang];
 			}
-			// if no abstract available, try to find a comment
-			else if (_comment.hasOwnProperty(_lang)) {
-				return _comment[_lang];
-			}else if (_comment.hasOwnProperty(_defaultLang)) {
-				return _comment[_defaultLang];
-			}
 			
 			return "no abstract available";
 		}
@@ -320,28 +311,9 @@ package graphElements {
 			dispatchEvent(new Event("abstractChange"));
 		}
 		
-		public function addComment(value:String, languageCode:String = "en"):void {
-			Languages.getInstance().addLanguageCode(languageCode);
-			
-			if (value != null || value != "") {
-				if (languageCode == "") {
-					languageCode = _defaultLang;
-				}
-				
-				_comment[languageCode] = value;
-			}
-			
-			dispatchEvent(new Event("abstractChange"));
-			dispatchEvent(new Event("commentChange"));
-		}
-		
 		public function set imageURL(value:String):void {
 			if (_imageURL != value) {
-				if (value == null || value == "") {
-					_imageURL = "no image available for " + this._label;
-				}else {
-					_imageURL = value;
-				}
+				_imageURL = value;
 				dispatchEvent(new Event("imageURLChange"));
 			}
 		}
@@ -399,49 +371,62 @@ package graphElements {
 			
 			var i:int = 0;
 			
-			imageURL = "no image available";
+			imageURL = "";
 			linkToWikipedia = "";
+			
+			var definedURI:String = "";
+			
+			var config:IConfig = ConnectionModel.getInstance().sparqlConfig;
 			
 			if (result..resultNS::results !== "") {
 				for each (var res:XML in result..resultNS::results.resultNS::result) {
 					
-					// wikipedia link or a similar link
-					if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://purl.org/ontology/mo/wikipedia") {
-						linkToWikipedia = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
-						pages.addItem(res.resultNS::binding.(@name == "hasValue").resultNS::uri);
-					}else if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://xmlns.com/foaf/0.1/page") {
-						linkToWikipedia = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
-						pages.addItem(res.resultNS::binding.(@name == "hasValue").resultNS::uri);
+					// links
+					for each(definedURI in config.linkURIs) {
+						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+							pages.addItem(res.resultNS::binding.(@name == "hasValue").resultNS::uri);
+						}
 					}
 					
-					// label or name
-					if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://www.w3.org/2000/01/rdf-schema#label") {
-						
-						var rdfLang:String = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang;
-						if (rdfLang == null || rdfLang == "") {
-							rdfLang = _defaultLang;
+					// label
+					for each(definedURI in config.autocompleteURIs) {
+						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+							var rdfLang:String = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang;
+							if (rdfLang == null || rdfLang == "") {
+								rdfLang = _defaultLang;
+							}
+							addRDFLabel(res.resultNS::binding.(@name == "hasValue").resultNS::literal, rdfLang);
 						}
-						addRDFLabel(res.resultNS::binding.(@name == "hasValue").resultNS::literal, rdfLang);
-					}else if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://xmlns.com/foaf/0.1/name") {
-						var rdfLang2:String = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang;
-						if (rdfLang2 == null || rdfLang2 == "") {
-							rdfLang2 = _defaultLang;
-						}
-						addRDFLabel(res.resultNS::binding.(@name == "hasValue").resultNS::literal, rdfLang2);
 					}
 					
+					var lang:String = "";
 					// abstarct or comment
-					if ((res.resultNS::binding.(@name == "property").resultNS::uri).search("abstract") > -1) {
-						addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang);
-					}
-					if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://www.w3.org/2000/01/rdf-schema#comment") {
-						addComment(res.resultNS::binding.(@name == "hasValue").resultNS::literal, res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang);
+					for each(definedURI in config.abstractURIs) {
+						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+							
+							lang = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang
+							if (lang == "") {
+								lang = _defaultLang;
+							}
+							if (_abstractLevels[lang] == undefined) {
+								_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
+								addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, lang);
+							}else {
+								if ((_abstractLevels[lang] as int) > config.abstractURIs.getItemIndex(definedURI)) {
+									_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
+									addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, lang);
+								}
+							}
+						}
 					}
 					
 					// depiction (image)
-					//TODO: extract all image urls (Timo)
-					if ((res.resultNS::binding.(@name == "property").resultNS::uri) == "http://xmlns.com/foaf/0.1/depiction") {
-						imageURL = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
+					if (imageURL == "") {
+						for each(definedURI in config.imageURIs) {
+							if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+								imageURL = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
+							}
+						}
 					}
 				}
 			}
@@ -503,7 +488,7 @@ package graphElements {
 		}
 		
 		public function getCopy():Element {
-			return new Element(this._id, this._resourceURI, this._label, this._isPredicate, this._abstract, this._imageURL, this._linkToWikipedia, this._comment);
+			return new Element(this._id, this._resourceURI, this._label, this._isPredicate, this._abstract, this._imageURL, this._linkToWikipedia, this.pages);
 		}
 		
 		public function addRelation(rel:Relation):void {

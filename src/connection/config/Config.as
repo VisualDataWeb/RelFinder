@@ -1,6 +1,5 @@
 ﻿package connection.config 
 {
-	import com.dynamicflash.util.Base64;
 	import connection.ILookUp;
 	import connection.LookUpSPARQL;
 	import flash.events.Event;
@@ -22,7 +21,7 @@
 		
 		private var _defaultGraphURI:String;
 		
-		private var _isVirtuoso:Boolean;
+		private var _isVirtuoso:Boolean = false;
 		
 		private var _name:String;
 		
@@ -36,10 +35,22 @@
 		
 		private var _useProxy:Boolean = true;
 		
+		private var _abstractURIs:ArrayCollection;
+		
+		private var _imageURIs:ArrayCollection;
+		
+		private var _linkURIs:ArrayCollection;
+		
+		//private var _minRelationLength:int = 0;
+		
+		private var _maxRelationLength:int = 2;
+		
 		public function Config(name:String = "", abbreviation:String = "", description:String = "",
 					endpointURI:String = "", defaultGraphURI:String = "", isVirtuoso:Boolean = false,
 					ignoredProperties:ArrayCollection = null, useProxy:Boolean = true,
-					autocompleteURIs:ArrayCollection = null,
+					autocompleteURIs:ArrayCollection = null, abstarctURIs:ArrayCollection = null,
+					imageURIs:ArrayCollection = null, linkURIs:ArrayCollection = null,
+					maxRelationLength:int = 2,
 					lookUp:ILookUp = null) {
 			
 			this.name = (name == null || name == "") ? "New Config" : name;
@@ -50,6 +61,11 @@
 			this.isVirtuoso = isVirtuoso;
 			this.ignoredProperties = ignoredProperties;
 			this.useProxy = useProxy;
+			this.abstractURIs = abstarctURIs;
+			this.imageURIs = imageURIs;
+			this.linkURIs = linkURIs;
+			//this.minRelationLength = minRelationLength;
+			this.maxRelationLength = maxRelationLength;
 			
 			this.lookUp = lookUp;
 		}
@@ -134,6 +150,56 @@
 			dispatchEvent(new Event("autocompleteURIsChange"));
 		}
 		
+		[Bindable(event="abstractURIsChange")]
+		public function get abstractURIs():ArrayCollection {
+			return _abstractURIs;
+		}
+		
+		public function set abstractURIs(value:ArrayCollection):void {
+			_abstractURIs = value;
+			dispatchEvent(new Event("abstractURIsChange"));
+		}
+		
+		[Bindable(event="imageURIsChange")]
+		public function get imageURIs():ArrayCollection {
+			return _imageURIs;
+		}
+		
+		public function set imageURIs(value:ArrayCollection):void {
+			_imageURIs = value;
+			dispatchEvent(new Event("imageURIsChange"));
+		}
+		
+		[Bindable(event="linkURIsChange")]
+		public function get linkURIs():ArrayCollection {
+			return _linkURIs;
+		}
+		
+		public function set linkURIs(value:ArrayCollection):void {
+			_linkURIs = value;
+			dispatchEvent(new Event("linkURIsChange"));
+		}
+		
+		//[Bindable(event="minRelationLengthChange")]
+		//public function get minRelationLength():int {
+			//return _minRelationLength;
+		//}
+		//
+		//public function set minRelationLength(value:int):void {
+			//_minRelationLength = value;
+			//dispatchEvent(new Event("minRelationLengthChange"));
+		//}
+		
+		[Bindable(event="maxRelationLengthChange")]
+		public function get maxRelationLength():int {
+			return _maxRelationLength;
+		}
+		
+		public function set maxRelationLength(value:int):void {
+			_maxRelationLength = value;
+			dispatchEvent(new Event("maxRelationLengthChange"));
+		}
+		
 		[Bindable(event="lookUpChange")]
 		public function get lookUp():ILookUp{
 			if (_lookUp == null){
@@ -157,52 +223,6 @@
 			dispatchEvent(new Event("useProxyChange"));
 		}
 		
-		public function toURLParameters():String {
-			var data:String = "";
-			if (name != null && name != "") {
-				data += "&name=" + Base64.encode(name);
-			}
-			if (description != null && description != "") {
-				data += "&description=" + Base64.encode(description);
-			}
-			if (endpointURI != null && endpointURI != "") {
-				data += "&endpointURI=" + Base64.encode(endpointURI);
-			}
-			if (defaultGraphURI != null && defaultGraphURI != "") {
-				data += "&defaultGraphURI=" + Base64.encode(defaultGraphURI);
-			}
-			data += "&isVirtuoso=" + Base64.encode(isVirtuoso.toString()) +
-				"&useProxy=" + Base64.encode(useProxy.toString());
-
-			if (autocompleteURIs != null && autocompleteURIs.length > 0) {
-				
-				var acuri:String = "";
-				
-				for (var i:int = 0; i < autocompleteURIs.length; i++) {
-					acuri += autocompleteURIs.getItemAt(i);
-					if (i < autocompleteURIs.length - 1) {
-						acuri += ",";
-					}
-				}
-				data += "&autocompleteURIs=" + Base64.encode(acuri);
-			}
-			
-			if (ignoredProperties != null && ignoredProperties.length > 0) {
-				
-				var ipuri:String = "";
-				
-				for (var j:int = 0; j < ignoredProperties.length; j++) {
-					ipuri += ignoredProperties.getItemAt(j);
-					if (j < ignoredProperties.length - 1) {
-						ipuri += ",";
-					}
-				}
-				data += "&ignoredProperties=" + Base64.encode(ipuri);
-			}
-			
-			return data;
-		}
-		
 		public function equals(config:IConfig):Boolean {
 			return (name == config.name) && (endpointURI == config.endpointURI) &&
 						(defaultGraphURI == config.defaultGraphURI) && (isVirtuoso == config.isVirtuoso) &&
@@ -222,7 +242,7 @@
 			a2.sort();
 			
 			for (var i:int = 0; i < a1.length; i++) {
-				if ((a1[i] as String) != (a2[i] as String)) {
+				if ((a1[i].toString()) != (a2[i].toString())) {
 					return false;
 				}
 			}
@@ -238,7 +258,12 @@
 					"IsVirtuoso: " + isVirtuoso + "\n" +
 					"UseProxy: " + useProxy + "\n" +
 					"AutocompleteURIs: " + ((autocompleteURIs == null) ? "null" : autocompleteURIs.toArray() + " #" + autocompleteURIs.length) + "\n" +
-					"IgnoredProperties: " + ((ignoredProperties == null) ? "null" : ignoredProperties.toArray() + " #" + ignoredProperties.length);
+					"IgnoredProperties: " + ((ignoredProperties == null) ? "null" : ignoredProperties.toArray() + " #" + ignoredProperties.length) + "\n" +
+					"AbstarctURIs: " + ((abstractURIs == null) ? "null" : abstractURIs.toArray() + " #" + abstractURIs.length) + "\n" +
+					"ImageURI: " + ((imageURIs == null) ? "null" : imageURIs.toArray() + " #" + imageURIs.length) + "\n" +
+					"LinkURI: " + ((linkURIs == null) ? "null" : linkURIs.toArray() + " #" + linkURIs.length) + "\n" +
+					//"MinRelationLength: " + minRelationLength + "\n" + 
+					"MaxRelationLenght: " + maxRelationLength;
 		}
 	}
 	

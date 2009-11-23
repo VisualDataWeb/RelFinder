@@ -26,6 +26,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import mx.controls.List;
 			import mx.core.Application;
 			import mx.events.ListEvent;
+			import utils.ConfigUtil;
 			
 			import connection.model.ConnectionModel;
 			import mx.controls.RadioButton;
@@ -92,6 +93,8 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			public function setSelectedSPARQL():void {
+				validateNow();
+				
 				var conf:IConfig = configList.selectedItem as IConfig;
 				if (conf != null) {
 					selectedSPARQL.text = conf.name + " - \"" + conf.endpointURI + "\"";
@@ -101,108 +104,21 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			private function create():void {
-				var create:CreateNewEndpoint = PopUpManager.createPopUp(Application.application as DisplayObject, CreateNewEndpoint, true) as CreateNewEndpoint;
-				create.config = new Config();
+				var newConfig:IConfig = new Config();
+				newConfig.name = "New Config " + (new Date()).toString();
+				newConfig.autocompleteURIs = new ArrayCollection(["http://www.w3.org/2000/01/rdf-schema#label"]);
+				newConfig.linkURIs = new ArrayCollection(["http://xmlns.com/foaf/0.1/page"]);
+				newConfig.imageURIs = new ArrayCollection(["http://xmlns.com/foaf/0.1/depiction"]);
+				
+				var edit:EditEndpointConfig = PopUpManager.createPopUp(this, EditEndpointConfig, true) as EditEndpointConfig;
+				edit.config = newConfig;
+				edit.expertSettings = this;
 			}
 			
 			
 			
 			public function save(event:Event):void {
-				var sc:ArrayCollection = ConnectionModel.getInstance().sparqlConfigs;
-				var ep:IConfig = sc.getItemAt(0) as IConfig;
-				
-				var data:String = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
-									"<data>" +
-										"<proxy>" +
-											"<url>" + proxyInput.text + "</url>" +
-										"</proxy>" +
-										"<endpoints>" +
-											"<defaultEndpoint>";
-												if (ep.name != null && ep.name != "") {
-													data += "<name>" + ep.name + "</name>";
-												}
-												if (ep.abbreviation != null && ep.abbreviation != "") {
-													data += "<abbreviation>" + ep.abbreviation + "</abbreviation>";
-												}
-												if (ep.description != null && ep.description != "") {
-													data += "<description>" + ep.description + "</description>";
-												}
-												if (ep.endpointURI != null && ep.endpointURI != "") {
-													data += "<endpointURI>" + ep.endpointURI + "</endpointURI>";
-												}
-												if (ep.defaultGraphURI != null && ep.defaultGraphURI != "") {
-													data += "<defaultGraphURI>" + ep.defaultGraphURI + "</defaultGraphURI>";
-												}
-												data += "<isVirtuoso>" + ep.isVirtuoso + "</isVirtuoso>" +
-												"<useProxy>" + ep.useProxy + "</useProxy>";
-												
-												if (ep.autocompleteURIs != null && ep.autocompleteURIs.length > 0) {
-													
-													data += "<autocompleteURIs>";
-													for each(var ac:String in ep.autocompleteURIs) {
-														data += "<autocompleteURI>" + ac + "</autocompleteURI>";
-													}
-													data += "</autocompleteURIs>";
-												}
-												
-												if (ep.ignoredProperties != null && ep.ignoredProperties.length > 0) {
-													
-													data += "<ignoredProperties>";
-													for each(var ip:String in ep.ignoredProperties) {
-														data += "<ignoredProperty>" + ip + "</ignoredProperty>";
-													}
-													data += "</ignoredProperties>";
-												}
-											data += "</defaultEndpoint>";
-											
-											for (var i:int = 1; i < sc.length; i++) {
-												
-												ep = sc.getItemAt(i) as IConfig;
-												
-												data += "<endpoint>";
-												if (ep.name != null && ep.name != "") {
-													data += "<name>" + ep.name + "</name>";
-												}
-												if (ep.abbreviation != null && ep.abbreviation != "") {
-													data += "<abbreviation>" + ep.abbreviation + "</abbreviation>";
-												}
-												if (ep.description != null && ep.description != "") {
-													data += "<description>" + ep.description + "</description>";
-												}
-												if (ep.endpointURI != null && ep.endpointURI != "") {
-													data += "<endpointURI>" + ep.endpointURI + "</endpointURI>";
-												}
-												if (ep.defaultGraphURI != null && ep.defaultGraphURI != "") {
-													data += "<defaultGraphURI>" + ep.defaultGraphURI + "</defaultGraphURI>";
-												}
-												data += "<isVirtuoso>" + ep.isVirtuoso + "</isVirtuoso>" +
-												"<useProxy>" + ep.useProxy + "</useProxy>";
-												
-												if (ep.autocompleteURIs != null && ep.autocompleteURIs.length > 0) {
-													
-													data += "<autocompleteURIs>";
-													for each(var ac2:String in ep.autocompleteURIs) {
-														data += "<autocompleteURI>" + ac2 + "</autocompleteURI>";
-													}
-													data += "</autocompleteURIs>";
-												}
-												
-												if (ep.ignoredProperties != null && ep.ignoredProperties.length > 0) {
-													
-													data += "<ignoredProperties>";
-													for each(var ip2:String in ep.ignoredProperties) {
-														data += "<ignoredProperty>" + ip2 + "</ignoredProperty>";
-													}
-													data += "</ignoredProperties>";
-												}
-												
-												data += "</endpoint>";
-											}
-											
-										data += "</endpoints>" +
-									"</data>";
-										
-				fileSave.save(new XML(data) , "RelFinderConfig.rfxml");
+				fileSave.save(ConfigUtil.getXMLfromConfiguration(proxyInput.text), "RelFinderConfig.rfxml");
 			}
 			
 			public function load(event:Event):void {
@@ -217,56 +133,10 @@ You should have received a copy of the GNU General Public License along with thi
 				
 				ConnectionModel.getInstance().sparqlConfigs.removeAll();
 				
-				// set proxy
-				ConnectionModel.getInstance().proxy = result.proxy.url;
-				ConnectionModel.getInstance().defaultProxy = result.proxy.url;
-				
-				// set default endpoint
-				var defaultConfig:Config = getConfig(result.endpoints.defaultEndpoint);
-				ConnectionModel.getInstance().sparqlConfigs.addItem(defaultConfig);
-				ConnectionModel.getInstance().sparqlConfig = defaultConfig;
-				
-				for each (var obj:Object in result.endpoints.endpoint) {
-					ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(obj));
-				}
+				ConfigUtil.setConfigurationFromXML(result);
 				
 				selectFirstSPARQL();
 			}
-
-			public function getConfig(conf:Object):Config {
-				
-				var config:Config = new Config();
-				config.name = conf.name;
-				config.abbreviation = conf.abbreviation;
-				config.description = conf.description;
-				config.endpointURI = conf.endpointURI;
-				config.defaultGraphURI = conf.defaultGraphURI;
-				config.isVirtuoso = (conf.isVirtuoso.toString().toLowerCase() == "true") ? true : false;
-				config.useProxy = (conf.useProxy.toString().toLowerCase() == "true") ? true : false;
-				if (conf.autocompleteURIs != null) {
-					for each (var autocomplete:String in conf.autocompleteURIs.autocompleteURI) {
-						if (config.autocompleteURIs == null) {
-							config.autocompleteURIs = new ArrayCollection();
-						}
-						config.autocompleteURIs.addItem(autocomplete);
-					}
-				}
-				if (conf.ignoredProperties != null) {
-					for each (var ignoredProperty:String in conf.ignoredProperties.ignoredProperty) {
-						if (config.ignoredProperties == null) {
-							config.ignoredProperties = new ArrayCollection();
-						}
-						config.ignoredProperties.addItem(ignoredProperty);
-					}
-				}
-				
-				//config.autocompleteURIs = (conf.autocompleteURIs != null) ? conf.autocompleteURIs.autocompleteURI : null;
-				//config.ignoredProperties = (conf.ignoredProperties != null) ? conf.ignoredProperties.ignoredProperty : null;
-				
-				return config;
-			}
-			
-			
 			
 		]]>
 	</mx:Script>

@@ -11,11 +11,12 @@ You should have received a copy of the GNU General Public License along with thi
 -->
 
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-		width="560" height="100%" borderAlpha="0.7" creationComplete="{init();}" title="Edit">
+		width="600" height="500" borderAlpha="0.7" creationComplete="{init();}" title="Edit">
 	<mx:Script>
 		<![CDATA[
 			
 			import connection.config.IConfig;
+			import connection.model.ConnectionModel;
 			import flash.display.DisplayObject;
 			import flash.events.Event;
 			import mx.collections.ArrayCollection;
@@ -27,6 +28,8 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			private var _config:IConfig;
 			
+			public var expertSettings:ExpertSettings;
+			
 			[Bindable(event="configChange")]
 			public function get config():IConfig {
 				return _config;
@@ -35,12 +38,26 @@ You should have received a copy of the GNU General Public License along with thi
 			public function set config(value:IConfig):void {
 				_config = value;
 				
-				for each (var o1:Object in _config.autocompleteURIs) {
-					tempACDP.addItem(o1);
+				var o:Object;
+				
+				for each (o in _config.autocompleteURIs) {
+					tempACDP.addItem(o);
 				}
 				
-				for each (var o2:Object in _config.ignoredProperties) {
-					tempIgPropDP.addItem(o2);
+				for each (o in _config.ignoredProperties) {
+					tempIgPropDP.addItem(o);
+				}
+				
+				for each (o in _config.abstractURIs) {
+					tempAbDP.addItem(o);
+				}
+				
+				for each (o in _config.imageURIs) {
+					tempImDP.addItem(o);
+				}
+				
+				for each (o in _config.linkURIs) {
+					tempLiDP.addItem(o);
 				}
 				
 				dispatchEvent(new Event("configChange"));
@@ -51,6 +68,15 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			[Bindable]
 			private var tempIgPropDP:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			private var tempAbDP:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			private var tempImDP:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			private var tempLiDP:ArrayCollection = new ArrayCollection();
 			
 			private function init():void {
 				callLater(PopUpManager.centerPopUp, [this]);
@@ -70,13 +96,26 @@ You should have received a copy of the GNU General Public License along with thi
 				config.isVirtuoso = inIsVirtuoso.selected;
 				config.name = inName.text;
 				config.useProxy = inUseProxy.selected;
-				
+				config.maxRelationLength = inMaxRelationLength.value;
+				config.abstractURIs = tempAbDP;
+				config.imageURIs = tempImDP;
+				config.linkURIs = tempLiDP;
 				
 			}
 			
 			public function ok():void {
 				
 				apply();
+				
+				if (!ConnectionModel.getInstance().sparqlConfigs.contains(config)) {
+					ConnectionModel.getInstance().sparqlConfigs.addItem(config);
+					
+					if (expertSettings) {
+						expertSettings.configList.selectedItem = config;
+						expertSettings.setSelectedSPARQL();
+					}
+				}
+				
 				cancel();
 			}
 			
@@ -124,53 +163,149 @@ You should have received a copy of the GNU General Public License along with thi
 				}
 			}
 			
+			private function addAbURI():void {
+				var addURI:AddURI = PopUpManager.createPopUp(Application.application as DisplayObject, AddURI) as AddURI;
+				addURI.collection = tempAbDP;
+			}
+			
+			private var selectedAbURI:Object;
+			
+			private function removeAbURI():void {
+				if (inAbstractURIs.selectedItem != null) {
+					selectedAbURI = inAbstractURIs.selectedItem;
+					Alert.show("Do you really want to delete this entry?", "Delete entry", Alert.YES + Alert.NO, this, dispatchCloseEventAb);
+				}
+			}
+			
+			private function dispatchCloseEventAb(event:CloseEvent):void {
+				if (event.detail==Alert.YES) {
+					tempAbDP.removeItemAt(tempAbDP.getItemIndex(selectedAbURI));
+				}
+			}
+			
+			private function addImURI():void {
+				var addURI:AddURI = PopUpManager.createPopUp(Application.application as DisplayObject, AddURI) as AddURI;
+				addURI.collection = tempImDP;
+			}
+			
+			private var selectedImURI:Object;
+			
+			private function removeImURI():void {
+				if (inImageURIs.selectedItem != null) {
+					selectedImURI = inImageURIs.selectedItem;
+					Alert.show("Do you really want to delete this entry?", "Delete entry", Alert.YES + Alert.NO, this, dispatchCloseEventIm);
+				}
+			}
+			
+			private function dispatchCloseEventIm(event:CloseEvent):void {
+				if (event.detail==Alert.YES) {
+					tempImDP.removeItemAt(tempImDP.getItemIndex(selectedImURI));
+				}
+			}
+			
+			private function addLiURI():void {
+				var addURI:AddURI = PopUpManager.createPopUp(Application.application as DisplayObject, AddURI) as AddURI;
+				addURI.collection = tempLiDP;
+			}
+			
+			private var selectedLiURI:Object;
+			
+			private function removeLiURI():void {
+				if (inLinkURIs.selectedItem != null) {
+					selectedLiURI = inLinkURIs.selectedItem;
+					Alert.show("Do you really want to delete this entry?", "Delete entry", Alert.YES + Alert.NO, this, dispatchCloseEventLi);
+				}
+			}
+			
+			private function dispatchCloseEventLi(event:CloseEvent):void {
+				if (event.detail==Alert.YES) {
+					tempLiDP.removeItemAt(tempLiDP.getItemIndex(selectedLiURI));
+				}
+			}
+			
 			
 		]]>
 	</mx:Script>
 	
-	<mx:Form width="100%">
-		
-		<mx:FormItem width="100%" label="Name:">
-			<mx:TextInput id="inName" width="100%" text="{config.name}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="ID:">
-			<mx:TextInput id="inAbbreviation" width="100%" text="{config.abbreviation}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Description:">
-			<mx:TextArea id="inDescription" width="100%" text="{config.description}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Endpoint URI:">
-			<mx:TextInput id="inEndpointURI" width="100%" text="{config.endpointURI}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Default Graph URI:">
-			<mx:TextInput id="inDefaultGraphURI" width="100%" text="{config.defaultGraphURI}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Is Virtuoso Server:">
-			<mx:CheckBox id="inIsVirtuoso" width="100%" selected="{config.isVirtuoso}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Use Proxy:">
-			<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Autocomplete URIs:">
-			<mx:HBox width="100%" height="60">
-				<mx:List id="inAutocompleteURIs" width="100%" height="100%" dataProvider="{tempACDP}" />
-				<mx:VBox>
-					<mx:Button id="bAddACURI" label="+" click="{addACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
-					<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
-				</mx:VBox>
-			</mx:HBox>
-		</mx:FormItem>
-		<mx:FormItem width="100%" label="Ignored Properties:">
-			<mx:HBox width="100%" height="100">
-				<mx:List id="inIgnoredProperties" width="100%" height="100%" dataProvider="{tempIgPropDP}" />
-				<mx:VBox>
-					<mx:Button id="bAddIgPropURI" label="+" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" />
-					<mx:Button id="bRemoveIgPropURI" label="-" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
-				</mx:VBox>
-			</mx:HBox>
-		</mx:FormItem>
-		
-	</mx:Form>
+	<mx:Box width="100%" height="410">
+		<mx:Form width="100%">
+			
+			<mx:FormItem width="100%" label="Name:">
+				<mx:TextInput id="inName" width="100%" text="{config.name}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="ID:">
+				<mx:TextInput id="inAbbreviation" width="100%" text="{config.abbreviation}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Description:">
+				<mx:TextArea id="inDescription" width="100%" text="{config.description}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Endpoint URI:">
+				<mx:TextInput id="inEndpointURI" width="100%" text="{config.endpointURI}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Default Graph URI:">
+				<mx:TextInput id="inDefaultGraphURI" width="100%" text="{config.defaultGraphURI}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Is Virtuoso Server:">
+				<mx:CheckBox id="inIsVirtuoso" width="100%" selected="{config.isVirtuoso}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Use Proxy:">
+				<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Max Relation Length:">
+				<mx:NumericStepper id="inMaxRelationLength" minimum="0" value="{config.maxRelationLength}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Autocomplete URIs:">
+				<mx:HBox width="100%" height="60">
+					<mx:List id="inAutocompleteURIs" width="100%" height="100%" dataProvider="{tempACDP}" />
+					<mx:VBox>
+						<mx:Button id="bAddACURI" label="+" click="{addACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+						<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Ignored Properties:">
+				<mx:HBox width="100%" height="100">
+					<mx:List id="inIgnoredProperties" width="100%" height="100%" dataProvider="{tempIgPropDP}" />
+					<mx:VBox>
+						<mx:Button id="bAddIgPropURI" label="+" click="{addIgPropURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" />
+						<mx:Button id="bRemoveIgPropURI" label="-" click="{removeIgPropURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			
+			<mx:FormItem width="100%" label="Abstract URIs:">
+				<mx:HBox width="100%" height="50">
+					<mx:List id="inAbstractURIs" width="100%" height="100%" dataProvider="{tempAbDP}" />
+					<mx:VBox>
+						<mx:Button id="bAddAbURI" label="+" click="{addAbURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+						<mx:Button id="bRemoveAbURI" label="-" click="{removeAbURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Image URIs:">
+				<mx:HBox width="100%" height="50">
+					<mx:List id="inImageURIs" width="100%" height="100%" dataProvider="{tempImDP}" />
+					<mx:VBox>
+						<mx:Button id="bAddImURI" label="+" click="{addImURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" />
+						<mx:Button id="bRemoveImURI" label="-" click="{removeImURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			
+			<mx:FormItem width="100%" label="Link URIs:">
+				<mx:HBox width="100%" height="50">
+					<mx:List id="inLinkURIs" width="100%" height="100%" dataProvider="{tempLiDP}" />
+					<mx:VBox>
+						<mx:Button id="bAddLiURI" label="+" click="{addLiURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+						<mx:Button id="bRemoveLiURI" label="-" click="{removeLiURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			
+		</mx:Form>
+	</mx:Box>
+	
+	<mx:Spacer height="100%" />
 	
 	<mx:HBox horizontalAlign="right" width="100%">
 		<mx:Button id="okButton" label="OK" click="{ok();}" />
