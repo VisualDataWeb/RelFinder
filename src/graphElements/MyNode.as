@@ -45,7 +45,6 @@ package graphElements
 		}
 		
 		private function isLoadingChangeHandler(event:Event):void {
-			trace("loading change handler");
 			dispatchEvent(new Event("isLoadingChange"));
 		}
 		

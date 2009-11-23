@@ -1103,6 +1103,8 @@ private function clear():void {
 	_concepts = new ArrayCollection();
 	elements = new HashMap();
 	
+	infoBox.selectedElement = null;
+	
 	
 	//_maxPathLength = 0;
 	//_selectedMinPathLength = 0;

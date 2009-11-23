@@ -81,7 +81,7 @@
 			ConnectionModel.getInstance().defaultProxy = xml.proxy.url;
 			
 			// for old versions
-			if (xml.endpoints.defaultEndpoint.toString() != "") {
+			if (xml && xml.hasOwnProperty("endpoints") && xml.endpoints.hasOwnProperty("defaultEndpoint")) {
 				ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(xml.endpoints.defaultEndpoint));
 			}
 			

@@ -3,7 +3,7 @@
 	paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" 
 	width="{findRelationPanel.width - 20}" height="100%" 
 	resize="{imageView.calcIdealImageSize(height); callLater(resizeTextArea, [abstarctText]);}"
-	visible="{(selectedElement) ? true : false}" initialize="init()"
+	visible="{selectedElement != null}" initialize="init()"
 	horizontalScrollPolicy="off" verticalScrollPolicy="on"
 	>
 	
@@ -35,21 +35,23 @@
 			}
 			
 			public function set selectedElement(value:Element):void {
+				
+				if (value == null) {
+					infoVBox.height = 0;
+					loadingVBox.height = 0;
+					visible = false;
+					infoForm.visible = false;
+					labelBox.visible = false;
+					return;
+				}
+				
+				visible = true;
+				infoForm.visible = true;
+				labelBox.visible = true;
+				
 				_selectedElement = value;
 				
-				_selectedElement.addEventListener("isLoadingChange", function():void {
-						
-						if (_selectedElement.isLoading) {
-							infoVBox.height = 0;
-							loadingVBox.percentHeight = 100;
-							la.startRotation();
-						}else {
-							infoVBox.percentHeight = 100;
-							loadingVBox.height = 0;
-							la.stopRotation();
-						}
-						
-					});
+				_selectedElement.addEventListener("isLoadingChange", isLoadingChangeHandler);
 					
 				if (_selectedElement.isLoading) {
 					infoVBox.height = 0;
@@ -64,6 +66,32 @@
 				dispatchEvent(new Event("selectedElementChange"));
 				
 				callLater(resizeTextArea, [abstarctText]);
+			}
+			
+			private function isLoadingChangeHandler(event:Event):void {
+					
+				if (_selectedElement == null) {
+					infoVBox.height = 0;
+					loadingVBox.height = 0;
+					visible = false;
+					infoForm.visible = false;
+					labelBox.visible = false;
+					return;
+				}
+				
+				visible = true;
+				infoForm.visible = true;
+				labelBox.visible = true;
+				
+				if (_selectedElement.isLoading) {
+					infoVBox.height = 0;
+					loadingVBox.percentHeight = 100;
+					la.startRotation();
+				}else {
+					infoVBox.percentHeight = 100;
+					loadingVBox.height = 0;
+					la.stopRotation();
+				}
 			}
 			
 			private function openWebsite(evt:TextEvent):void {
@@ -120,24 +148,32 @@
 				//http://de.selfhtml.org/html/referenz/zeichen.htm
 			}
 			
+			[Bindable(event="selectedElementChange")]
+			private function childrenVisible():Boolean {
+				trace("visible", selectedElement != null && selectedElement.resourceURI != "" && selectedElement.resourceURI != null);
+				return selectedElement && selectedElement.resourceURI != "" && selectedElement.resourceURI != null ;
+			}
+				
+			
+			
 		]]>
 	</mx:Script>
 	
-	<mx:HBox>
+	<mx:HBox id="labelBox">
 		<mx:Label truncateToFit="true" width="{findRelationPanel.width - 24 - langCombo.width - 8 - 20}" fontWeight="bold" fontSize="16" text="{selectedElement.rdfLabel}" /> 
-		<mx:ComboBox id="langCombo" dataProvider="{Languages.getInstance().asDataProvider}" width="60" close="{changeLang();}" visible="{!selectedElement.isLoading}"/>
+		<mx:ComboBox id="langCombo" dataProvider="{Languages.getInstance().asDataProvider}" width="60" close="{changeLang();}" />
 	</mx:HBox>
 	
-	<mx:VBox id="infoVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%" visible="{!selectedElement.isLoading}">
-		<mx:Form id="moreInfos" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0" indicatorGap="4">
-			<mx:FormItem label="More Infos:" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
-				<mx:VBox paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
-					<mx:Label id="resourceLink" truncateToFit="true"  width="{findRelationPanel.width - 100 - 20}" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
-					<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{findRelationPanel.width - 100 - 25}" />
-				</mx:VBox>
-			</mx:FormItem>
-		</mx:Form>
-		
+	<mx:Form id="infoForm" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0" indicatorGap="4">
+		<mx:FormItem label="More Infos:" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
+			<mx:VBox paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
+				<mx:Label id="resourceLink" truncateToFit="true"  width="{findRelationPanel.width - 100 - 20}" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
+				<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{findRelationPanel.width - 100 - 25}" />
+			</mx:VBox>
+		</mx:FormItem>
+	</mx:Form>
+	
+	<mx:VBox id="infoVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%" >
 		<local:ImageView id="imageView" width="{findRelationPanel.width - 24 - 20}" image_path="{selectedElement.imageURL}" />
 		<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{findRelationPanel.width - 28 - 20}"
 				visible="{selectedElement.abstract != 'no abstract available'}"
