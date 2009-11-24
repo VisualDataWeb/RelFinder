@@ -107,7 +107,7 @@
     <url>http://relfinder.dbpedia.org/Proxy.php</url>
   </proxy>
   <endpoints>
-    <endpoint>
+    <defaultEndpoint>
       <name>DBpedia</name>
       <abbreviation>dbp</abbreviation>
       <description>Linked Data version of Wikipedia. The DBpedia data set currently provides information about more than 1.95 million “things”, including at least 80,000 persons, 70,000 places, 35,000 music albums, 12,000 films. Provides descriptions in 12 different languages. Altogether, the DBpedia data set consists of (more than) 103 million RDF triples. The data set is interlinked with various other data sources.</description>
@@ -138,7 +138,7 @@
         <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
-    </endpoint>
+    </defaultEndpoint>
     <endpoint>
       <name>Linking Open Data (LOD)</name>
       <abbreviation>lod</abbreviation>
