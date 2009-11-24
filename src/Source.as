@@ -1027,7 +1027,7 @@ public function set selectedElement(e:Element):void {
 private function clear():void {
 	trace("clear");
 	
-	ConnectionModel.getInstance().lastClear = new Date();
+	//ConnectionModel.getInstance().lastClear = new Date();
 	
 	//TODO: clear slider, clear input fields
 	
@@ -1037,7 +1037,7 @@ private function clear():void {
 	/**
 	 * REMOVE ALL LISTENER ----------------
 	 */
-	var iter:Iterator = _paths.getIterator();
+	/*var iter:Iterator = _paths.getIterator();
 	while (iter.hasNext()) {
 		var p:Path = iter.next();
 		p.removeListener();
@@ -1071,9 +1071,6 @@ private function clear():void {
 		cL.removeListener();
 	}
 	
-	/**
-	 * RESET VARIABLES -----------------------
-	 */
 	graph = new Graph();
 	selectedElement = null;
 	_selectedConnectivityLevel = null;
@@ -1124,6 +1121,8 @@ private function clear():void {
 	basicGraph = "";
 	resultParser = new SPARQLResultParser();
 //	myLookUp = new LookUpSPARQL();
+	*/
+	clearGraph();
 
 	inputFields = new ArrayCollection(new Array(new String("input0"), new String("input1")));
 	autoCompleteList = new ArrayCollection();
@@ -1132,11 +1131,6 @@ private function clear():void {
 	//pathLengthRange.values = [0, 0];
 	//pathLengthRange.minimum = 0;
 	//pathLengthRange.maximum = 1;
-	
-	tab10.isVisible = true;// icon = null;
-	tab11.isVisible = true;
-	tab12.isVisible = true;// .icon = null;
-	tab13.isVisible = true;// icon = null;
 	
 	_showOptions = false;
 	
