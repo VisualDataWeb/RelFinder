@@ -215,7 +215,7 @@ package graphElements {
 							setVisible = false;
 							break;
 						}*/
-						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore
+						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore	//TODO: was passiert wenn path einen Knoten enthält der level 4 ist (level 4 aber invisible) ein anderer Knoten hat aber level 3 (und level 3 ist visible)? dann wird der path invisible gestellt! das ist RICHTIG!!
 							if (r1.object.isGiven && r1.subject.isGiven) {	//direct connection!
 								maxConL = app().getConnectivityLevel("2", 2);
 							}else {
@@ -264,13 +264,13 @@ package graphElements {
 							if (r2.object.isGiven && r2.subject.isGiven) {	//direct connection!
 								maxConL2 = app().getConnectivityLevel("2", 2);
 							}else {
-								if (!r2.object.isGiven) {	//if not given
+								if (r2.object.connectivityLevel != null) {	//if not given
 									var conL11:ConnectivityLevel = r2.object.connectivityLevel;
 									if ((maxConL2 == null) || (conL11.id > maxConL2.id)) {
 										maxConL2 = conL11;
 									}
 								}
-								if (!r2.subject.isGiven) {	//if not given
+								if (r2.subject.connectivityLevel != null) {	//if not given
 									var conL12:ConnectivityLevel = r2.subject.connectivityLevel;
 									if ((maxConL2 == null) || (conL12.id > maxConL2.id)) {
 										maxConL2 = conL12;

@@ -1188,14 +1188,20 @@ public function clearGraph():void {
 		rT.removeListener();
 	}
 	
+	for each(var cL:ConnectivityLevel in _connectivityLevels) {
+		cL.removeListener();
+	}
+	
 	/**
 	 * RESET VARIABLES -----------------------
 	 */
 	graph = new Graph();
 	selectedElement = null;
+	_selectedConnectivityLevel = null;
 	_selectedConcept = null;
 	_selectedPathLength = null;
 	_selectedRelType = null;
+	_selectedConnectivityLevel = null;
 	_graphIsFull = false;	//whether the graph is overcluttered already!
 	_delayedDrawing = true;
 	
@@ -1209,6 +1215,7 @@ public function clearGraph():void {
 	StatusModel.getInstance().queueIsEmpty = true;
 	
 	//trace("before",_paths.size);
+	_connectivityLevels = new ArrayCollection();
 	_pathLengths = new ArrayCollection();
 	_paths = new HashMap();
 	//trace("after", _paths.size);
@@ -1234,6 +1241,11 @@ public function clearGraph():void {
 	sparqlEndpoint = "";
 	basicGraph = "";
 	resultParser = new SPARQLResultParser();
+	
+	tab10.isVisible = true;// icon = null;
+	tab11.isVisible = true;
+	tab12.isVisible = true;// .icon = null;
+	tab13.isVisible = true;// icon = null;
 }
 
 //--Expert-Settings + Info-------------------------------------
