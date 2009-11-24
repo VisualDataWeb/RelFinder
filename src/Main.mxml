@@ -102,7 +102,7 @@ You should have received a copy of the GNU General Public License along with thi
 									<local:FilterTab id="tab13" label="link" list="{_relTypes}">
 										<mx:DataGrid id="dgT" height="100%" width="100%" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
 											<mx:columns>
-												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="relation type"></mx:DataGridColumn>
+												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="link type"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
 											</mx:columns>
