@@ -9,6 +9,7 @@
  */ 
 
 package graphElements {
+	import global.StatusModel;
 	import graphElements.events.PropertyChangedEvent;
 	import mx.collections.ArrayCollection;
 	import flash.events.Event;
@@ -205,6 +206,7 @@ package graphElements {
 			trace("--------checkVisibility-------------");
 			if (this.isVisible) {	//check, if it should become invisible
 				var setVisible:Boolean = true;
+				var maxConL:ConnectivityLevel = null;
 				if (!this.pathLength.isVisible) {	//if pathLenght is invisible
 					setVisible = false;
 				}else {	//check other requirements
@@ -213,7 +215,33 @@ package graphElements {
 							setVisible = false;
 							break;
 						}*/
-						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible()) || (!r1.bothConLevelsAreVisible())) {	//if either the relType or one of the concepts are invisible
+						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore
+							if (r1.object.isGiven && r1.subject.isGiven) {	//direct connection!
+								maxConL = app().getConnectivityLevel("2", 2);
+							}else {
+								if (r1.object.connectivityLevel != null) {	//if not given
+									var conL1:ConnectivityLevel = r1.object.connectivityLevel;
+									if ((maxConL == null) || (conL1.id > maxConL.id)) {
+										maxConL = conL1;
+									}
+								}
+								if (r1.subject.connectivityLevel != null) {	//if not given
+									var conL2:ConnectivityLevel = r1.subject.connectivityLevel;
+									if ((maxConL == null) || (conL2.id > maxConL.id)) {
+										maxConL = conL2;
+									}
+								}								
+							}
+							if (maxConL != null) {
+								if (maxConL.isVisible) {
+									setVisible = true;
+								}else {
+									setVisible = false;
+								}
+							}
+						}
+						
+						if ((!r1.relType.isVisible) || (!r1.bothConceptsAreVisible())){	// || (!r1.extendedConLevelsCheck())) {	//bothConLevelsAreVisible() //if either the relType or one of the concepts are invisible
 							setVisible = false;
 							break;
 						}
@@ -224,6 +252,7 @@ package graphElements {
 				}
 			}else {	//check, if it should become visible
 				var setVisible2:Boolean = true;
+				var maxConL2:ConnectivityLevel = null;
 				if (!this.pathLength.isVisible) {
 					setVisible2 = false;
 				}else {
@@ -231,10 +260,38 @@ package graphElements {
 						/*if (r2.bothConLevelsAreVisible()) {
 							setVisible2 = true;
 						}*/
-						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible()) || (!r2.bothConLevelsAreVisible())) {	//if either the relType or one of the concepts are invisible
+						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore
+							if (r2.object.isGiven && r2.subject.isGiven) {	//direct connection!
+								maxConL2 = app().getConnectivityLevel("2", 2);
+							}else {
+								if (!r2.object.isGiven) {	//if not given
+									var conL11:ConnectivityLevel = r2.object.connectivityLevel;
+									if ((maxConL2 == null) || (conL11.id > maxConL2.id)) {
+										maxConL2 = conL11;
+									}
+								}
+								if (!r2.subject.isGiven) {	//if not given
+									var conL12:ConnectivityLevel = r2.subject.connectivityLevel;
+									if ((maxConL2 == null) || (conL12.id > maxConL2.id)) {
+										maxConL2 = conL12;
+									}
+								}
+							}							
+							if (maxConL2 != null) {
+								if (maxConL2.isVisible) {
+									setVisible2 = true;
+								}else {
+									setVisible2 = false;
+								}
+							}
+						}
+						
+						if ((!r2.relType.isVisible) || (!r2.bothConceptsAreVisible())){	// || (!r2.extendedConLevelsCheck())) {	//bothConLevelsAreVisible() //if either the relType or one of the concepts are invisible
 							setVisible2 = false;
 							break;
 						}
+						
+						
 					}
 				}
 				
