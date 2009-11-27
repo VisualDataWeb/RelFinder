@@ -12,12 +12,14 @@ You should have received a copy of the GNU General Public License along with thi
 
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				xmlns:local="*"
-				width="300" height="400" borderAlpha="0.7" creationComplete="{init();}" >
+				paddingRight="0" paddingLeft="0"
+				width="400" height="460" borderAlpha="0.7" creationComplete="{init();}" >
 	
 	<mx:Script>
 		<![CDATA[
 			
 			import graphElements.Element;
+			import mx.managers.PopUpManager;
 			
 			private function init():void {
 				
@@ -30,26 +32,39 @@ You should have received a copy of the GNU General Public License along with thi
 			public var selectedElement:Element = null;
 			
 			public function validate():void {
+				resourceURI = inURI.text;
 				selectedElement = new Element(resourceURI, resourceURI, resourceURI);
+			}
+			
+			
+			public function ok():void {
+				
+			}
+			
+			public function cancel():void {
+				PopUpManager.removePopUp(this);
 			}
 			
 			
 		]]>
 	</mx:Script>
 	
-	<mx:VBox width="100%" height="100%">
-		<mx:Form width="100%">
+	<mx:VBox width="100%" height="80" horizontalAlign="right">
+		<mx:Form width="100%" paddingBottom="0">
 			<mx:FormItem width="100%" label="Resource URI:">
-				<mx:HBox width="100%">
+				<mx:VBox width="100%" horizontalAlign="right">
 					<mx:TextInput id="inURI" width="100%" text="{resourceURI}" />
 					<mx:Button label="validate" click="validate()" />
-				</mx:HBox>
-				
+				</mx:VBox>
 			</mx:FormItem>
 		</mx:Form>
 		
-		<local:InfoBox id="infoBox" findRelationPanel="{this}" selectedElement="{selectedElement}"/>
-		
 	</mx:VBox>
-	
+	<local:InfoBox id="infoBox" height="280" findRelationPanel="{this}" selectedElement="{selectedElement}"/>
+	<mx:Spacer height="100%" />
+	<mx:HBox width="100%" paddingRight="10">
+		<mx:Spacer width="100%" />
+		<mx:Button id="okButton" label="OK" />
+		<mx:Button id="cancelButton" label="Cancel" click="cancel();" />
+	</mx:HBox>
 </mx:TitleWindow>
