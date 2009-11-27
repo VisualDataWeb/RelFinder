@@ -22,6 +22,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import flash.events.Event;
 			import flash.events.KeyboardEvent;
 			import flash.ui.Keyboard;
+			import global.GlobalString;
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.List;
@@ -48,7 +49,7 @@ You should have received a copy of the GNU General Public License along with thi
 					_dataProvider = new ArrayCollection();
 				}
 				
-				if (_dataProvider.length == 0 || _dataProvider.getItemAt(0) == null || _dataProvider.getItemAt(0).label.toString() == "Searching...") {
+				if (_dataProvider.length == 0 || _dataProvider.getItemAt(0) == null || _dataProvider.getItemAt(0).label.toString() == GlobalString.SEARCHING) {
 					trace("start new search");
 					inputChanged(new Event("inputChange"));
 				}
@@ -107,7 +108,7 @@ You should have received a copy of the GNU General Public License along with thi
 				if (textInput.text.length > 1) {
 					var results:ArrayCollection = new ArrayCollection();
 					var searching:Object = new Object();
-					searching.label = "Searching...";
+					searching.label = GlobalString.SEARCHING;
 					results.addItem(searching);
 					dataProvider = results;
 					ConnectionModel.getInstance().sparqlConfig.lookUp.run(textInput.text, this, 50);

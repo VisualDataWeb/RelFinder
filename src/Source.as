@@ -18,6 +18,7 @@ import connection.config.IConfig;
 import connection.model.LookUpCache;
 import flash.display.DisplayObject;
 import flash.geom.Point;
+import global.GlobalString;
 import global.ToolTipModel;
 import mx.collections.Sort;
 import mx.collections.SortField;
@@ -1770,7 +1771,7 @@ private function handleAutoCompleteSearchChange(_selectedItem:Object):void {
 		if (input != null && input.length >= 2) {
 			var results:ArrayCollection = new ArrayCollection();
 			var searching:Object = new Object();
-			searching.label = "Searching...";
+			searching.label = GlobalString.SEARCHING;
 			results.addItem(searching);
 			_selectedItem.dataProvider = results;
 			_selectedItem.validateNow();
@@ -1854,6 +1855,7 @@ public function selectedItemClicked(event:Event):void {
 			edit.inputText = si.label;
 			edit.autoComplete = ac;
 			edit.dataProvider = ac.dataProvider;
+			edit.title = "Change input"
 		}
 	}
 }

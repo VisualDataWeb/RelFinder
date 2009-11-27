@@ -13,7 +13,7 @@ package connection
 
 	public interface ILookUp 
 	{
-		function run(input:String, targetWithDataProvider:Object, limit:int = 20):void;
+		function run(input:String, targetWithDataProvider:Object, limit:int = 20, offset:int = 0):void;
 	}
 	
 }

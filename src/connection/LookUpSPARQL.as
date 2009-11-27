@@ -21,7 +21,7 @@
 		
 		private var currentInput:String = "";
 		
-		public function run(_input:String, target:Object, limit:int = 0):void {
+		public function run(_input:String, target:Object, limit:int = 20, offset:int = 0):void {
 			
 			currentInput = _input;
 			
@@ -38,19 +38,19 @@
 				
 				
 				//query = createCompleteOutdegQuery(_input, 20);
-				query = createCompleteIndegQuery(_input, 20);
+				query = createCompleteIndegQuery(_input, limit);
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Count_Result);
 				
 				
 			}else {
-				query = createStandardREGEXQuery(_input, 20);
+				query = createStandardREGEXQuery(_input, limit);
 				//query = createCompleteREGEXIndegQuery(_input, 20);
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result);
 			}
 			
 		}
 		
-		public function createStandardBIFContainsQuery(input:String, limit:int = 0):String {
+		public function createStandardBIFContainsQuery(input:String, limit:int = 0, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
@@ -67,6 +67,9 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
@@ -82,7 +85,7 @@
 //		Filter regex(?l, 'Bruce', 'i') }
 //		 }
 //		GROUP BY ?s ?l 
-		public function createStandardREGEXQuery(input:String, limit:int = 20):String {
+		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
@@ -99,10 +102,13 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		public function createCompleteOutdegQuery(input:String, limit:int = 0):String {
+		public function createCompleteOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
 				return createSingleWordCompleteCountOutdegQuery("'" + input + "'", limit);
@@ -112,7 +118,7 @@
 			}
 		}
 		
-		private function createMultipleWordsCompleteCountOutdegQuery(input:String, limit:int = 0):String {
+		private function createMultipleWordsCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -128,10 +134,13 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		private function createSingleWordCompleteCountOutdegQuery(input:String, limit:int = 0):String {
+		private function createSingleWordCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -147,10 +156,13 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		public function createCompleteIndegQuery(input:String, limit:int = 0):String {
+		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
 				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit);
@@ -160,7 +172,7 @@
 			}
 		}
 		
-		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0):String {
+		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -176,10 +188,13 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0):String {
+		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -195,10 +210,13 @@
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		public function createCompleteREGEXIndegQuery(input:String, limit:int = 0):String {
+		public function createCompleteREGEXIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
 				return createSingleWordREGEXCompleteCountIndegQuery("\"" + input + "\"", limit);
@@ -208,20 +226,26 @@
 			}
 		}
 		
-		private function createMultipleWordsREGEXCompleteCountIndegQuery(input:String, limit:int = 0):String {
+		private function createMultipleWordsREGEXCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . filter regex(?l, '" + input + "', 'i')  . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(?count) "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
+			}
 			return query;
 		}
 		
-		private function createSingleWordREGEXCompleteCountIndegQuery(input:String, limit:int = 0):String {
+		private function createSingleWordREGEXCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			var query:String = "";
 			query = "SELECT ?s ?l COUNT(?s) WHERE { ?someobj ?p ?s . ?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . FILTER regex(?l, '" + input + "', 'i')  . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(COUNT(?s)) "
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
+			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString();
 			}
 			return query;
 		}
@@ -319,6 +343,13 @@
 						var empty:Object = new Object();
 						empty.label = "No results found";
 						results.addItem(empty);
+					}else {
+						var separator:Object = new Object();
+						separator.label = "-----------------------------------------";
+						results.addItem(separator);
+						var more:Object = new Object();
+						more.label = "Search for more";
+						results.addItem(more);
 					}
 					
 					target.dataProvider = results;
@@ -402,6 +433,13 @@
 					var empty:Object = new Object();
 					empty.label = "No results found";
 					results.addItem(empty);
+				}else {
+					var separator:Object = new Object();
+					separator.label = "-----------------------------------------";
+					results.addItem(separator);
+					var more:Object = new Object();
+					more.label = "Search for more";
+					results.addItem(more);
 				}
 				
 				SimilaritySort.sort(results, lastInput);

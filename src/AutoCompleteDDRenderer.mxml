@@ -9,13 +9,21 @@
 			import flash.events.KeyboardEvent;
 			import flash.events.MouseEvent;
 			import flash.geom.Point;
+			import global.GlobalString;
 			import mx.controls.List;
 			import mx.controls.listClasses.BaseListData;
 			import mx.controls.listClasses.ListBaseContentHolder;
+			import mx.core.Application;
 			import mx.core.IFlexModuleFactory;
 			import mx.core.IToolTip;
 			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			import mx.managers.ToolTipManager;
+			import mx.utils.ObjectUtil;
+			
+			import com.hillelcoren.components.AutoComplete;
+			
+			import popup.EditSearchInput;
 			
 			[Bindable]
 			private var _list:List;
@@ -30,13 +38,26 @@
 			}
 			
 			private function clickHandler(e:MouseEvent):void {
-				if (data.hasOwnProperty("label") && (data.label == "Searching..." || data.label == "No results found")) {
+				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHING || data.label.toString() == GlobalString.NORESULTS || data.label.toString() == GlobalString.SEPARATOR)) {
 					e.stopImmediatePropagation();
+				}
+				
+				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHMORE)) {
+					e.stopImmediatePropagation();
+					
+					if (this.parentDocument.parent.parent.parent.parent is AutoComplete) {
+						var ac:AutoComplete = this.parentDocument.parent.parent.parent.parent as AutoComplete;
+						var edit:EditSearchInput = PopUpManager.createPopUp(Application.application as DisplayObject, EditSearchInput, true) as EditSearchInput;
+						edit.inputText = ac.searchText;
+						edit.autoComplete = ac;
+						edit.dataProvider = ac.dataProvider;
+						edit.title = "Find object";
+					}
 				}
 			}
 			
 			private function over():void {
-				if (data.hasOwnProperty("uris")) {
+				if (data.hasOwnProperty("uris") && arrayToString(data.uris) != null && arrayToString(data.uris) != "") {
 					var pos:Point = contentToGlobal(new Point(x, y));
 					tooltipInstance = ToolTipManager.createToolTip(arrayToString(data.uris), pos.x + width, pos.y - y);
 				}
@@ -81,7 +102,7 @@
 				
 				dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
 				
-				if (value != null && value.hasOwnProperty("label") && value.label == "Searching...") {
+				if (value != null && value.hasOwnProperty("label") && value.label == GlobalString.SEARCHING) {
 					
 					if (la == null) {
 						la = new LoadingAnimation();

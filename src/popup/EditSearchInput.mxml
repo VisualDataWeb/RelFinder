@@ -20,22 +20,24 @@ You should have received a copy of the GNU General Public License along with thi
 			import connection.LookUpSPARQL;
 			import connection.SPARQLConnection;
 			import connection.SPARQLResultEvent;
+			import flash.display.DisplayObject;
 			import flash.events.Event;
 			import flash.events.KeyboardEvent;
 			import flash.ui.Keyboard;
+			import global.GlobalString;
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.List;
+			import mx.core.Application;
 			import mx.core.IToolTip;
 			import mx.events.ListEvent;
 			import mx.managers.PopUpManager;
 			import mx.managers.ToolTipManager;
 			import mx.utils.ObjectUtil;
 			import popup.InputSelectionEvent;
+			import popup.DirectInput;
 			
 			private function init():void {
-				
-				title = "Change input";
 				
 				focusManager.setFocus(textInput);
 				this.x = 180;
@@ -94,6 +96,13 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			public function set dataProvider(value:ArrayCollection):void {
+				var dp:ArrayCollection = new ArrayCollection(value.source);
+				for (var i:int = dp.length - 1; i >= 0; i--) {
+					if (dp.getItemAt(i).label.toString() == GlobalString.SEARCHMORE ||
+							dp.getItemAt(i).label.toString() == GlobalString.SEPARATOR){
+						dp.removeItemAt(i);
+					}
+				}
 				_dataProvider = value;
 				callLater(selectFirstElement);
 				dispatchEvent(new Event("dpChange"));
@@ -110,7 +119,7 @@ You should have received a copy of the GNU General Public License along with thi
 				if (textInput.text.length > 1) {
 					var results:ArrayCollection = new ArrayCollection();
 					var searching:Object = new Object();
-					searching.label = "Searching...";
+					searching.label = GlobalString.SEARCHING;
 					results.addItem(searching);
 					dataProvider = results;
 					ConnectionModel.getInstance().sparqlConfig.lookUp.run(textInput.text, this, 50);
@@ -163,6 +172,14 @@ You should have received a copy of the GNU General Public License along with thi
 				return output;
 			}
 			
+			private function directInput():void {
+				var direct:DirectInput = PopUpManager.createPopUp(Application.application as DisplayObject, DirectInput, true) as DirectInput;
+				
+				
+			}
+			
+			
+			
 		]]>
 	</mx:Script>
 	
@@ -180,6 +197,7 @@ You should have received a copy of the GNU General Public License along with thi
 		
 		
 		<mx:HBox horizontalAlign="right" width="100%">
+			<mx:Button id="directButton" label="Direct Input" click="directInput();" />
 			<mx:Button id="okButton" label="Select" click="{ok();}" />
 			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
 		</mx:HBox>

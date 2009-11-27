@@ -11,6 +11,7 @@
 			import flash.events.KeyboardEvent;
 			import flash.events.MouseEvent;
 			import flash.geom.Point;
+			import global.GlobalString;
 			import mx.collections.ArrayCollection;
 			import mx.controls.List;
 			import mx.controls.listClasses.BaseListData;
@@ -42,13 +43,18 @@
 			}
 			
 			private function clickHandler(e:MouseEvent):void {
-				if (data.hasOwnProperty("label") && (data.label == "Searching..." || data.label == "No results found")) {
+				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHING || data.label.toString() == GlobalString.NORESULTS || data.label.toString() == GlobalString.SEPARATOR)) {
+					e.stopImmediatePropagation();
+				}
+				
+				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHMORE)) {
+					trace("searchmore");
 					e.stopImmediatePropagation();
 				}
 			}
 			
 			private function over():void {
-				if (data.hasOwnProperty("uris")) {
+				if (data.hasOwnProperty("uris") && arrayToString(data.uris) != null && arrayToString(data.uris) != "") {
 					var pos:Point = contentToGlobal(new Point(x, y));
 					tooltipInstance = ToolTipManager.createToolTip(arrayToString(data.uris), pos.x + width, pos.y - y);
 				}
@@ -103,7 +109,7 @@
 				dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
 				dispatchEvent(new Event("showButton"));
 				
-				if (value != null && value.hasOwnProperty("label") && value.label == "Searching...") {
+				if (value != null && value.hasOwnProperty("label") && value.label == GlobalString.SEARCHING) {
 					
 					if (la == null) {
 						la = new LoadingAnimation();
