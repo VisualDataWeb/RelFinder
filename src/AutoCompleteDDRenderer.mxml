@@ -23,7 +23,7 @@
 			
 			import com.hillelcoren.components.AutoComplete;
 			
-			import popup.EditSearchInput;
+			import popup.InputSelection;
 			
 			[Bindable]
 			private var _list:List;
@@ -47,7 +47,7 @@
 					
 					if (this.parentDocument.parent.parent.parent.parent is AutoComplete) {
 						var ac:AutoComplete = this.parentDocument.parent.parent.parent.parent as AutoComplete;
-						var edit:EditSearchInput = PopUpManager.createPopUp(Application.application as DisplayObject, EditSearchInput, true) as EditSearchInput;
+						var edit:InputSelection = PopUpManager.createPopUp(Application.application as DisplayObject, InputSelection, true) as InputSelection;
 						edit.inputText = ac.searchText;
 						edit.autoComplete = ac;
 						edit.dataProvider = ac.dataProvider;

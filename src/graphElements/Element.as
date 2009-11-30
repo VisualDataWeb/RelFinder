@@ -135,6 +135,18 @@ package graphElements {
 			//this._concept = concept;
 		}
 		
+		private var _isValidResource:Boolean = false;
+		
+		[Bindable(event="isValidResourceChanged")]
+		public function get isValidResource():Boolean {
+			return _isValidResource;
+		}
+		
+		public function set isValidResource(value:Boolean):void {
+			_isValidResource = value;
+			dispatchEvent(new Event("isValidResourceChanged"));
+		}
+		
 		public function removeListener():void {
 			if (_pages != null) {
 				_pages.removeEventListener(CollectionEvent.COLLECTION_CHANGE, dispatchPagesChange);
@@ -378,7 +390,7 @@ package graphElements {
 			
 			var config:IConfig = ConnectionModel.getInstance().sparqlConfig;
 			
-			if (result..resultNS::results !== "") {
+			if (result..resultNS::results != "") {
 				for each (var res:XML in result..resultNS::results.resultNS::result) {
 					
 					// links
@@ -430,6 +442,8 @@ package graphElements {
 					}
 				}
 			}
+			
+			isValidResource = (result..resultNS::results != "");
 			
 			_loadLinkToWikipedia = false;
 			_loadAbstact = false;
@@ -484,7 +498,7 @@ package graphElements {
 		
 		private function faultHandler(e:FaultEvent):void {
 			isLoading = false;
-			//trace((e);
+			isValidResource = false;
 		}
 		
 		public function getCopy():Element {

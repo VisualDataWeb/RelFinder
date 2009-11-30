@@ -10,9 +10,11 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.	
 -->
 
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="300" height="400" borderAlpha="0.7" creationComplete="{init();}">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				xmlns:utils="utils.*" width="300" height="400" borderAlpha="1.0" creationComplete="{init();}">
 	<mx:Script>
 		<![CDATA[
+			import com.hillelcoren.components.AutoComplete;
 			import connection.model.ConnectionModel;
 			import connection.ILookUp;
 			import connection.LookUpKeywordSearch;
@@ -26,15 +28,17 @@ You should have received a copy of the GNU General Public License along with thi
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.List;
+			import mx.core.Application;
 			import mx.core.IToolTip;
 			import mx.events.ListEvent;
 			import mx.managers.PopUpManager;
 			import mx.managers.ToolTipManager;
+			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
 			import popup.InputSelectionEvent;
 			
 			private function init():void {
-				textArea.text = "Your input is not clear.\nPlease select a resource from the list or check your input for spelling mistakes."
+				//"Your input is not clear.\nPlease select a resource from the list or check your input for spelling mistakes."
 				focusManager.setFocus(textInput);
 				this.x = 180;
 				this.y = 30;
@@ -55,9 +59,40 @@ You should have received a copy of the GNU General Public License along with thi
 				}
 			}
 			
+			
+			private var _msgText:String = "";
+			
+			[Bindable(event="msgTextChange")]
+			public function get msgText():String {
+				return _msgText;
+			}
+			
+			public function set msgText(value:String):void {
+				if (value == null) {
+					_msgText = "";
+				}else {
+					_msgText = value;
+				}
+				
+				dispatchEvent(new Event("msgTextChange"));
+				
+			}
+			
 			private var _inputIndex:int;
 			private var _inputText:String;
 			private var _dataProvider:ArrayCollection;
+			
+			private var _ac:AutoComplete;
+			
+			[Bindable(event="autoCompleteChange")]
+			public function get autoComplete():AutoComplete {
+				return _ac;
+			}
+			
+			public function set autoComplete(value:AutoComplete):void {
+				_ac = value;
+				dispatchEvent(new Event("autoCompleteChange"));
+			}
 			
 			private function dpChangeHandler(e:Event):void {
 				inputList.selectedIndex = 0;
@@ -91,8 +126,15 @@ You should have received a copy of the GNU General Public License along with thi
 				return _dataProvider;
 			}
 			
-			public function set dataProvider(dataProvider:ArrayCollection):void {
-				_dataProvider = dataProvider;
+			public function set dataProvider(value:ArrayCollection):void {
+				var dp:ArrayCollection = new ArrayCollection(value.source);
+				for (var i:int = dp.length - 1; i >= 0; i--) {
+					if (dp.getItemAt(i).label.toString() == GlobalString.SEARCHMORE ||
+							dp.getItemAt(i).label.toString() == GlobalString.SEPARATOR){
+						dp.removeItemAt(i);
+					}
+				}
+				_dataProvider = value;
 				callLater(selectFirstElement);
 				dispatchEvent(new Event("dpChange"));
 			}
@@ -120,11 +162,27 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			public function ok():void {
-				if (inputList.selectedItem && inputList.selectedItem.hasOwnProperty("uris")) {
-					dispatchEvent(new InputSelectionEvent(InputSelectionEvent.INPUTSELECTION, _inputIndex, inputList.selectedItem));
-					PopUpManager.removePopUp(this);
+				
+				okObject(inputList.selectedItem);
+				
+			}
+			
+			private function okObject(selectedItem:Object):void {
+				if (autoComplete == null) {
+					if (selectedItem && selectedItem.hasOwnProperty("uris")) {
+						dispatchEvent(new InputSelectionEvent(InputSelectionEvent.INPUTSELECTION, _inputIndex, selectedItem));
+						PopUpManager.removePopUp(this);
+					}else {
+						Alert.show("You have to select a valid resource from list", "No valid resource selected!", Alert.OK);
+					}
 				}else {
-					Alert.show("You have to select a valid resource from list", "No valid resource selected!", Alert.OK);
+					if (selectedItem && selectedItem.hasOwnProperty("uris")) {
+						autoComplete.selectedItem = selectedItem;
+						autoComplete.validateNow();
+						PopUpManager.removePopUp(this);
+					}else {
+						Alert.show("You have to select a valid resource from list", "No valid resource selected!", Alert.OK);
+					}
 				}
 			}
 			
@@ -160,12 +218,22 @@ You should have received a copy of the GNU General Public License along with thi
 				return output;
 			}
 			
+			private function directInput():void {
+				var direct:DirectInput = PopUpManager.createPopUp(this, DirectInput, true) as DirectInput;
+				direct.addEventListener("DirectInputResult", handleDirectInput);
+			}
+			
+			private function handleDirectInput(event:ResultEvent):void {
+				okObject(event.result);
+			}
+			
+			
 		]]>
 	</mx:Script>
 	
 	
 	<mx:VBox width="100%" height="100%">
-		<mx:TextArea id="textArea" width="100%" wordWrap="true" editable="false" selectable="false" borderStyle="none"/>
+		<utils:DynamicTextArea id="textArea" text="{msgText}" width="100%" wordWrap="true" editable="false" selectable="false" borderStyle="none"/>
 		
 		<mx:TextInput id="textInput" width="100%" change="{inputChanged(event);}" keyDown="{newKeyDownHandler(event);}" />
 		
@@ -176,8 +244,9 @@ You should have received a copy of the GNU General Public License along with thi
 				<!-- from inputList   itemRollOver="showTooltip(event)" itemRollOut="destroyTooltip(event)"-->
 		</mx:VDividedBox>
 		
-		
 		<mx:HBox horizontalAlign="right" width="100%">
+			<mx:Button id="directButton" label="Direct Input" click="directInput();" />
+			<mx:Spacer width="100%" />
 			<mx:Button id="okButton" label="Select" click="{ok();}" />
 			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
 		</mx:HBox>

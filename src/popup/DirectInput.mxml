@@ -12,24 +12,53 @@ You should have received a copy of the GNU General Public License along with thi
 
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 				xmlns:local="*"
-				paddingRight="0" paddingLeft="0"
-				width="400" height="460" borderAlpha="0.7" creationComplete="{init();}" >
+				paddingRight="0" paddingLeft="0" paddingBottom="0"
+				width="400" height="460" borderAlpha="1.0" creationComplete="{init();}" 
+				title="Enter Resource URI">
 	
 	<mx:Script>
 		<![CDATA[
 			
+			import flash.events.Event;
 			import graphElements.Element;
 			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
 			
 			private function init():void {
+				callLater(PopUpManager.centerPopUp, [this]);
 				
+				
+			}
+			
+			private function validResourceHandler(event:Event):void {
+				if (selectedElement != null) {
+					
+					if (selectedElement.isValidResource) {
+						okButton.enabled = true;
+					}else {
+						okButton.enabled = false;
+					}
+					
+				}
 			}
 			
 			[Bindable]
 			public var resourceURI:String = ""; 
 			
-			[Bindable]
-			public var selectedElement:Element = null;
+			private var _selectedElement:Element = null;
+			
+			[Bindable(event="selectedElementChanged")]
+			public function get selectedElement():Element {
+				return _selectedElement;
+			}
+			
+			public function set selectedElement(value:Element):void {
+				_selectedElement = value;
+				if (_selectedElement!= null) {
+					_selectedElement.addEventListener("isValidResourceChanged", validResourceHandler);
+				}
+				dispatchEvent(new Event("selectedElementChanged"));
+			}
 			
 			public function validate():void {
 				resourceURI = inURI.text;
@@ -38,6 +67,14 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			
 			public function ok():void {
+				if (selectedElement) {
+					var result:Object = new Object();
+					result.label = selectedElement.rdfLabel;
+					result.uris = new Array(selectedElement.resourceURI);
+					dispatchEvent(new ResultEvent("DirectInputResult", false, true, result));
+					
+					cancel();
+				}
 				
 			}
 			
@@ -49,22 +86,21 @@ You should have received a copy of the GNU General Public License along with thi
 		]]>
 	</mx:Script>
 	
-	<mx:VBox width="100%" height="80" horizontalAlign="right">
-		<mx:Form width="100%" paddingBottom="0">
+	<mx:VBox width="100%" height="80" horizontalAlign="right" paddingLeft="0" paddingRight="0">
+		<mx:Form width="100%" paddingBottom="0" paddingLeft="4" paddingRight="4">
 			<mx:FormItem width="100%" label="Resource URI:">
 				<mx:VBox width="100%" horizontalAlign="right">
-					<mx:TextInput id="inURI" width="100%" text="{resourceURI}" />
+					<mx:TextInput id="inURI" width="100%" text="{resourceURI}" enter="validate()" />
 					<mx:Button label="validate" click="validate()" />
 				</mx:VBox>
 			</mx:FormItem>
 		</mx:Form>
-		
 	</mx:VBox>
-	<local:InfoBox id="infoBox" height="280" findRelationPanel="{this}" selectedElement="{selectedElement}"/>
+	<local:InfoBox id="infoBox" height="290" findRelationPanel="{this}" selectedElement="{selectedElement}"/>
 	<mx:Spacer height="100%" />
-	<mx:HBox width="100%" paddingRight="10">
+	<mx:HBox width="100%" paddingRight="4" paddingBottom="4">
 		<mx:Spacer width="100%" />
-		<mx:Button id="okButton" label="OK" />
-		<mx:Button id="cancelButton" label="Cancel" click="cancel();" />
+		<mx:Button id="okButton" label="use" click="ok();" enabled="false" />
+		<mx:Button id="cancelButton" label="cancel" click="cancel();" />
 	</mx:HBox>
 </mx:TitleWindow>

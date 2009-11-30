@@ -70,7 +70,6 @@ import mx.core.Application;
 import mx.managers.PopUpManager;
 import mx.rpc.events.ResultEvent;
 
-import popup.EditSearchInput;
 import popup.ExpertSettings;
 import popup.Infos;
 import popup.InputDisambiguation;
@@ -1624,6 +1623,7 @@ private function findRelationsImmediately():void {
 						pop.inputIndex = j;
 						pop.dataProvider = (inputField[j] as AutoComplete).dataProvider;
 						pop.inputText = (inputField[j] as AutoComplete).searchText;
+						pop.msgText = "Your input is not clear.\nPlease select a resource from the list or check your input for spelling mistakes.";
 						pop.addEventListener(InputSelectionEvent.INPUTSELECTION, inputSelectionWindowHandler);
 						break;
 					}
@@ -1851,7 +1851,7 @@ public function selectedItemClicked(event:Event):void {
 		var ac:AutoComplete = event.currentTarget as AutoComplete;
 		if (ac.selectedItem) {
 			var si:Object = ac.selectedItem;
-			var edit:EditSearchInput = PopUpManager.createPopUp(Application.application as DisplayObject, EditSearchInput, true) as EditSearchInput;
+			var edit:InputSelection = PopUpManager.createPopUp(Application.application as DisplayObject, InputSelection, true) as InputSelection;
 			edit.inputText = si.label;
 			edit.autoComplete = ac;
 			edit.dataProvider = ac.dataProvider;
