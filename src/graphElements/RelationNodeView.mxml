@@ -80,7 +80,7 @@ You should have received a copy of the GNU General Public License along with thi
 				}*/
 				for each(var p:Path in data.relation.paths) {
 					if (p.isHighlighted) {
-						return 0xFF0000;
+						return 0xD2001E; // 0xFF0000;
 					}
 				}
 				//default

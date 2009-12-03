@@ -184,7 +184,7 @@ package graphElements {
 				//dispatchEvent(new PropertyChangedEvent(Path.HCHANGE, this, "isHighlighted", _currentUserAction));
 				
 				if (_isHighlighted) {
-					_layout.settings = { alpha: 1, color: 0xFF0000, thickness: 2 };
+					_layout.settings = { alpha: 1, color: 0xD2001E /*0xFF0000*/, thickness: 2 };
 					if(_isVisible)	app().drawPath(this, true);	//only if is visible
 				}else {
 					_layout.settings = { alpha: 1, color: 0xcccccc, thickness: 1 }; 
@@ -217,7 +217,7 @@ package graphElements {
 						}*/
 						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore	//TODO: was passiert wenn path einen Knoten enthält der level 4 ist (level 4 aber invisible) ein anderer Knoten hat aber level 3 (und level 3 ist visible)? dann wird der path invisible gestellt! das ist RICHTIG!!
 							if (r1.object.isGiven && r1.subject.isGiven) {	//direct connection!
-								maxConL = app().getConnectivityLevel("2", 2);
+								//maxConL = app().getConnectivityLevel("2", 2);
 							}else {
 								if (r1.object.connectivityLevel != null) {	//if not given
 									var conL1:ConnectivityLevel = r1.object.connectivityLevel;
@@ -262,7 +262,7 @@ package graphElements {
 						}*/
 						if (!StatusModel.getInstance().isSearching) {	//is not searching anymore
 							if (r2.object.isGiven && r2.subject.isGiven) {	//direct connection!
-								maxConL2 = app().getConnectivityLevel("2", 2);
+								//maxConL2 = app().getConnectivityLevel("2", 2);
 							}else {
 								if (r2.object.connectivityLevel != null) {	//if not given
 									var conL11:ConnectivityLevel = r2.object.connectivityLevel;
