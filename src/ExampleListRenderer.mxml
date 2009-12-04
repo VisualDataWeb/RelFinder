@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:utils="utils.*"
+	width="100%" height="100%" horizontalGap="0" paddingLeft="0" paddingRight="0"
+	creationComplete="init()"  mouseOver="over()" mouseOut="out()" click="clickHandler(event)"
+	horizontalScrollPolicy="off" verticalScrollPolicy="off"
+	implements="mx.controls.listClasses.IDropInListItemRenderer, mx.core.IFontContextComponent">
+	
+	<mx:Script>
+		<![CDATA[
+			import flash.display.Graphics;
+			import flash.events.Event;
+			import flash.events.KeyboardEvent;
+			import flash.events.MouseEvent;
+			import flash.geom.Point;
+			import flash.text.TextLineMetrics;
+			import global.GlobalString;
+			import mx.collections.ArrayCollection;
+			import mx.controls.List;
+			import mx.controls.listClasses.BaseListData;
+			import mx.controls.listClasses.ListBaseContentHolder;
+			import mx.core.Application;
+			import mx.core.IFlexModuleFactory;
+			import mx.events.FlexEvent;
+			import mx.utils.ObjectUtil;
+			import utils.Example;
+			
+			[Bindable]
+			private var _list:List;
+			
+			private function init():void
+			{
+				if (listData && listData.owner) {
+					_list = listData.owner as List;
+				}
+			}
+			
+			private function over():void {
+				
+			}
+			
+			private var _listData:BaseListData;
+			
+			[Bindable("dataChange")]
+			[Inspectable(environment="none")]
+			public function get listData():BaseListData
+			{
+				return _listData;
+			}
+			
+			public function set listData(value:BaseListData):void
+			{
+				_listData = value;
+			}
+			
+			public function get fontContext():IFlexModuleFactory
+			{
+				return moduleFactory;
+			}
+			
+			public function set fontContext(moduleFactory:IFlexModuleFactory):void
+			{
+				this.moduleFactory = moduleFactory;
+			}
+			
+			private var _data:Object;
+			
+			private var _example:Example = new Example();
+			
+			[Bindable("dataChange")]
+			override public function get data():Object {
+				return _data;
+			}
+			
+			override public function set data(value:Object):void 
+			{
+				_data = value;
+				
+				if (value is Example) {
+					_example = value as Example;
+					
+					endpointLabel.text = _example.endpointConfig.name;
+					objectLabels.text = formatText(_example.objects);
+					toolTip = formatToolTipText(_example.objects);
+				}
+				
+				dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
+				
+			}
+			
+			private function formatText(objects:ArrayCollection):String {
+				var output:String = "";
+				
+				for each (var obj:Object in objects) {
+					output += "\t\u2022 " + obj.label + "\n";
+				}
+				
+				return output;
+			}
+			
+			private function formatToolTipText(objects:ArrayCollection):String {
+				var output:String = "";
+				
+				for each (var obj:Object in objects) {
+					output += "\u2022 " + obj.label + "\n" + "\t " + obj.uri + "\n";
+				}
+				
+				return output;
+			}
+			
+			private function clickHandler(e:MouseEvent):void {
+				
+			}
+			
+			private function arrayToString(arr:Array):String {
+				var output:String = "";
+				for each(var entry:String in arr) {
+					output += entry + "\n";
+				}
+				return output;
+			}
+			
+			private function out():void {
+				
+			}
+			
+			override protected function updateDisplayList(unscaledWidth:Number,
+                                                  unscaledHeight:Number):void {
+				
+				var g:Graphics = graphics
+				
+				g.clear();
+				
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				
+				var borderColor:Number = getStyle("borderColor");
+				
+				var left:Number = 3;
+				var top:Number = 11;
+				var right:Number = unscaledWidth - 2 * left;
+				var widthLeft:Number = 10;
+				
+				var lineMetrics:TextLineMetrics;
+				lineMetrics = endpointLabel.measureText(endpointLabel.text);
+				var textWidth:Number = lineMetrics.width + 1
+				
+				g.beginFill(borderColor);
+				g.drawRect(left, top, left + widthLeft, 1);
+				g.drawRect(3 * left + widthLeft + textWidth, top, unscaledWidth - (4 * left + widthLeft + textWidth), 1);
+				g.endFill();
+				
+				endpointLabel.x = 2 * left + widthLeft;
+				objectLabels.y -= 4;
+				
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Label id="endpointLabel" width="100%" height="100%" truncateToFit="true" fontWeight="bold" fontSize="12" />
+	<utils:DynamicTextArea id="objectLabels" width="100%" height="100%"
+		selectable="false" focusEnabled="false" editable="false"
+		borderThickness="0" backgroundAlpha="0.0" 
+		horizontalScrollPolicy="off" verticalScrollPolicy="off" scroll="{null}"
+		paddingRight="2" />
+	
+</mx:VBox>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" paddingLeft="6" paddingRight="6" paddingBottom="6">
+	
+	<mx:Metadata>
+		[Event(name="loadExample")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
+			
+			[Bindable]
+			public var examples:ArrayCollection = new ArrayCollection();
+			
+			public function loadExample():void {
+				dispatchEvent(new ResultEvent("loadExample", true, true, exampleList.selectedItem));
+			}
+			
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:HBox width="100%" paddingLeft="0" paddingRight="0">
+		<mx:Spacer width="100%" />
+		<mx:Button id="loadButton" label="load" click="loadExample()" height="20" />
+	</mx:HBox>
+	
+	<mx:List id="exampleList" width="100%" height="100%" 
+		dataProvider="{examples}" itemRenderer="ExampleListRenderer"
+		variableRowHeight="true"
+		doubleClickEnabled="true" doubleClick="loadExample()" />
+	
+</mx:VBox>

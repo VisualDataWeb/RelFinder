@@ -83,6 +83,15 @@
 			return null;
 		}
 		
+		public function getSPARQLByAbbreviation(abbreviation:String):IConfig {
+			for each (var config:IConfig in sparqlConfigs) {
+				if (config.abbreviation.toLowerCase() == abbreviation.toLowerCase()) {
+					return config;
+				}
+			}
+			return null;
+		}
+		
 		private var _sparqlConfig:IConfig = new DBpediaConfig(); // Standard
 		//private var _sparqlConfig:IConfig = new LODConfig(); // funtioniert
 		//private var _sparqlConfig:IConfig = new LinkedMDBConfig(); // funktioniert noch nicht (Label)

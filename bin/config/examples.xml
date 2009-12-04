@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<data>
+	<example>
+		<endpoint>dbp</endpoint>
+		<object>
+			<label>Albert Einstein</label>
+			<uri>http://dbpedia.org/resource/Albert_Einstein</uri>
+		</object>
+		<object>
+			<label>Kurt Gödel</label>
+			<uri>http://dbpedia.org/resource/Kurt_G%C3%B6del</uri>
+		</object>
+	</example>
+	<example>
+		<endpoint>dbp</endpoint>
+		<object>
+			<label>Albert Einstein</label>
+			<uri>http://dbpedia.org/resource/Albert_Einstein</uri>
+		</object>
+		<object>
+			<label>Stuttgart</label>
+			<uri>http://dbpedia.org/resource/Stuttgart</uri>
+		</object>
+	</example>
+	<example>
+		<endpoint>dbp</endpoint>
+		<object>
+			<label>Leipzig</label>
+			<uri>http://dbpedia.org/resource/Leipzig</uri>
+		</object>
+		<object>
+			<label>Berlin</label>
+			<uri>http://dbpedia.org/resource/Berlin</uri>
+		</object>
+	</example>
+	<example>
+		<endpoint>dbp</endpoint>
+		<object>
+			<label>Duisburg</label>
+			<uri>http://dbpedia.org/resource/Duisburg</uri>
+		</object>
+		<object>
+			<label>Essen</label>
+			<uri>http://dbpedia.org/resource/Essen</uri>
+		</object>
+	</example>
+	<example>
+		<endpoint>dbp</endpoint>
+		<object>
+			<label>Fiat</label>
+			<uri>http://dbpedia.org/resource/Fiat</uri>
+		</object>
+		<object>
+			<label>Ferrari</label>
+			<uri>http://dbpedia.org/resource/Ferrari</uri>
+		</object>
+		<object>
+			<label>Maserati</label>
+			<uri>http://dbpedia.org/resource/Maserati</uri>
+		</object>
+	</example>
+	<example>
+		<endpoint>lmdb</endpoint>
+		<object>
+			<label>Kill Bill</label>
+			<uri>http://data.linkedmdb.org/resource/film/716</uri>
+		</object>
+		<object>
+			<label>Pulp Fiction</label>
+			<uri>http://data.linkedmdb.org/resource/film/77</uri>
+		</object>
+	</example>
+</data>

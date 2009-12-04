@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*"
+	xmlns:utils="utils.*"
 	paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" 
 	initialize="init()"
 	horizontalScrollPolicy="off" verticalScrollPolicy="on"
@@ -25,7 +26,6 @@
 			
 			private function selectedLanguageChangedHandler(event:Event):void {
 				langCombo.selectedIndex = Languages.getInstance().selectedLanguageIndex;
-				callLater(resizeTextArea, [abstarctText]);
 			}
 			
 			private var _selectedElement:Element = null;
@@ -63,7 +63,6 @@
 					
 				dispatchEvent(new Event("selectedElementChange"));
 				
-				callLater(resizeTextArea, [abstarctText]);
 			}
 			
 			private function openWebsite(evt:TextEvent):void {
@@ -75,18 +74,6 @@
 			
 			private function changeLang():void {
 				Languages.getInstance().selectedLanguage = langCombo.selectedItem.toString();
-				callLater(resizeTextArea, [abstarctText]);
-			}
-			
-			private function resizeTextArea(field:TextArea):void {
-				var ta_height:uint = 10;
-				field.validateNow();
-
-				for(var i:int=0; i < field .mx_internal::getTextField().numLines; i++) {
-					ta_height += field.mx_internal::getTextField().getLineMetrics(i).height;
-				}
-				
-				field.minHeight = ta_height;
 			}
 			
 			public function htmlUnescape(str:String):String {
@@ -136,7 +123,7 @@
 	<mx:VBox id="infoVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%" visible="{!selectedElement.isLoading}">
 		
 		<local:ImageView id="imageView" width="{width - 24 }" image_path="{selectedElement.imageURL}" />
-		<mx:TextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="{width - 28 }"
+		<utils:DynamicTextArea id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="100%"
 			visible="{selectedElement.abstract != 'no abstract available'}"
 			htmlText="{htmlUnescape(selectedElement.abstract)}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
 		

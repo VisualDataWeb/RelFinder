@@ -36,6 +36,8 @@ import mx.rpc.http.HTTPService;
 import mx.utils.ObjectUtil;
 import mx.utils.StringUtil;
 import utils.ConfigUtil;
+import utils.Example;
+import utils.ExampleUtil;
 
 import connection.ILookUp;
 import connection.ISPARQLResultParser;
@@ -193,10 +195,6 @@ private function setupParams():void {
 			hasObjectParameters = validateParamters(key, param[key].toString()) || hasObjectParameters;
 		}
 		
-		//if (key == "obj2") {
-			//hasObjectParameters = validateParamters(key, param[key].toString()) || hasObjectParameters;
-		//}
-		
 		if (key == "name") {
 			conf.name = Base64.decode(param[key]);
 		}
@@ -292,6 +290,30 @@ private function xmlCompleteHandler(event:Event):void {
 		
 	}else {
 		Alert.show((event as FaultEvent).fault.toString(), "Config file not found");
+	}
+	
+	callLater(setInitialized);
+	
+	loadExamples();
+}
+
+private function loadExamples():void {
+	var root:String = Application.application.url;
+	var exampleLoader:HTTPService = new HTTPService(root);
+	
+	exampleLoader.addEventListener(ResultEvent.RESULT, exampleCompleteHandler);
+	exampleLoader.addEventListener(FaultEvent.FAULT, exampleCompleteHandler);
+	exampleLoader.url = "config/examples.xml";
+	exampleLoader.send();
+}
+
+private function exampleCompleteHandler(event:Event):void {
+	if (event is ResultEvent) {
+		
+		ExampleUtil.setExamplesFromXML((event as ResultEvent).result.data);
+		
+	}else {
+		Alert.show((event as FaultEvent).fault.toString(), "Example file not found");
 	}
 	
 	callLater(setInitialized);
@@ -1027,110 +1049,10 @@ public function set selectedElement(e:Element):void {
 private function clear():void {
 	trace("clear");
 	
-	//ConnectionModel.getInstance().lastClear = new Date();
-	
-	//TODO: clear slider, clear input fields
-	
-	//TODO: Stop SPARQL queries, clear all the connection stuff! 
-	//(resultParser as SPARQLResultParser).clear();
-	
-	/**
-	 * REMOVE ALL LISTENER ----------------
-	 */
-	/*var iter:Iterator = _paths.getIterator();
-	while (iter.hasNext()) {
-		var p:Path = iter.next();
-		p.removeListener();
-	}
-	
-	var iter2:Iterator = relations.getIterator();
-	while (iter2.hasNext()) {
-		var r:Relation = iter2.next();
-		r.removeListener();
-	}
-	
-	var iter4:Iterator = elements.getIterator();
-	while (iter4.hasNext()) {
-		var e:Element = iter4.next();
-		e.removeListener();
-	}
-	
-	for each(var c:Concept in _concepts) {
-		c.removeListener();
-	}
-	
-	for each(var pL:PathLength in _pathLengths) {
-		pL.removeListener();
-	}
-	
-	for each(var rT:RelType in _relTypes) {
-		rT.removeListener();
-	}
-	
-	for each(var cL:ConnectivityLevel in _connectivityLevels) {
-		cL.removeListener();
-	}
-	
-	graph = new Graph();
-	selectedElement = null;
-	_selectedConnectivityLevel = null;
-	_selectedConcept = null;
-	_selectedPathLength = null;
-	_selectedRelType = null;
-	_selectedConnectivityLevel = null;
-	_graphIsFull = false;	//whether the graph is overcluttered already!
-	_delayedDrawing = true;
-	
-	_relationNodes = new HashMap();
-	foundNodes = new HashMap();
-	givenNodes = new HashMap();
-
-	toDrawPaths = new ArrayedQueue(1000);
-	timer.stop();
-	timer.delay = 2000;
-	StatusModel.getInstance().queueIsEmpty = true;
-	
-	//trace("before",_paths.size);
-	_connectivityLevels = new ArrayCollection();
-	_pathLengths = new ArrayCollection();
-	_paths = new HashMap();
-	//trace("after", _paths.size);
-	_relTypes = new ArrayCollection();
-	relations = new HashMap();
-	_concepts = new ArrayCollection();
-	elements = new HashMap();
-	
-	infoBox.selectedElement = null;
-	
-	
-	//_maxPathLength = 0;
-	//_selectedMinPathLength = 0;
-	//_selectedMaxPathLength = 0;
-	
-	
-	
-	myConnection = new SPARQLConnection();
-	
-	StatusModel.getInstance().clear();
-	
-	Languages.getInstance().clear();
-	
-	_selectedElement = null;	//so ist es besser!
-	
-	sparqlEndpoint = "";
-	basicGraph = "";
-	resultParser = new SPARQLResultParser();
-//	myLookUp = new LookUpSPARQL();
-	*/
 	clearGraph();
 
 	inputFields = new ArrayCollection(new Array(new String("input0"), new String("input1")));
 	autoCompleteList = new ArrayCollection();
-	
-	//pathLengthRange.thumbCount = 2;
-	//pathLengthRange.values = [0, 0];
-	//pathLengthRange.minimum = 0;
-	//pathLengthRange.maximum = 1;
 	
 	_showOptions = false;
 	
@@ -1325,17 +1247,13 @@ private function infosClickHandler(event:MouseEvent):void {
 	var pop:Infos = PopUpManager.createPopUp(this, Infos) as Infos;
 }
 
-//--AutoComplete----------------------------------------
-/*private function showExamples():void {
-	//var pop:Examples = PopUpManager.createPopUp(this, Examples) as Examples;
-	
-	
-}*/
-
 [Bindable]
 private var _examples:ArrayCollection = new ArrayCollection();
 
 private function fillExamples():void {
+	
+	_examples = new ArrayCollection();
+	
 	//example1
 	var ex1:Object = new Object();
 	
@@ -1474,6 +1392,51 @@ private function loadExample(o1:Object, o2:Object, ep:Object):void {
 		findRelations();
 	}
 
+}
+
+public function loadExample2(example:Example):void {
+	var searchPossible:Boolean = true;
+	
+	// set endpoint config
+	if (ConnectionModel.getInstance().sparqlConfig != example.endpointConfig) {
+		if (example.endpointConfig != null) {
+			Alert.show("Your selected Endpoint was set to \"" + example.endpointConfig.name + "\".\nYou can change back the endpoint to \"" + ConnectionModel.getInstance().sparqlConfig.name + "\" in the settings menu.", "Endpoint changed", Alert.OK + Alert.NONMODAL);
+			ConnectionModel.getInstance().sparqlConfig = example.endpointConfig;
+		}else {
+			searchPossible = false;
+			Alert.show("The desired endpoint \"" + example.endpointConfig.endpointURI + "\" was not specified in the configuration file.", "Endpoint not specified", Alert.OK);
+		}
+	}
+	
+	if (searchPossible) {
+		
+		tn.selectedChild = tab1;	//set current tab
+		
+		// set number of input fields
+		if (inputFields.length != example.objects.length) {
+			
+			if (inputFields.length < example.objects.length) {
+				// add fields
+				
+				while (inputFields.length < example.objects.length) {
+					addNewInputField();
+				}
+			}else {
+				// remove fields
+				while (inputFields.length > example.objects.length) {
+					removeInputField(inputFields.length - 1);
+				}
+			}
+			
+		}
+		
+		for (var i:int = 0; i < inputFields.length; i++) {
+			(inputField[i] as AutoComplete).selectedItem = (example.objects as ArrayCollection).getItemAt(i);
+			(inputField[i] as AutoComplete).validateNow();
+		}
+		
+		findRelations();
+	}
 }
 
 private function autoDisambiguate(ac:AutoComplete):Boolean {
