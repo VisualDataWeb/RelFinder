@@ -379,7 +379,13 @@ package graphElements {
 		private function sparqlResultHandler(e:SPARQLResultEvent):void {
 			var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
 			var xmlNS:Namespace = new Namespace("http://www.w3.org/XML/1998/namespace");
-			var result:XML = new XML(e.result);
+			var result:XML = new XML();
+			
+			try {
+				result = new XML(e.result);
+			}catch (error:Error) {
+				trace(error);
+			}
 			
 			var i:int = 0;
 			

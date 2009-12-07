@@ -2,6 +2,7 @@
 {
 	import connection.model.ConnectionModel;
 	import connection.model.LookUpCache;
+	import global.GlobalString;
 	
 	import mx.collections.ArrayCollection;
 	import mx.rpc.events.FaultEvent;
@@ -341,14 +342,14 @@
 					
 					if (results.length == 0) {
 						var empty:Object = new Object();
-						empty.label = "No results found";
+						empty.label = GlobalString.NORESULTS;
 						results.addItem(empty);
 					}else {
 						var separator:Object = new Object();
-						separator.label = "-----------------------------------------";
+						separator.label = GlobalString.SEPARATOR;
 						results.addItem(separator);
 						var more:Object = new Object();
-						more.label = "Search for more";
+						more.label = GlobalString.SEARCHMORE;
 						results.addItem(more);
 					}
 					
@@ -429,20 +430,20 @@
 					}
 				}
 				
+				SimilaritySort.sort(results, lastInput);
+				
 				if (results.length == 0) {
 					var empty:Object = new Object();
-					empty.label = "No results found";
+					empty.label = GlobalString.NORESULTS;
 					results.addItem(empty);
 				}else {
 					var separator:Object = new Object();
-					separator.label = "-----------------------------------------";
+					separator.label = GlobalString.SEPARATOR;
 					results.addItem(separator);
 					var more:Object = new Object();
-					more.label = "Search for more";
+					more.label = GlobalString.SEARCHMORE;
 					results.addItem(more);
 				}
-				
-				SimilaritySort.sort(results, lastInput);
 				
 				target.dataProvider = results;
 			}

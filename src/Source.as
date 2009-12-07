@@ -148,127 +148,52 @@ private var _showOptions:Boolean = false;	//flag to set filters and infos visibl
 [Embed(source="../assets/img/show.gif")]
 public var filterSign:Class;
 
+private var setupDone:Boolean = false;
 
 private function setup(): void {
 	
-	myConnection = new SPARQLConnection();
+	if (!setupDone) {
+		myConnection = new SPARQLConnection();
 	
-	StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
+		StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
+		
+		filterSort.fields = [sortByLabel];
+		_concepts.sort = filterSort;
+		_relTypes.sort = filterSort;
+		_pathLengths.sort = filterSort;
+		_connectivityLevels.sort = filterSort;
+		
+		callLater(setupParams);
+	}
 	
-	filterSort.fields = [sortByLabel];
-	_concepts.sort = filterSort;
-	_relTypes.sort = filterSort;
-	_pathLengths.sort = filterSort;
-	_connectivityLevels.sort = filterSort;
+	setupDone = true;
 	
-	callLater(setupParams);
-	
-	fillExamples();
 }
 
 private function setupParams():void {
-	var hasObjectParameters:Boolean = false;
+	
 	var param:Dictionary = getUrlParamateres();
 	
-	var conf:Config = new Config();
-	
-	if (param.hasOwnProperty("id")) {
-		var id:String = param["id"];
-		
-		for (var k:int = 0; k < ConnectionModel.getInstance().sparqlConfigs.length; k++) {
-			if ((ConnectionModel.getInstance().sparqlConfigs.getItemAt(k) as IConfig).abbreviation == id) {
-				ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(k) as IConfig;
-				
-				return;
-			}
-		}
-		
-		// Config is not in config file
-		Alert.show("Config " + id + " is not known");
+	if (param == null) {
 		return;
-		
 	}
 	
-	for (var key:String in param) {
+	var example:Example = ConfigUtil.fromURLParameter(param);
+	
+	if (example != null && example.endpointConfig != null && example.objects.length >= 2) {
 		
-		if (key.substring(0, 3) == "obj") {
-			hasObjectParameters = validateParamters(key, param[key].toString()) || hasObjectParameters;
+		var conf:IConfig = ConnectionModel.getInstance().getSPARQLByAbbreviation(example.endpointConfig.abbreviation);
+		
+		if (conf == null) {
+			ConnectionModel.getInstance().sparqlConfigs.addItem(example.endpointConfig);
+			ConnectionModel.getInstance().sparqlConfig = example.endpointConfig;
+		}else {
+			ConnectionModel.getInstance().sparqlConfig = conf;
 		}
 		
-		if (key == "name") {
-			conf.name = Base64.decode(param[key]);
-		}
-		
-		if (key == "description") {
-			conf.description = Base64.decode(param[key]);
-		}
-		
-		if (key == "endpointURI") {
-			conf.endpointURI = Base64.decode(param[key]);
-		}
-		
-		if (key == "defaultGraphURI") {
-			conf.defaultGraphURI = Base64.decode(param[key]);
-		}
-		
-		if (key == "isVirtuoso") {
-			conf.isVirtuoso = (Base64.decode(param[key]) == "true") ? true : false;
-		}
-		
-		if (key == "useProxy") {
-			conf.useProxy = (Base64.decode(param[key]) == "true") ? true : false;
-		}
-		
-		if (key == "autocompleteURIs") {
-			conf.autocompleteURIs = new ArrayCollection(Base64.decode(param[key]).split(","));
-		}
-		
-		if (key == "ignoredProperties") {
-			conf.ignoredProperties = new ArrayCollection(Base64.decode(param[key]).split(","));
-		}
-		
+		callLater(loadExample2, [example]);
 	}
 	
-	if (hasObjectParameters) {
-		
-		if (conf.endpointURI != null && conf.endpointURI != "") {
-			var found:Boolean = false;
-			
-			for (var i:int = 0; i < ConnectionModel.getInstance().sparqlConfigs.length; i++) {
-				if (!found && conf.equals(ConnectionModel.getInstance().sparqlConfigs.getItemAt(i) as IConfig)) {
-					found = true;
-					
-					ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(i) as IConfig;
-					
-				}
-			}
-			
-			if (!found) {
-				ConnectionModel.getInstance().sparqlConfigs.addItem(conf);
-				ConnectionModel.getInstance().sparqlConfig = conf;
-			}
-		}
-		
-		callLater(findRelationsImmediately);
-	}else {
-		if (conf.endpointURI != null && conf.endpointURI != "") {
-			var found2:Boolean = false;
-			
-			for (var j:int = 0; j < ConnectionModel.getInstance().sparqlConfigs.length; j++) {
-				if (!found2 && conf.equals(ConnectionModel.getInstance().sparqlConfigs.getItemAt(j) as IConfig)) {
-					found2 = true;
-					
-					ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(j) as IConfig;
-					
-				}
-			}
-			
-			if (!found2) {
-				ConnectionModel.getInstance().sparqlConfigs.addItem(conf);
-				ConnectionModel.getInstance().sparqlConfig = conf;
-			}
-		}
-	}
 }
 
 private function preInitHandler(event:Event):void {
@@ -389,9 +314,17 @@ private function decodeObjectParameter(value:String):Object {
 private function getUrlParamateres():Dictionary {
 	var urlParams:Dictionary = new Dictionary();
 	var param:Object = Application.application.parameters;
+	var count:int = 0;
+	
 	for (var key:String in param) {
 		urlParams[key] = param[key];
+		count++;
 	}
+	
+	if (count == 0) {
+		return null;
+	}
+	
 	return urlParams;
 }
 
@@ -1250,121 +1183,6 @@ private function infosClickHandler(event:MouseEvent):void {
 [Bindable]
 private var _examples:ArrayCollection = new ArrayCollection();
 
-private function fillExamples():void {
-	
-	_examples = new ArrayCollection();
-	
-	//example1
-	var ex1:Object = new Object();
-	
-	var o11:Object = new Object();
-	o11.label = "Albert Einstein";
-	ex1.o1Lab = "Albert Einstein";
-	o11.uris = new Array("http://dbpedia.org/resource/Albert_Einstein");
-	var o21:Object = new Object();
-	o21.label = "Kurt Gödel";
-	ex1.o2Lab = "Kurt Gödel";
-	o21.uris = new Array("http://dbpedia.org/resource/Kurt_G%C3%B6del");
-	var ep1:Object = new Object();
-	ep1.label = "DBpedia";
-	ex1.epLab = "DBpedia";
-	ep1.uri = "http://dbpedia.org/sparql";
-	
-	ex1.o1 = o11;
-	ex1.o2 = o21;
-	ex1.ep = ep1;
-	
-	_examples.addItem(ex1);
-	
-	//example2
-	var ex2:Object = new Object();
-	
-	var o12:Object = new Object();
-	o12.label = "Albert Einstein";
-	ex2.o1Lab = "Albert Einstein";
-	o12.uris = new Array("http://dbpedia.org/resource/Albert_Einstein");
-	var o22:Object = new Object();
-	o22.label = "Stuttgart";
-	ex2.o2Lab = "Stuttgart";
-	o22.uris = new Array("http://dbpedia.org/resource/Stuttgart");
-	var ep2:Object = new Object();
-	ep2.label = "DBpedia";
-	ex2.epLab = "DBpedia";
-	ep2.uri = "http://dbpedia.org/sparql";
-	
-	ex2.o1 = o12;
-	ex2.o2 = o22;
-	ex2.ep = ep2;
-	
-	_examples.addItem(ex2);
-	
-	//example3
-	var ex3:Object = new Object();
-	
-	var o13:Object = new Object();
-	o13.label = "Leipzig";
-	ex3.o1Lab = "Leipzig";
-	o13.uris = new Array("http://dbpedia.org/resource/Leipzig");
-	var o23:Object = new Object();
-	o23.label = "Berlin";
-	ex3.o2Lab = "Berlin";
-	o23.uris = new Array("http://dbpedia.org/resource/Berlin");
-	var ep3:Object = new Object();
-	ep3.label = "DBpedia";
-	ex3.epLab = "DBpedia";
-	ep3.uri = "http://dbpedia.org/sparql";
-	
-	ex3.o1 = o13;
-	ex3.o2 = o23;
-	ex3.ep = ep3;
-	
-	_examples.addItem(ex3);
-	
-	//example4
-	var ex4:Object = new Object();
-	
-	var o14:Object = new Object();
-	o14.label = "Duisburg";
-	ex4.o1Lab = "Duisburg";
-	o14.uris = new Array("http://dbpedia.org/resource/Duisburg");
-	var o24:Object = new Object();
-	o24.label = "Essen";
-	ex4.o2Lab = "Essen";
-	o24.uris = new Array("http://dbpedia.org/resource/Essen");
-	var ep4:Object = new Object();
-	ep4.label = "DBpedia";
-	ex4.epLab = "DBpedia";
-	ep4.uri = "http://dbpedia.org/sparql";
-	
-	ex4.o1 = o14;
-	ex4.o2 = o24;
-	ex4.ep = ep4;
-	
-	_examples.addItem(ex4);
-	
-	//example5
-	var ex5:Object = new Object();
-	
-	var o15:Object = new Object();
-	o15.label = "Kill Bill";
-	ex5.o1Lab = "Kill Bill";
-	o15.uris = new Array("http://data.linkedmdb.org/resource/film/716");
-	var o25:Object = new Object();
-	o25.label = "Pulp Fiction";
-	ex5.o2Lab = "Pulp Fiction";
-	o25.uris = new Array("http://data.linkedmdb.org/resource/film/77");
-	var ep5:Object = new Object();
-	ep5.label = "LinkedMDB";
-	ex5.epLab = "LinkedMDB";
-	ep5.uri = "http://data.linkedmdb.org";
-	
-	ex5.o1 = o15;
-	ex5.o2 = o25;
-	ex5.ep = ep5;
-	
-	_examples.addItem(ex5);
-}
-
 private function loadExample(o1:Object, o2:Object, ep:Object):void {
 	
 	var searchPossible:Boolean = true;
@@ -1395,6 +1213,11 @@ private function loadExample(o1:Object, o2:Object, ep:Object):void {
 }
 
 public function loadExample2(example:Example):void {
+	
+	if (example == null || example.endpointConfig == null) {
+		return;
+	}
+	
 	var searchPossible:Boolean = true;
 	
 	// set endpoint config
@@ -1899,7 +1722,6 @@ private function showToolTip(event:Event):void {
 }
 
 private function menuHideHandler(event:MenuEvent):void {
-	trace("hide");
 	if (ToolTipModel.getInstance().preventToolTipHide) {
 		event.preventDefault();
 		event.menu.visible = true;

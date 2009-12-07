@@ -58,6 +58,7 @@ You should have received a copy of the GNU General Public License along with thi
 			public function apply():void {
 				
 				ConnectionModel.getInstance().sparqlConfig = configList.selectedItem as IConfig;
+				ConnectionModel.getInstance().proxy = proxyInput.text;
 				
 			}
 			

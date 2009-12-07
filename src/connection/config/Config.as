@@ -3,6 +3,7 @@
 	import connection.ILookUp;
 	import connection.LookUpSPARQL;
 	import flash.events.Event;
+	import utils.ConfigUtil;
 	
 	import flash.events.EventDispatcher;
 	
@@ -41,8 +42,6 @@
 		
 		private var _linkURIs:ArrayCollection;
 		
-		//private var _minRelationLength:int = 0;
-		
 		private var _maxRelationLength:int = 2;
 		
 		public function Config(name:String = "", abbreviation:String = "", description:String = "",
@@ -64,7 +63,6 @@
 			this.abstractURIs = abstarctURIs;
 			this.imageURIs = imageURIs;
 			this.linkURIs = linkURIs;
-			//this.minRelationLength = minRelationLength;
 			this.maxRelationLength = maxRelationLength;
 			
 			this.lookUp = lookUp;
@@ -180,16 +178,6 @@
 			dispatchEvent(new Event("linkURIsChange"));
 		}
 		
-		//[Bindable(event="minRelationLengthChange")]
-		//public function get minRelationLength():int {
-			//return _minRelationLength;
-		//}
-		//
-		//public function set minRelationLength(value:int):void {
-			//_minRelationLength = value;
-			//dispatchEvent(new Event("minRelationLengthChange"));
-		//}
-		
 		[Bindable(event="maxRelationLengthChange")]
 		public function get maxRelationLength():int {
 			return _maxRelationLength;
@@ -224,30 +212,7 @@
 		}
 		
 		public function equals(config:IConfig):Boolean {
-			return (name == config.name) && (endpointURI == config.endpointURI) &&
-						(defaultGraphURI == config.defaultGraphURI) && (isVirtuoso == config.isVirtuoso) &&
-						(useProxy == config.useProxy) && arrayCollectionEquals(autocompleteURIs, config.autocompleteURIs) &&
-						arrayCollectionEquals(ignoredProperties, config.ignoredProperties);
-		}
-		
-		private function arrayCollectionEquals(ac1:ArrayCollection, ac2:ArrayCollection):Boolean {
-			if (ac1.length != ac2.length) {
-				return false;
-			}
-			
-			var a1:Array = ac1.toArray();
-			var a2:Array = ac2.toArray();
-			
-			a1.sort();
-			a2.sort();
-			
-			for (var i:int = 0; i < a1.length; i++) {
-				if ((a1[i].toString()) != (a2[i].toString())) {
-					return false;
-				}
-			}
-			
-			return true;
+			return (ConfigUtil.compare(this, config) == 0);
 		}
 		
 		override public function toString():String {
@@ -262,7 +227,6 @@
 					"AbstarctURIs: " + ((abstractURIs == null) ? "null" : abstractURIs.toArray() + " #" + abstractURIs.length) + "\n" +
 					"ImageURI: " + ((imageURIs == null) ? "null" : imageURIs.toArray() + " #" + imageURIs.length) + "\n" +
 					"LinkURI: " + ((linkURIs == null) ? "null" : linkURIs.toArray() + " #" + linkURIs.length) + "\n" +
-					//"MinRelationLength: " + minRelationLength + "\n" + 
 					"MaxRelationLenght: " + maxRelationLength;
 		}
 	}

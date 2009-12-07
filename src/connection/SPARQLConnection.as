@@ -22,6 +22,7 @@ package connection {
 	import mx.core.Application;
 	import flash.system.Security;
 	import mx.controls.Alert;
+	import mx.rpc.http.HTTPService;
 
 	
 	public class SPARQLConnection extends EventDispatcher {
@@ -131,7 +132,7 @@ package connection {
 			}
 			sparqlService.useProxy = false;
 			sparqlService.method = "GET";
-			sparqlService.contentType = contentType;
+			sparqlService.contentType = HTTPService.CONTENT_TYPE_FORM;
 			sparqlService.resultFormat = "text";
 			sparqlService.addEventListener(SPARQLResultEvent.SPARQL_RESULT, resultHandler);
 			
@@ -141,7 +142,7 @@ package connection {
 				sparqlService.addEventListener(FaultEvent.FAULT, findRelations_Fault);
 			}
 			
-			var params:Dictionary = new Dictionary();
+			var params:Object = new Object();
 			if (useDefaultGraphURI && config.defaultGraphURI != null && config.defaultGraphURI != "") {
 				params["default-graph-uri"] = config.defaultGraphURI;
 			}

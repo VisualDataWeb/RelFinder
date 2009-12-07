@@ -23,8 +23,13 @@ You should have received a copy of the GNU General Public License along with thi
 				fontFamily="Verdana" fontSize="9"
 				
 				preinitialize="preInitHandler(event)"
-				creationComplete="setup()" >
+				
+				preloader="preloader.CustomPreloader"
+				>
 					
+				<!--creationComplete="setup()"
+					preloader="preloader.CustomPreloader"-->
+				
 	<mx:Script source="Source.as"/>
 	<mx:Style source="../assets/css/styles.css"/>
 	
@@ -157,7 +162,7 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			<mx:VBox width="100%" height="100%">
 				
-				<fc:SpringGraph id="sGraph" backgroundColor="#ffffff" height="100%" width="100%" left="0" right="0" top="0" bottom="0" viewFactory="{new ViewFactory()}" edgeRenderer="{new DirectedEdge()}" dataProvider="{graph}"
+				<fc:SpringGraph id="sGraph" creationComplete="setup();" backgroundColor="#ffffff" height="100%" width="100%" left="0" right="0" top="0" bottom="0" viewFactory="{new ViewFactory()}" edgeRenderer="{new DirectedEdge()}" dataProvider="{graph}"
 					repulsionFactor="0.5">
 						
 						<fc:removeItemEffect>

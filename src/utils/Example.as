@@ -13,7 +13,7 @@
 		[Bindable]
 		public var objects:ArrayCollection = new ArrayCollection();
 		
-		public var endpointConfig:IConfig;
+		public var endpointConfig:IConfig = null;
 		
 		public function toString():String 
 		{
