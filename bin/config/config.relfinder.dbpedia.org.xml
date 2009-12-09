@@ -188,6 +188,25 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
+	<endpoint>
+      <name>Linking Open Drug Data (LODD) Side Effects</name>
+      <abbreviation>sider</abbreviation>
+      <description>Contains information on marketed drugs and their recorded adverse reactions</description>
+      <endpointURI>http://www4.wiwiss.fu-berlin.de/sider</endpointURI>
+      <isVirtuoso>false</isVirtuoso>
+      <useProxy>true</useProxy>
+      <autocompleteURIs>
+        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
+      </autocompleteURIs>
+      <abstractURIs>
+        <abstractURI>http://www4.wiwiss.fu-berlin.de/dailymed/resource/dailymed/description</abstractURI>
+      </abstractURIs>
+      <linkURIs>
+        <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
+        <linkURI>http://www.w3.org/2000/01/rdf-schema#seeAlso</linkURI>
+      </linkURIs>
+      <maxRelationLength>2</maxRelationLength>
+    </endpoint>
     <endpoint>
       <name>DBTune</name>
       <abbreviation>dbt</abbreviation>
