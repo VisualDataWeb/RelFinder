@@ -3,11 +3,13 @@
 	xmlns:utils="utils.*"
 	paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" 
 	width="{findRelationPanel.width - 20}" height="100%" 
-	resize="{imageView.calcIdealImageSize(height); }"
+	
 	visible="{selectedElement != null}" initialize="init()"
 	horizontalScrollPolicy="off" verticalScrollPolicy="on"
 	>
 	
+	<!-- resize="{imageView.calcIdealImageSize(height); }"-->
+		
 	<mx:Script>
 		<![CDATA[
 			import components.ButtonBarPanel;

@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.	
 -->
 
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="900" height="600" borderAlpha="0.7" creationComplete="{init();}" title="Query selected SPARQL-Endpoint">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="768" height="512" borderAlpha="1.0" creationComplete="{init();}" title="Query selected SPARQL-Endpoint">
 	<mx:Script>
 		<![CDATA[
 			import connection.SPARQLConnection;
@@ -24,8 +24,7 @@ You should have received a copy of the GNU General Public License along with thi
 				sparqlConnection = new SPARQLConnection();
 				
 				focusManager.setFocus(textInput);
-				this.x = 180;
-				this.y = 30;
+				PopUpManager.centerPopUp(this);
 				setStyle("borderColor", getStyle("themeColor"));
 			}
 			

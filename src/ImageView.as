@@ -10,8 +10,8 @@
 
 package  
 {
-	//import com.everythingFlex.components.ImageToolTip;
 	import connection.model.ConnectionModel;
+	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
@@ -31,23 +31,26 @@ package
 		private var imgWidth:Number;
 		private var imgHeigth:Number;
 		
-		//private var imageToolTip:ImageToolTip;
-		
 		public function ImageView() {
+			mouseChildren = false;
 			addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
 			addEventListener(MouseEvent.MOUSE_OUT,  mouseOutHandler);
+			addEventListener(MouseEvent.CLICK, mouseClickHandler);
 		}
 		
 		private function mouseOverHandler(event:MouseEvent):void {
-			trace("mouseOver");
-			
+			useHandCursor = true;
+			buttonMode = true;
 		}
 		
 		private function mouseOutHandler(event:MouseEvent):void {
-			trace("mouseOut");
+			useHandCursor = false;
+			buttonMode = false;
 		}
 		
-		
+		private function mouseClickHandler(event:MouseEvent):void {
+			scaleMaxHeight = !scaleMaxHeight;
+		}
 		
 		private function onComplete(event:Event):void {
 			imgWidth = loader.width;
@@ -55,12 +58,6 @@ package
 			scaleImageToFit();
 			centerImage();
 			addChild(loader);
-			//dispatchEvent(new Event("image_pathChange"));
-			
-			// imageToolTip
-			//imageToolTip = new ImageToolTip();
-			//imageToolTip.myImage = loader.content;
-			
 		}
 		
 		public function calcIdealImageSize(infoboxHeight:Number):void{
@@ -81,10 +78,6 @@ package
 		}
 		
 		public function set image_path(value:String):void {
-
-//			if (_image_path == value){
-//				return;
-//			}
 			
 			if (loader && contains(loader)){
 				removeChild(loader);
@@ -132,21 +125,44 @@ package
 			super.height = value;
 		}
 		
+		private var _scaleMaxHeight:Boolean = true;
+		
+		[Bindable(event="scaleMaxHeightChange")]
+		public function get scaleMaxHeight():Boolean {
+			return _scaleMaxHeight;
+		}
+		
+		public function set scaleMaxHeight(value:Boolean):void {
+			if (_scaleMaxHeight != value) {
+				_scaleMaxHeight = value;
+			}
+			
+			dispatchEvent(new Event("scaleMaxHeightChange"));
+			scaleImageToFit();
+			centerImage();
+		}
+		
 		public function scaleImageToFit():void {
 			if (loader) {
-				
 				var scalingFactor:Number = width / imgWidth;
 				
-				if (imgHeigth * scalingFactor > maxImageHeight) {
-					scalingFactor = maxImageHeight / imgHeigth;
-				}
-				
-				if (scalingFactor > 1) {
-					scalingFactor = 1;
+				if (scaleMaxHeight) {
+					
+					if (imgHeigth * scalingFactor > maxImageHeight) {
+						scalingFactor = maxImageHeight / imgHeigth;
+					}
+					
+					if (scalingFactor > 1) {
+						scalingFactor = 1;
+					}
+					
 				}
 				
 				height = (imgHeigth * scalingFactor);
 				
+				if (loader.content is Bitmap) {
+					(loader.content as Bitmap).smoothing = true;
+				}
 				loader.scaleX = scalingFactor;
 				loader.scaleY = scalingFactor;
 			}
@@ -164,11 +180,6 @@ package
 			
 			onComplete(null);
 			
-			//loader = new Loader();
-			//request = new URLRequest("../assets/img/noImage.png");
-			//loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onComplete);
-			//loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, faultHandler2);
-			//loader.load(request);
 		}
 		
 		private function faultHandler2(e:Event):void {
@@ -191,7 +202,7 @@ package
 				return false;
 			}
 			
-			return url != null && url != "" && url.search("http://") == 0;
+			return url != null && url != "";// && url.search("http://") == 0;
 		}
 	}
 }

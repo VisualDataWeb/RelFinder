@@ -104,7 +104,7 @@
 
 <data>
   <proxy>
-    <url>http://relfinder.dbpedia.org/Proxy.php</url>
+    <url>http://relfinder.dbpedia.org/Proxy2.php</url>
   </proxy>
   <endpoints>
     <defaultEndpoint>

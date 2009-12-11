@@ -107,7 +107,7 @@ package connection {
 				sparqlService.url = config.endpointURI + "/sparql?";
 			}
 			sparqlService.useProxy = false;
-			sparqlService.method = "POST";
+			sparqlService.method = "GET";
 			sparqlService.contentType = HTTPService.CONTENT_TYPE_FORM;
 			sparqlService.resultFormat = "text";
 			sparqlService.addEventListener(SPARQLResultEvent.SPARQL_RESULT, resultHandler);

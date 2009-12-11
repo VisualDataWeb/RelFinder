@@ -110,7 +110,9 @@ You should have received a copy of the GNU General Public License along with thi
 					calcWidth -= 20;
 				}
 				
-				nodeLabel.width = calcWidth;
+				if (nodeLabel != null) {
+					nodeLabel.width = calcWidth;
+				}
 			}
 			
 			private function rdfLabelChangeHandler(event:Event):void {

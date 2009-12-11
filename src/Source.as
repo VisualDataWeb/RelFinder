@@ -883,12 +883,14 @@ public function getRelation(_subject:Element, _predicate:Element, _object:Elemen
 public function getElement(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, _abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = ""):Element {
 	
 	//WARNING: This is just a workaround!! It should get index by its id instead of by its label!!
-	if (!elements.containsKey(_label.toLowerCase())) {	//_id
-		var e:Element = new Element(_label.toLowerCase()/*_id*/, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
+	//what was the reason for this workaround?
+	//changed it back to id!!! needed for autocomplete tooltip (Timo)
+	if (!elements.containsKey(_id)) {	//_id
+		var e:Element = new Element(_id, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
 		
-		elements.insert(_label.toLowerCase()/*_id*/, e);
+		elements.insert(_id, e);
 	}
-	return elements.find(_label.toLowerCase()/*_id*/);
+	return elements.find(_id);
 }
 
 public function getPath(pathId:String, pathRelations:Array):Path {
