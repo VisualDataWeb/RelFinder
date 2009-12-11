@@ -42,7 +42,7 @@ package connection {
 		//private var defaultGraphURI:String = "http://dbpedia.org";
 		
 		
-		private var contentType:String = "application/sparql-results+json";
+		private var contentType:String = "application/sparql-results+xml";
 		
 		public function get config():IConfig {
 			return ConnectionModel.getInstance().sparqlConfig;
@@ -86,30 +86,6 @@ package connection {
 				}
 			}
 			
-			/*var obj1:String = "";
-			var obj2:String = "";
-			
-			//var index:int = 0;
-			
-			if (between.length >= 2) {
-				//obj1 = decodeURI(between.getItemAt(0).toString());
-				obj1 = between.getItemAt(0).toString();
-				//obj2 = decodeURI(between.getItemAt(1).toString());
-				obj2 = between.getItemAt(1).toString();
-				
-				var queries:ArrayCollection = builder.buildQueries(obj1, obj2, maxDist, maxNum, ignoredObjects, ignoredProperties, avoidCycles);
-				
-				StatusModel.getInstance().resetNoRelationFound();
-				
-				for each (var query:Array in queries) {
-					StatusModel.getInstance().addSearch();
-					
-					executeSparqlQuery(new ArrayCollection(new Array(obj1, obj2)), query[0], onResult, resultFormat, true, null, query[1]);
-					
-				}
-				
-			}*/
-			
 		}
 		
 		public function executeSparqlQuery(sources:ArrayCollection, sparqlQueryString:String, resultHandler:Function, format:String = "XML", useDefaultGraphURI:Boolean = true, errorHandler:Function = null, parsingInformations:Object = null):SPARQLService {
@@ -131,7 +107,7 @@ package connection {
 				sparqlService.url = config.endpointURI + "/sparql?";
 			}
 			sparqlService.useProxy = false;
-			sparqlService.method = "GET";
+			sparqlService.method = "POST";
 			sparqlService.contentType = HTTPService.CONTENT_TYPE_FORM;
 			sparqlService.resultFormat = "text";
 			sparqlService.addEventListener(SPARQLResultEvent.SPARQL_RESULT, resultHandler);
@@ -150,6 +126,7 @@ package connection {
 			params["query"] = sparqlQueryString;
 			
 			sparqlService.send(params);
+			sparqlService.disconnect();
 			return sparqlService;
 		}
 		

@@ -12,8 +12,8 @@ package preloader
 		[ Embed(source="../../assets/img/RelFinder-Logo-gr.png", mimeType="application/octet-stream") ]
 		public var WelcomeScreenGraphic:Class;
 		public var timer:Timer;
-		private var fadeInRate:Number  = .01;
-		private var fadeOutRate:Number = .05;
+		private var fadeInRate:Number  = .005;
+		private var fadeOutRate:Number = .005;
 		private var timeAutoClose:int = 500;
 		public var ready:Boolean = false; 
 		
