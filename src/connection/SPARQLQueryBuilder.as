@@ -79,7 +79,7 @@ package connection
 			
 			// removing linebreaks workaround
 			if (true) { //TODO: add some value to config file
-				completeQuery = completeQuery.split("\n").join("");
+				completeQuery = completeQuery.split("\n").join(" ");
 				var old:String = "";
 				while (old != completeQuery) {
 					old = completeQuery;
