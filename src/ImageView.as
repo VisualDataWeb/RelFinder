@@ -94,8 +94,6 @@ package
 					tempURL = ConnectionModel.getInstance().proxy + "?" + tempURL;
 				}
 				
-				Security.allowDomain(URLUtil.getServerName(tempURL));
-				
 				loader = new Loader();
 				request = new URLRequest(tempURL);
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onComplete);
@@ -164,9 +162,9 @@ package
 				
 				height = (imgHeigth * scalingFactor);
 				
-				if (loader.content is Bitmap) {
-					(loader.content as Bitmap).smoothing = true;
-				}
+				//if (loader.content is Bitmap) {
+					//(loader.content as Bitmap).smoothing = true;
+				//}
 				loader.scaleX = scalingFactor;
 				loader.scaleY = scalingFactor;
 			}
