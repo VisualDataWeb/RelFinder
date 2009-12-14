@@ -24,14 +24,17 @@
 			description:
 				A description of the SPARQL endpoint which will be displayed in the settings menu.
 				
+			endpointURI:
+				The URL of the SPARQL endpoint.  RelFinder will use this URL + '/sparql?' + a Query to request this endpoint. Please keep this in mind, when you define this value.
+				
 			defaultGraphURI:
 				The default graph which should be used for the search. (normally not necessary)
 				
 			isVirtuoso:
-				If the SPARQL server is a "Virtuoso" server, you can set this value to true. In this case RelFinder will use some special Virtuoso dependent commands for the autocomplete process. If you are not sure, set it to false. This should always work.
+				If the SPARQL server is a "Virtuoso" server, you can set this value =true. In this case RelFinder will use some special Virtuoso dependent commands for the autocomplete process, which may be faster. If you are not sure, set it to false. This should always work.
 				
 			useProxy:
-				If the SPARQL server has no crossdomain.xml, set this value to true, to forward all queries to the defined proxy server.
+				If the SPARQL server has NO crossdomain.xml, set this value = true, to forward all queries to the defined proxy server.
 				
 			autocompleteURIs:
 				A list of properties which will be use for autocomplete search and input disambiguation process.
@@ -211,12 +214,21 @@
       <name>DBTune</name>
       <abbreviation>dbt</abbreviation>
       <description>Provides linked data access for the Jamendo Creative Commons music platform, the Magnatune label, the BBC John Peel sessions, the MySpace data and the AudioScrobbler data. It also hosts a version of MusicBrainz powered by D2R, and interlinked with Lingvoj and DBpedia.</description>
-      <endpointURI>http://api.talis.com/stores/bbc-backstage/services</endpointURI>
+      <endpointURI>http://bbc.openlinksw.com/sparql</endpointURI>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
       <autocompleteURIs>
-        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
+        <autocompleteURI>http://xmlns.com/foaf/0.1/name</autocompleteURI>
       </autocompleteURIs>
+      <imageURIs>
+        <imageURI>http://purl.org/ontology/mo/image</imageURI>
+      </imageURIs>
+      <linkURIs>
+        <linkURI>http://purl.org/ontology/mo/wikipedia</linkURI>
+        <linkURI>http://purl.org/ontology/mo/musicbrainz</linkURI>
+        <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
+        <linkURI>http://purl.org/ontology/mo/homepage</linkURI>
+      </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
     <endpoint>
@@ -241,6 +253,18 @@
       <abbreviation>dblp</abbreviation>
       <description>Provides bibliographic information about scientific papers. Size of the data set: 800.000 articles and 400.000 authors, approx. 15 million triples.</description>
       <endpointURI>http://www4.wiwiss.fu-berlin.de/dblp</endpointURI>
+      <isVirtuoso>false</isVirtuoso>
+      <useProxy>true</useProxy>
+      <autocompleteURIs>
+        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
+      </autocompleteURIs>
+      <maxRelationLength>2</maxRelationLength>
+    </endpoint>
+	<endpoint>
+      <name>DBLP Bibliography Database (Hannover)</name>
+      <abbreviation>dblp</abbreviation>
+      <description>Provides bibliographic information about scientific papers. Size of the data set: 800.000 articles and 400.000 authors, approx. 15 million triples.</description>
+      <endpointURI>http://dblp.l3s.de/d2r/</endpointURI>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
       <autocompleteURIs>
