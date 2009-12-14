@@ -17,7 +17,9 @@ package
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
+	import flash.system.Security;
 	import mx.managers.ToolTipManager;
+	import mx.utils.URLUtil;
 	
 	import mx.core.UIComponent;
 	
@@ -91,6 +93,8 @@ package
 				if (ConnectionModel.getInstance().sparqlConfig.useProxy) {
 					tempURL = ConnectionModel.getInstance().proxy + "?" + tempURL;
 				}
+				
+				Security.allowDomain(URLUtil.getServerName(tempURL));
 				
 				loader = new Loader();
 				request = new URLRequest(tempURL);
