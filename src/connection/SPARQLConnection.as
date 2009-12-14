@@ -49,7 +49,6 @@ package connection {
 		}
 		
 		public function SPARQLConnection(_host:String = "", _basicGraph:String = "") {
-			Security.allowDomain("http://dbpedia.org");
 			this.host = _host;
 			this.basicGraph = _basicGraph;
 		}
@@ -94,8 +93,6 @@ package connection {
 			if (resultHandler == null) {
 				resultHandler = findRelations_Result;
 			}
-			
-			var url:String = config.endpointURI + "/sparql?query=";
 			
 			var sparqlService:SPARQLService = new SPARQLService(config.endpointURI);
 			sparqlService.sources = sources;

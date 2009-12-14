@@ -217,6 +217,7 @@
 		
 		override public function toString():String {
 			return "Name: " + name + "\n" +
+					"ID: " + abbreviation + "\n" +
 					"Description: " + description  + "\n" +
 					"EndpointURI: " + endpointURI  + "\n" +
 					"DefaultGraphURI: " + defaultGraphURI  + "\n" +

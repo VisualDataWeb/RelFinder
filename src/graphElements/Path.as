@@ -203,7 +203,7 @@ package graphElements {
 		 * Checks all the requirements to the path to be visible or invisible
 		 */
 		private function checkVisibility(event:Event = null):void {
-			trace("--------checkVisibility-------------");
+			//trace("--------checkVisibility-------------");
 			if (this.isVisible) {	//check, if it should become invisible
 				var setVisible:Boolean = true;
 				var maxConL:ConnectivityLevel = null;

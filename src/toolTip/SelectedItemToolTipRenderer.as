@@ -92,7 +92,7 @@
 			
 			trace(uriIndex, data.uris[uriIndex], data.tempUri);
 			
-			if (data.hasOwnProperty("tempUri")) {
+			if (data.hasOwnProperty("tempUri") && data.tempUri != null) {
 				infoBox.selectedElement = (Application.application as Main).getElement(data.tempUri, data.tempUri, data.label);
 				showNavButtons = false;
 			}else if (data.hasOwnProperty("uris")) {

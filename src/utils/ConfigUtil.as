@@ -11,7 +11,7 @@
 	import mx.utils.ObjectUtil;
 	/**
 	 * ...
-	 * @author ...
+	 * @author Timo Stegemann
 	 */
 	public class ConfigUtil
 	{

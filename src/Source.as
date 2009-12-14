@@ -180,7 +180,7 @@ private function setupParams():void {
 	
 	var example:Example = ConfigUtil.fromURLParameter(param);
 	
-	if (example != null && example.endpointConfig != null && example.objects.length >= 2) {
+	if (example != null && example.endpointConfig != null) {
 		
 		var conf:IConfig = ConnectionModel.getInstance().getSPARQLByAbbreviation(example.endpointConfig.abbreviation);
 		
@@ -203,7 +203,7 @@ private function preInitHandler(event:Event):void {
 	
 	configLoader.addEventListener(ResultEvent.RESULT, xmlCompleteHandler);
 	configLoader.addEventListener(FaultEvent.FAULT, xmlCompleteHandler);
-	configLoader.url = "config/config.relfinder.semanticweb.org.xml"; //Config.xml";	//TODO: unterscheiden zwischen dbpedia und semanticweb.org
+	configLoader.url = "config/Config.xml";	//TODO: unterscheiden zwischen dbpedia und semanticweb.org
 	configLoader.send();
    
 }
@@ -883,14 +883,27 @@ public function getRelation(_subject:Element, _predicate:Element, _object:Elemen
 public function getElement(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, _abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = ""):Element {
 	
 	//WARNING: This is just a workaround!! It should get index by its id instead of by its label!!
+	
 	//what was the reason for this workaround?
 	//changed it back to id!!! needed for autocomplete tooltip (Timo)
-	if (!elements.containsKey(_id)) {	//_id
-		var e:Element = new Element(_id, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
-		
-		elements.insert(_id, e);
+	
+	//ok, its not working properly if predicates are indexed by its id. So we are using label, if its a predicate (Timo)
+	if (isPredicate) {
+		if (!elements.containsKey(_label)) {	//_id
+			var e:Element = new Element(_label, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
+			
+			elements.insert(_label, e);
+		}
+		return elements.find(_label);
+	}else {
+		if (!elements.containsKey(_id)) {	//_id
+			var e2:Element = new Element(_id, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
+			
+			elements.insert(_id, e2);
+		}
+		return elements.find(_id);
 	}
-	return elements.find(_id);
+	
 }
 
 public function getPath(pathId:String, pathRelations:Array):Path {
@@ -1248,19 +1261,21 @@ public function loadExample2(example:Example):void {
 				}
 			}else {
 				// remove fields
-				while (inputFields.length > example.objects.length) {
+				while (inputFields.length > example.objects.length && inputFields.length > 2) {
 					removeInputField(inputFields.length - 1);
 				}
 			}
 			
 		}
 		
-		for (var i:int = 0; i < inputFields.length; i++) {
+		for (var i:int = 0; i < example.objects.length; i++) {
 			(inputField[i] as AutoComplete).selectedItem = (example.objects as ArrayCollection).getItemAt(i);
 			(inputField[i] as AutoComplete).validateNow();
 		}
 		
-		findRelations();
+		if (example.objects.length >= 2) {
+			findRelations();
+		}
 	}
 }
 

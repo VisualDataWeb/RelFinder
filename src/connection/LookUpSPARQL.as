@@ -131,7 +131,14 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(?count) "; 
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
@@ -153,7 +160,14 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(?count) "
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
@@ -185,7 +199,15 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(?count) "; 
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
@@ -207,7 +229,15 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). FILTER (lang(?l) = 'en'). FILTER (!isLiteral(?someobj)). } ORDER BY DESC(?count) "
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " + 
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
@@ -306,6 +336,10 @@
 							var newUri:String = res.resultNS::binding.(@name == 's').resultNS::uri;
 							var newCount:int = new int(res.resultNS::binding.(@name == 'count').resultNS::literal);
 							
+							if (newUri == null || newUri == "") {
+								newUri = res.resultNS::binding.(@name == 's').resultNS::literal;
+							}
+							
 							contains = false;
 							containsLabel = false;
 							
@@ -341,9 +375,18 @@
 					}
 					
 					if (results.length == 0) {
-						var empty:Object = new Object();
-						empty.label = GlobalString.NORESULTS;
-						results.addItem(empty);
+						
+						if (result.html && result.html.length != 0) {
+							var er:Object = new Object();
+							er.label = GlobalString.ERROR;
+							er.toolTip = e.result;
+							results.addItem(er);
+						}else {
+							var empty:Object = new Object();
+							empty.label = GlobalString.NORESULTS;
+							results.addItem(empty);
+						}
+						
 					}else {
 						var separator:Object = new Object();
 						separator.label = GlobalString.SEPARATOR;
@@ -353,10 +396,14 @@
 						results.addItem(more);
 					}
 					
-					target.dataProvider = results;
-				}catch (e:Error) {
-					
+				}catch (error:Error) {
+					var err:Object = new Object();
+					err.label = GlobalString.ERROR;
+					err.toolTip = e.result;
+					results.addItem(err);
 				}
+				
+				target.dataProvider = results;
 				
 			}
 		}

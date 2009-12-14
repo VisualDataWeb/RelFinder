@@ -230,40 +230,51 @@ You should have received a copy of the GNU General Public License along with thi
 	<mx:Box width="100%" height="410">
 		<mx:Form width="100%">
 			
-			<mx:FormItem width="100%" label="Name:">
+			<mx:FormItem width="100%" label="Name:" 
+					toolTip="Name of the SPARQL endpoint" >
 				<mx:TextInput id="inName" width="100%" text="{config.name}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="ID:">
+			<mx:FormItem width="100%" label="ID:" 
+					toolTip="An abbreviation or ID for the endpoint configuration. This can be used to load RelFinder with this configuration as default (e.g. http://relfinder.semanticweb.org/RelFinder.swf?id=lod to load RelFinder with the 'Linking Open Data' configuration as default)." >
 				<mx:TextInput id="inAbbreviation" width="100%" text="{config.abbreviation}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Description:">
+			<mx:FormItem width="100%" label="Description:"
+					toolTip="A description of the SPARQL endpoint" >
 				<mx:TextArea id="inDescription" width="100%" text="{config.description}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Endpoint URI:">
+			<mx:FormItem width="100%" label="Endpoint URI:"
+					toolTip="The URL of the SPARQL endpoint.  RelFinder will use this URL + '/sparql?' + a Query to send requests to this endpoint. Please keep this in mind, when you define this value." >
 				<mx:TextInput id="inEndpointURI" width="100%" text="{config.endpointURI}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Default Graph URI:">
+			<mx:FormItem width="100%" label="Default Graph URI:"
+					toolTip="The default graph which should be used for the search. (normally not necessary)" >
 				<mx:TextInput id="inDefaultGraphURI" width="100%" text="{config.defaultGraphURI}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Is Virtuoso Server:">
+			<mx:FormItem width="100%" label="Is Virtuoso Server:"
+					toolTip="If the SPARQL server is a 'Virtuoso' server, you can set this value = true. In this case RelFinder will use some special Virtuoso dependent commands for the autocomplete process, which may be faster. If you are not sure, set it to false. This should always work." >
 				<mx:CheckBox id="inIsVirtuoso" width="100%" selected="{config.isVirtuoso}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Use Proxy:">
+			<mx:FormItem width="100%" label="Use Proxy:"
+					toolTip="If the SPARQL server has NO crossdomain.xml, set this value = true, to forward all queries to the defined proxy server.">
 				<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Max Relation Length:">
+			<mx:FormItem width="100%" label="Max Relation Length:"
+					toolTip="The maximal lenght of relations RelFinder will search for.">
 				<mx:NumericStepper id="inMaxRelationLength" minimum="0" value="{config.maxRelationLength}" />
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Autocomplete URIs:">
+			<mx:FormItem width="100%" label="Autocomplete URIs:"
+					toolTip="A list of properties which will be use for autocomplete search and input disambiguation process. In most cases you can find the resources by its label (http://www.w3.org/2000/01/rdf-schema#label)">
 				<mx:HBox width="100%" height="60">
-					<mx:List id="inAutocompleteURIs" width="100%" height="100%" dataProvider="{tempACDP}" />
+					<mx:List id="inAutocompleteURIs" width="100%" height="100%" dataProvider="{tempACDP}" 
+						toolTip="" />
 					<mx:VBox>
 						<mx:Button id="bAddACURI" label="+" click="{addACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
 						<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
 					</mx:VBox>
 				</mx:HBox>
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Ignored Properties:">
+			<mx:FormItem width="100%" label="Ignored Properties:"
+					toolTip="Properties which should not be contained in the result graph.">
 				<mx:HBox width="100%" height="100">
 					<mx:List id="inIgnoredProperties" width="100%" height="100%" dataProvider="{tempIgPropDP}" />
 					<mx:VBox>
@@ -273,7 +284,8 @@ You should have received a copy of the GNU General Public License along with thi
 				</mx:HBox>
 			</mx:FormItem>
 			
-			<mx:FormItem width="100%" label="Abstract URIs:">
+			<mx:FormItem width="100%" label="Abstract URIs:"
+					toolTip="A list of property URI of abstracts or discriptions of the resource, which should be displayed in the info boxes, if available.  If no value for the 1st entry will be found, RelFinder will try to find a value for the 2nd entry etc.">
 				<mx:HBox width="100%" height="50">
 					<mx:List id="inAbstractURIs" width="100%" height="100%" dataProvider="{tempAbDP}" />
 					<mx:VBox>
@@ -282,7 +294,8 @@ You should have received a copy of the GNU General Public License along with thi
 					</mx:VBox>
 				</mx:HBox>
 			</mx:FormItem>
-			<mx:FormItem width="100%" label="Image URIs:">
+			<mx:FormItem width="100%" label="Image URIs:"
+					toolTip="A list of property URI of images which should be displayed in the info boxes, if available. If no value for the 1st entry will be found, RelFinder will try to find a value for the 2nd entry etc.">
 				<mx:HBox width="100%" height="50">
 					<mx:List id="inImageURIs" width="100%" height="100%" dataProvider="{tempImDP}" />
 					<mx:VBox>
@@ -292,7 +305,8 @@ You should have received a copy of the GNU General Public License along with thi
 				</mx:HBox>
 			</mx:FormItem>
 			
-			<mx:FormItem width="100%" label="Link URIs:">
+			<mx:FormItem width="100%" label="Link URIs:"
+					toolTip="A list of property URI of web links which should be displayed in the info boxes, if available. All will be displayed.">
 				<mx:HBox width="100%" height="50">
 					<mx:List id="inLinkURIs" width="100%" height="100%" dataProvider="{tempLiDP}" />
 					<mx:VBox>

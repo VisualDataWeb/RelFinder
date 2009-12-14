@@ -38,8 +38,17 @@
 			}
 			
 			private function clickHandler(e:MouseEvent):void {
-				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHING || data.label.toString() == GlobalString.NORESULTS || data.label.toString() == GlobalString.SEPARATOR)) {
-					e.stopImmediatePropagation();
+				if (data.hasOwnProperty("label")){
+					
+					var match:Boolean = false;
+					
+					for each (var str:String in GlobalString.getStrings()) {
+						match = match || data.label.toString() == str;
+					}
+					
+					if (match) {
+						e.stopImmediatePropagation();
+					}
 				}
 				
 				if (data.hasOwnProperty("label") && (data.label.toString() == GlobalString.SEARCHMORE)) {
