@@ -49,6 +49,7 @@ package connection {
 		}
 		
 		public function SPARQLConnection(_host:String = "", _basicGraph:String = "") {
+			Security.allowDomain("http://dbpedia.org")
 			this.host = _host;
 			this.basicGraph = _basicGraph;
 		}
