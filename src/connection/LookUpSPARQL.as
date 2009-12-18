@@ -34,156 +34,27 @@
 			var query:String = "";
 			
 			if (ConnectionModel.getInstance().sparqlConfig.isVirtuoso) {
-				//query = createStandardBIFContainsQuery(_input, limit);
-				//sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result);
-				
 				
 				//query = createCompleteOutdegQuery(_input, 20);
-				query = createCompleteIndegQuery(_input, limit);
-				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Count_Result);
+				query = createCompleteIndegQuery(_input, limit, offset);
+				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Count_Result, "XML", true, lookUp_Fault);
 				
 				
 			}else {
-				query = createStandardREGEXQuery(_input, limit);
+				query = createStandardREGEXQuery(_input, limit, offset);
 				//query = createCompleteREGEXIndegQuery(_input, 20);
-				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result);
+				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result, "XML", true, lookUp_Fault);
 			}
 			
-		}
-		
-		public function createStandardBIFContainsQuery(input:String, limit:int = 0, offset:int = 0):String {
-			input = StringUtil.trim(input);
-			var query:String = "";
-			query = "SELECT ?s ?l WHERE { ";
-			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
-				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
-					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
-				}
-				query += ". ";
-			}else {
-				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
-			}
-			query += " ?l bif:contains \"'" + input + "'\" . } "; 
-			if (limit != 0) {
-				query += "LIMIT " + limit.toString();
-			}
-			if (offset != 0) {
-				query += "OFFSET " + offset.toString();
-			}
-			return query;
-		}
-		
-		
-//		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-//		PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-//		PREFIX dcterms:  <http://purl.org/dc/terms/>
-//		SELECT ?s  ?l  count(?s)  WHERE {
-//		{?s ?p ?o.
-//		{?s rdfs:label ?l }
-//		UNION {?s foaf:name ?l}
-//		UNION {?s dcterms:title ?l}
-//		Filter regex(?l, 'Bruce', 'i') }
-//		 }
-//		GROUP BY ?s ?l 
-		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0):String {
-			input = StringUtil.trim(input);
-			var query:String = "";
-			query = "SELECT ?s ?l WHERE { ";
-			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
-				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
-					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
-				}
-				query += ". ";
-			}else {
-				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
-			}
-			query += "FILTER regex(?l, '" + input + "', 'i')  . } "; 
-			if (limit != 0) {
-				query += "LIMIT " + limit.toString();
-			}
-			if (offset != 0) {
-				query += "OFFSET " + offset.toString();
-			}
-			return query;
-		}
-		
-		public function createCompleteOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
-			input = StringUtil.trim(input);
-			if (input.search(" ") < 0) {
-				return createSingleWordCompleteCountOutdegQuery("'" + input + "'", limit);
-			}else {
-				var newInput:String = input.split(" ").join("' and '");
-				return createMultipleWordsCompleteCountOutdegQuery("'" + newInput + "'", limit);
-			}
-		}
-		
-		private function createMultipleWordsCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
-			var query:String = "";
-			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
-			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
-				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
-					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
-				}
-				query += ". ";
-			}else {
-				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
-			}
-			query += "?l bif:contains \"" + input + "\" . " +
-						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
-						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
-						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
-						//"FILTER (lang(?l) = 'en'). " +
-						"FILTER (!isLiteral(?someobj)). " +
-						"} " +
-						"ORDER BY DESC(?count) "; 
-			if (limit != 0) {
-				query += "LIMIT " + limit.toString();
-			}
-			if (offset != 0) {
-				query += "OFFSET " + offset.toString();
-			}
-			return query;
-		}
-		
-		private function createSingleWordCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
-			var query:String = "";
-			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
-			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
-				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
-					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
-				}
-				query += ". ";
-			}else {
-				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
-			}
-			query += "?l bif:contains \"" + input + "\" . " +
-						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
-						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
-						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
-						//"FILTER (lang(?l) = 'en'). " +
-						"FILTER (!isLiteral(?someobj)). " +
-						"} " +
-						"ORDER BY DESC(?count) "; 
-			if (limit != 0) {
-				query += "LIMIT " + limit.toString();
-			}
-			if (offset != 0) {
-				query += "OFFSET " + offset.toString();
-			}
-			return query;
 		}
 		
 		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
-				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit);
+				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit, offset);
 			}else {
 				var newInput:String = input.split(" ").join("' and '");
-				return createMultipleWordsCompleteCountIndegQuery("'" + newInput + "'", limit);
+				return createMultipleWordsCompleteCountIndegQuery("'" + newInput + "'", limit, offset);
 			}
 		}
 		
@@ -209,10 +80,10 @@
 						"} " +
 						"ORDER BY DESC(?count) "; 
 			if (limit != 0) {
-				query += "LIMIT " + limit.toString();
+				query += "LIMIT " + limit.toString() + " ";
 			}
 			if (offset != 0) {
-				query += "OFFSET " + offset.toString();
+				query += "OFFSET " + offset.toString() + " ";
 			}
 			return query;
 		}
@@ -239,10 +110,138 @@
 						"} " +
 						"ORDER BY DESC(?count) "
 			if (limit != 0) {
+				query += "LIMIT " + limit.toString() + " ";
+			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString() + " ";
+			}
+			return query;
+		}
+		
+//		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+//		PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+//		PREFIX dcterms:  <http://purl.org/dc/terms/>
+//		SELECT ?s  ?l  count(?s)  WHERE {
+//		{?s ?p ?o.
+//		{?s rdfs:label ?l }
+//		UNION {?s foaf:name ?l}
+//		UNION {?s dcterms:title ?l}
+//		Filter regex(?l, 'Bruce', 'i') }
+//		 }
+//		GROUP BY ?s ?l 
+		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0):String {
+			input = StringUtil.trim(input);
+			var query:String = "";
+			query = "SELECT ?s ?l WHERE { ";
+			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
+				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
+					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
+				}
+				query += ". ";
+			}else {
+				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
+			}
+			query += "FILTER regex(?l, '" + input + "', 'i'). " +
+						//"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (!isLiteral(?someobj)). " +
+						"} "; 
+			if (limit != 0) {
+				query += "LIMIT " + limit.toString() + " ";
+			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString() + " ";
+			}
+			return query;
+		}
+		
+		public function createStandardBIFContainsQuery(input:String, limit:int = 0, offset:int = 0):String {
+			input = StringUtil.trim(input);
+			var query:String = "";
+			query = "SELECT ?s ?l WHERE { ";
+			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
+				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
+					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
+				}
+				query += ". ";
+			}else {
+				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
+			}
+			query += " ?l bif:contains \"'" + input + "'\" . } "; 
+			if (limit != 0) {
 				query += "LIMIT " + limit.toString();
 			}
 			if (offset != 0) {
 				query += "OFFSET " + offset.toString();
+			}
+			return query;
+		}
+		
+		public function createCompleteOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
+			input = StringUtil.trim(input);
+			if (input.search(" ") < 0) {
+				return createSingleWordCompleteCountOutdegQuery("'" + input + "'", limit, offset);
+			}else {
+				var newInput:String = input.split(" ").join("' and '");
+				return createMultipleWordsCompleteCountOutdegQuery("'" + newInput + "'", limit, offset);
+			}
+		}
+		
+		private function createMultipleWordsCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
+			var query:String = "";
+			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
+			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
+				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
+					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
+				}
+				query += ". ";
+			}else {
+				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
+			}
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "; 
+			if (limit != 0) {
+				query += "LIMIT " + limit.toString() + " ";
+			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString() + " ";
+			}
+			return query;
+		}
+		
+		private function createSingleWordCompleteCountOutdegQuery(input:String, limit:int = 0, offset:int = 0):String {
+			var query:String = "";
+			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
+			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
+				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
+					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
+				}
+				query += ". ";
+			}else {
+				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
+			}
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						//"FILTER (lang(?l) = 'en'). " +
+						"FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) "; 
+			if (limit != 0) {
+				query += "LIMIT " + limit.toString() + " ";
+			}
+			if (offset != 0) {
+				query += "OFFSET " + offset.toString() + " ";
 			}
 			return query;
 		}
@@ -376,7 +375,7 @@
 					
 					if (results.length == 0) {
 						
-						if (result.html && result.html.length != 0) {
+						if (result.html && result.html.length != undefined ) {
 							var er:Object = new Object();
 							er.label = GlobalString.ERROR;
 							er.toolTip = e.result;
@@ -498,6 +497,12 @@
 		}
 		
 		public function lookUp_Fault(e:FaultEvent):void {
+			var results:ArrayCollection = new ArrayCollection();
+			var er:Object = new Object();
+			er.label = GlobalString.ERROR;
+			er.toolTip = e.message.toString();
+			results.addItem(er);
+			target.dataProvider = results;
 			trace("lookUp_Fault: " + e.message.toString());
 		}
 		

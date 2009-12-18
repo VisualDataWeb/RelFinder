@@ -11,7 +11,8 @@ You should have received a copy of the GNU General Public License along with thi
 -->
 
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-				xmlns:utils="utils.*" width="300" height="400" borderAlpha="1.0" creationComplete="{init();}">
+				xmlns:utils="utils.*"
+				width="300" height="400" borderAlpha="1.0" creationComplete="{init();}">
 	<mx:Script>
 		<![CDATA[
 			import com.hillelcoren.components.AutoComplete;
@@ -43,7 +44,10 @@ You should have received a copy of the GNU General Public License along with thi
 				this.x = 180;
 				this.y = 30;
 				setStyle("borderColor", getStyle("themeColor"));
+				
 				addEventListener("dpChange", dpChangeHandler);
+				addEventListener("offsetIndexChange", offsetIndexChangeHandler);
+				
 				textInput.setSelection(textInput.text.length, textInput.text.length);
 				
 				
@@ -53,12 +57,37 @@ You should have received a copy of the GNU General Public License along with thi
 					_dataProvider = new ArrayCollection();
 				}
 				
-				if (_dataProvider.length == 0 || _dataProvider.getItemAt(0) == null || _dataProvider.getItemAt(0).label.toString() == GlobalString.SEARCHING) {
-					trace("start new search");
-					inputChanged(new Event("inputChange"));
+				inputChanged(new Event("inputChange"));
+				
+				//if (_dataProvider.length == 0 || _dataProvider.getItemAt(0) == null || _dataProvider.getItemAt(0).label.toString() == GlobalString.SEARCHING) {
+					//trace("start new search");
+					//inputChanged(new Event("inputChange"));
+				//}
+			}
+			
+			protected var offset:int = 8;
+			
+			private var _offsetIndex:int = 0;
+			
+			[Bindable(event="offsetIndexChange")]
+			protected function get offsetIndex():int {
+				return _offsetIndex;
+			}
+			
+			protected function set offsetIndex(value:int):void {
+				if (value < 0) {
+					value = 0;
+				}
+				
+				if (value != _offsetIndex) {
+					_offsetIndex = value;
+					dispatchEvent(new Event("offsetIndexChange"));
 				}
 			}
 			
+			protected function offsetIndexChangeHandler(event:Event):void {
+				inputChanged(event);
+			}
 			
 			private var _msgText:String = "";
 			
@@ -146,14 +175,13 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			public function inputChanged(event:Event):void {
-				
 				if (textInput.text.length > 1) {
 					var results:ArrayCollection = new ArrayCollection();
 					var searching:Object = new Object();
 					searching.label = GlobalString.SEARCHING;
 					results.addItem(searching);
 					dataProvider = results;
-					ConnectionModel.getInstance().sparqlConfig.lookUp.run(textInput.text, this, 50);
+					ConnectionModel.getInstance().sparqlConfig.lookUp.run(textInput.text, this, offset, offset * offsetIndex);
 				}
 			}
 			
@@ -227,6 +255,26 @@ You should have received a copy of the GNU General Public License along with thi
 				okObject(event.result);
 			}
 			
+			protected function offsetFirstHandler():void {
+				offsetIndex = 0;
+			}
+			
+			protected function offsetPreviousHandler():void {
+				offsetIndex = offsetIndex - 1;
+			}
+			
+			protected function offsetNextHandler():void {
+				offsetIndex = offsetIndex + 1;
+			}
+			
+			protected function offsetInputHandler():void {
+				try {
+					var offset:int = new int(offsetInput.text);
+					offsetIndex = offset;
+				}catch (error:Error) {
+					trace(error);
+				}
+			}
 			
 		]]>
 	</mx:Script>
@@ -244,11 +292,21 @@ You should have received a copy of the GNU General Public License along with thi
 				<!-- from inputList   itemRollOver="showTooltip(event)" itemRollOut="destroyTooltip(event)"-->
 		</mx:VDividedBox>
 		
-		<mx:HBox horizontalAlign="right" width="100%">
-			<mx:Button id="directButton" label="Direct Input" click="directInput();" />
+		<mx:HBox width="100%" >
+			<mx:Button id="directButton" label="direct input" click="directInput();" height="20" paddingLeft="6" paddingRight="6"/>
 			<mx:Spacer width="100%" />
-			<mx:Button id="okButton" label="Select" click="{ok();}" />
-			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
+			<mx:Button id="offsetFirst" label="|&lt;&lt;" click="offsetFirstHandler()" height="20" width="28" paddingLeft="0" paddingRight="0"
+				toolTip="find first" />
+			<mx:Button id="offsetPrevious" label="&lt;" click="offsetPreviousHandler()" height="20" width="34" paddingLeft="0" paddingRight="0"
+				toolTip="find previous" />
+			<mx:TextInput id="offsetInput" text="{offsetIndex}" height="20" width="28" change="offsetInputHandler()" />
+			<mx:Button id="offsetNext" label="&gt;" click="offsetNextHandler()" height="20" width="28" paddingLeft="0" paddingRight="0"
+				toolTip="find next" />
+		</mx:HBox>
+		
+		<mx:HBox horizontalAlign="right" width="100%">
+			<mx:Button id="okButton" label="select" click="{ok();}" height="20" paddingLeft="6" paddingRight="6"/>
+			<mx:Button id="cancelButton" label="cancel" click="{cancel();}" height="20" paddingLeft="6" paddingRight="6"/>
 		</mx:HBox>
 	</mx:VBox>
 </mx:TitleWindow>
