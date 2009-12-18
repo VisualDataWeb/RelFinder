@@ -22,6 +22,7 @@ import global.GlobalString;
 import global.ToolTipModel;
 import mx.collections.Sort;
 import mx.collections.SortField;
+import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.controls.Menu;
@@ -157,6 +158,8 @@ private function setup(): void {
 	
 		StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
 		
+		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelHandler);
+		
 		filterSort.fields = [sortByLabel];
 		_concepts.sort = filterSort;
 		_relTypes.sort = filterSort;
@@ -168,6 +171,22 @@ private function setup(): void {
 	
 	setupDone = true;
 	
+}
+
+private var wheelScale:Number = 1.0;
+
+private function mouseWheelHandler(event:MouseEvent):void {
+	if (event.delta > 0) {
+		//wheelScale = wheelScale * 1.05;
+		sGraph.repulsionFactor = sGraph.repulsionFactor * 1.05;
+	}else {
+		//wheelScale = wheelScale / 1.05;
+		sGraph.repulsionFactor= sGraph.repulsionFactor / 1.05;
+	}
+	
+	//sGraph.scaleX = wheelScale;
+	//sGraph.scaleY = wheelScale;
+	trace(sGraph.repulsionFactor);
 }
 
 private function setupParams():void {
