@@ -47,7 +47,7 @@ Heim, P.; Hellmann, S.; Lehmann, J.; Lohmann, S.; Stegemann, T.: <font color="#0
             </mx:htmlText>
         </mx:Text>
 		<mx:HBox horizontalAlign="right" width="100%">
-			<mx:Button id="cButton" label="Close" click="{close();}" />
+			<mx:Button id="cButton" label="close" click="{close();}"  height="20" paddingLeft="6" paddingRight="6"/>
 		</mx:HBox>
 	</mx:VBox>
 </mx:TitleWindow>

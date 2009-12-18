@@ -86,7 +86,12 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			protected function offsetIndexChangeHandler(event:Event):void {
-				inputChanged(event);
+				var results:ArrayCollection = new ArrayCollection();
+				var searching:Object = new Object();
+				searching.label = GlobalString.SEARCHING;
+				results.addItem(searching);
+				dataProvider = results;
+				ConnectionModel.getInstance().sparqlConfig.lookUp.run(textInput.text, this, offset, offset * offsetIndex);
 			}
 			
 			private var _msgText:String = "";
@@ -176,6 +181,7 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			public function inputChanged(event:Event):void {
 				if (textInput.text.length > 1) {
+					offsetIndex = 0;
 					var results:ArrayCollection = new ArrayCollection();
 					var searching:Object = new Object();
 					searching.label = GlobalString.SEARCHING;

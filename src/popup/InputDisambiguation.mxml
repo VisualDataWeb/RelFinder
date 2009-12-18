@@ -42,7 +42,7 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			public function set inputIndex(index:int):void {
 				_inputIndex = index;
-				this.title = "Input " + (_inputIndex + 1) + " is not unique";
+				this.title = "input " + (_inputIndex + 1) + " is not unique";
 				dispatchEvent(new Event("indexChange"));
 			}
 			
@@ -100,8 +100,8 @@ You should have received a copy of the GNU General Public License along with thi
 		
 		
 		<mx:HBox horizontalAlign="right" width="100%">
-			<mx:Button id="okButton" label="OK" click="{ok();}" />
-			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
+			<mx:Button id="okButton" label="ok" click="{ok();}" height="20" paddingLeft="6" paddingRight="6" />
+			<mx:Button id="cancelButton" label="cancel" click="{cancel();}" height="20" paddingLeft="6" paddingRight="6" />
 		</mx:HBox>
 	</mx:VBox>
 </mx:TitleWindow>

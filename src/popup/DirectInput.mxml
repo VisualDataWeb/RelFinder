@@ -100,7 +100,7 @@ You should have received a copy of the GNU General Public License along with thi
 	<mx:Spacer height="100%" />
 	<mx:HBox width="100%" paddingRight="4" paddingBottom="4">
 		<mx:Spacer width="100%" />
-		<mx:Button id="okButton" label="use" click="ok();" enabled="false" />
-		<mx:Button id="cancelButton" label="cancel" click="cancel();" />
+		<mx:Button id="okButton" label="use" click="ok();" enabled="false" height="20" paddingLeft="6" paddingRight="6" />
+		<mx:Button id="cancelButton" label="cancel" click="cancel();" height="20" paddingLeft="6" paddingRight="6" />
 	</mx:HBox>
 </mx:TitleWindow>

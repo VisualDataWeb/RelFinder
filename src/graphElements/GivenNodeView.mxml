@@ -32,9 +32,10 @@ You should have received a copy of the GNU General Public License along with thi
 			borderThickness="{getBorderThickness(app().currentElement)}"
 		-->
 		
-		<mx:HBox id="content" height="100%" width="100%" horizontalGap="0" verticalAlign="middle" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
-			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8"/>
-			<mx:Label id="nodeLabel" text="{data.element.rdfLabel}" width="120" fontSize="12" />
+		<mx:HBox id="content" height="100%" width="100%" horizontalGap="0" verticalAlign="middle"
+				paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8" useHandCursor="true" buttonMode="true" mouseChildren="false"/>
+			<mx:Label id="nodeLabel" text="{data.element.rdfLabel}" width="120" fontSize="12" useHandCursor="true" buttonMode="true" mouseChildren="false"/>
 			<!-- <mx:Button id="pinButton" width="10" height="10" styleName="pinBtn" />
 			<mx:Spacer width="2"/>
 			<mx:Button id="closeButton" width="10" height="10" styleName="closeBtn" /> -->

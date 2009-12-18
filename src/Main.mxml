@@ -135,26 +135,6 @@ You should have received a copy of the GNU General Public License along with thi
 						
 					</mx:VBox>
 					
-					<!--
-					<mx:VBox id="tab2" label="examples" width="100%">
-						<mx:Form width="100%" paddingLeft="6" paddingRight="6" paddingTop="0" paddingBottom="0">
-							<mx:DataGrid id="dgExamples" width="100%" rowCount="10" dataProvider="{_examples}" doubleClickEnabled="true" doubleClick="loadExample(dgExamples.selectedItem.o1, dgExamples.selectedItem.o2, dgExamples.selectedItem.ep)" >
-								<mx:columns>
-									<mx:DataGridColumn dataField="o1Lab" headerText="(1)"> </mx:DataGridColumn>
-									<mx:DataGridColumn dataField="o2Lab" headerText="(2)"> </mx:DataGridColumn>
-									<mx:DataGridColumn dataField="epLab" headerText="in"> </mx:DataGridColumn>
-								</mx:columns>
-							</mx:DataGrid>
-							<mx:FormItem width="100%">
-								<mx:HBox width="100%" paddingLeft="0" paddingRight="0">
-									<mx:Spacer width="100%" />
-									<mx:Button id="loadButton" label="load"  height="20" click="loadExample(dgExamples.selectedItem.o1, dgExamples.selectedItem.o2, dgExamples.selectedItem.ep)"/>
-								</mx:HBox>
-							</mx:FormItem>
-						</mx:Form>
-					</mx:VBox>
-					-->
-					
 					<local:ExampleBox id="tabExamples" label="examples" width="100%" loadExample="loadExample2((event as ResultEvent).result as Example)" />
 					
 				</mx:TabNavigator>
@@ -163,7 +143,7 @@ You should have received a copy of the GNU General Public License along with thi
 			<mx:VBox width="100%" height="100%">
 				
 				<fc:SpringGraph id="sGraph" creationComplete="setup();" backgroundColor="#ffffff" height="100%" width="100%" left="0" right="0" top="0" bottom="0" viewFactory="{new ViewFactory()}" edgeRenderer="{new DirectedEdge()}" dataProvider="{graph}"
-					repulsionFactor="0.5">
+					repulsionFactor="0.5" >
 						
 						<fc:removeItemEffect>
 							<mx:Fade alphaFrom="1" alphaTo="0" duration="1000"/>				
@@ -187,6 +167,8 @@ You should have received a copy of the GNU General Public License along with thi
 			<mx:Text id="statusLabel" text="Status: Idle" selectable="false" fontWeight="bold"/>
 			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8"/>
 	</mx:ApplicationControlBar>
-	<mx:Button id="stopDelayed" label="stop delayed graph building" y="{statusBar.height + 10 + 5}" x="{mainVBox.width - stopDelayed.width - 10}" visible="{!(!la.isRotating() || !delayedDrawing)}" click="{delayedDrawing = false;}" />
+	<mx:Button id="stopDelayed" label="stop delayed graph building" y="{statusBar.height + 10 + 5}" x="{mainVBox.width - stopDelayed.width - 10}"
+			visible="{!(!la.isRotating() || !delayedDrawing)}" click="{delayedDrawing = false;}" 
+			height="20" paddingLeft="6" paddingRight="6" />
 	
 </mx:Application>

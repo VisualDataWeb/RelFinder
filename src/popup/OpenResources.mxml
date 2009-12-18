@@ -94,8 +94,8 @@ You should have received a copy of the GNU General Public License along with thi
 				doubleClickEnabled="true" itemDoubleClick="{ok();}"  />
 		
 		<mx:HBox horizontalAlign="right" width="100%">
-			<mx:Button id="okButton" label="Open" click="{ok();}" />
-			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
+			<mx:Button id="okButton" label="open" click="{ok();}" height="20" paddingLeft="6" paddingRight="6" />
+			<mx:Button id="cancelButton" label="cancel" click="{cancel();}" height="20" paddingLeft="6" paddingRight="6" />
 		</mx:HBox>
 	</mx:VBox>
 </mx:TitleWindow>

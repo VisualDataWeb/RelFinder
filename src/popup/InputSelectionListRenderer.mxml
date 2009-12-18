@@ -84,7 +84,7 @@
 			}
 			
 			private function selectionChangeHandler(event:MouseEvent):void {
-				setStyle("backgroundColor", getColor(mouseOver));
+				//setStyle("backgroundColor", getColor(mouseOver));
 			}
 			
 			public function get fontContext():IFlexModuleFactory
@@ -156,13 +156,13 @@
 			
 			private function mouseOverHandler(event:Event):void {
 				mouseOver = true;
-				setStyle("backgroundColor", getColor(mouseOver));
+				//setStyle("backgroundColor", getColor(mouseOver));
 				dispatchEvent(new Event("showButton"));
 			}
 			
 			private function mouseOutHandler(event:Event):void {
 				mouseOver = false;
-				setStyle("backgroundColor", getColor(mouseOver));
+				//setStyle("backgroundColor", getColor(mouseOver));
 				dispatchEvent(new Event("showButton"));
 			}
 			
@@ -227,6 +227,7 @@
 			
 		]]>
 	</mx:Script>
+	
 	<mx:Label id="rendererLabel" width="{calcWidth()}" height="100%" truncateToFit="true" htmlText="{ defaultDropDownLabelFunction( data ) }" />
 	<mx:Button id="openResourceButton" toolTip="Open resource in browser" icon="@Embed(source='../../assets/img/16-globe.png')"
 		width="20" height="20" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0"

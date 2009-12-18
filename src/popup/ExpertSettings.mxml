@@ -147,17 +147,18 @@ You should have received a copy of the GNU General Public License along with thi
 		<mx:VBox width="100%" height="100%" id="configBox">
 			
 			<mx:Form id="proxyForm" width="100%" height="100%">
-				<mx:FormItem label="Proxy:" width="100%" height="100%">
+				<mx:FormItem label="proxy:" width="100%" height="100%">
 					<mx:HBox width="100%" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
 						<mx:TextInput id="proxyInput" width="100%" text="{ConnectionModel.getInstance().proxy}" />
-						<mx:Button id="proxyReset" label="Reset" toolTip="Reset proxy url to default proxy url from config file" click="{proxyInput.text = ConnectionModel.getInstance().defaultProxy}" />
+						<mx:Button id="proxyReset" label="reset" toolTip="Reset proxy url to default proxy url from config file" click="{proxyInput.text = ConnectionModel.getInstance().defaultProxy}" 
+								 height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
 					</mx:HBox>
 				</mx:FormItem>
 			</mx:Form>
 			
 			<mx:HRule width="100%"/>
 			<mx:HBox>
-				<mx:Label id="sel" text="Selected:" />
+				<mx:Label id="sel" text="selected:" />
 				<mx:Label id="selectedSPARQL" width="{configBox.width - 20 - sel.width}" truncateToFit="true" fontWeight="bold" fontSize="12" />
 			</mx:HBox>
 			
@@ -166,13 +167,13 @@ You should have received a copy of the GNU General Public License along with thi
 
 		</mx:VBox>
 		<mx:HBox width="100%">
-			<mx:Button id="createConfig" label="Create" click="{create();}" />
-			<mx:Button id="saveConfigs" label="Save Configs" click="save(event);" />
-			<mx:Button id="loadConfigs" label="Load Configs" click="load(event);" />
-			<mx:Button id="queryTool" label="QueryTool" click="{openQueryTool();}" />
+			<mx:Button id="createConfig" label="create" click="{create();}"  height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
+			<mx:Button id="saveConfigs" label="save configs" click="save(event);"  height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
+			<mx:Button id="loadConfigs" label="load configs" click="load(event);"  height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
+			<mx:Button id="queryTool" label="query tool" click="{openQueryTool();}"  height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
 			<mx:Spacer width="100%" />
-			<mx:Button id="okButton" label="OK" click="{ok();}" />
-			<mx:Button id="cancelButton" label="Cancel" click="{cancel();}" />
+			<mx:Button id="okButton" label="ok" click="{ok();}"  height="20" paddingLeft="6" paddingRight="6"/>
+			<mx:Button id="cancelButton" label="cancel" click="{cancel();}"  height="20" paddingLeft="6" paddingRight="6"/>
 		</mx:HBox>
 	</mx:VBox>
 </mx:TitleWindow>

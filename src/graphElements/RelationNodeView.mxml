@@ -34,8 +34,9 @@ You should have received a copy of the GNU General Public License along with thi
 		}  
 	</mx:Style>
 	
-	<mx:HBox id="myHBox" horizontalGap="0" verticalAlign="middle" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
-			<mx:Label text="{data.element.label}" maxWidth="70" toolTip="{data.element.label}" styleName="chainItemStyle" />
+	<mx:HBox id="myHBox" horizontalGap="0" verticalAlign="middle"
+			paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+		<mx:Label text="{data.element.label}" maxWidth="70" toolTip="{data.element.label}" styleName="chainItemStyle" />
 	</mx:HBox>
 	
 	<!-- <mx:VBox id="myVBox" verticalGap="0" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0"  backgroundColor="#f8f8f8" backgroundAlpha=".8" borderStyle="solid" verticalAlign="middle" borderColor="#cccccc" borderThickness="1">

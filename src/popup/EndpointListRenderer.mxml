@@ -160,11 +160,11 @@
 		]]>
 	</mx:Script>
 	
-	<mx:HBox id="hb" width="100%" paddingBottom="0" horizontalGap="0" verticalGap="0" paddingRight="5">
+	<mx:HBox id="hb" width="100%" paddingBottom="0" horizontalGap="2" verticalGap="0" paddingRight="5">
 		<mx:Label id="epNumber" text="#{getNumber()}" fontWeight="bold" fontSize="12" paddingBottom="0"  />
 		<mx:Label id="epName" width="100%" fontWeight="bold" fontSize="12" paddingBottom="0"  />
-		<mx:Button id="epRemove" label="Remove" visible="false" click="remove(event);" paddingRight="2" />
-		<mx:Button id="epEdit" label="Edit" visible="false" click="edit(event);" />
+		<mx:Button id="epRemove" label="remove" visible="false" click="remove(event);" height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
+		<mx:Button id="epEdit" label="edit" visible="false" click="edit(event);" height="20" paddingLeft="6" paddingRight="6" skin="skin.EmptyButtonSkin"/>
 	</mx:HBox>
 	
 	<utils:DynamicTextArea id="epDescription" width="100%" selectable="false" wordWrap="true"

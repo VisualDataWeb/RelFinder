@@ -266,8 +266,7 @@
 				if (textWidth > 0)
 				{
 					textField.width = labelWidth = 
-						Math.max(Math.min(viewWidth - iconWidth - horizontalGap -
-										  paddingLeft - paddingRight - closeButton.width - 2*CLOSE_BUTTON_X_OFFSET, textWidth), 0);
+						Math.max(Math.min(viewWidth - iconWidth - closeButton.width, textWidth), 0);
 				}
 				else
 				{
@@ -277,7 +276,7 @@
 				
 				if (textAlign == "left")
 				{
-					labelX += paddingLeft;
+					labelX += paddingLeft + iconWidth + closeButton.width;
 				}
 				else if (textAlign == "right")
 				{
@@ -287,8 +286,8 @@
 				else // "center" -- default value
 				{
 					
-					labelX += ((viewWidth - labelWidth - iconWidth - 
-                           horizontalGap - paddingLeft - paddingRight) / 2) + paddingLeft;
+					labelX += ((viewWidth - labelWidth - iconWidth + closeButton.width -
+                           horizontalGap) / 2) - 2;
 				}
 
 				if (labelPlacement == ButtonLabelPlacement.RIGHT)

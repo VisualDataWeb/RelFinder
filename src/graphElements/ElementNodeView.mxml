@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License along with thi
 	xmlns:nimer="com.mikenimer.components.datagrid.*"
 	creationComplete="setup()"
 	
-	
 	backgroundColor="#f8f8f8"
 	
 
@@ -30,7 +29,8 @@ You should have received a copy of the GNU General Public License along with thi
 			borderThickness="{getBorderThickness(app().currentElement)}"
 		-->
 		
-		<mx:HBox id="content" height="100%" width="100%" horizontalGap="0" verticalAlign="middle" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+		<mx:HBox id="content" height="100%" width="100%" horizontalGap="0" verticalAlign="middle"
+				paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
 			<mx:Label text="{data.eLabel}" width="{120 - 26}"/>
 			<mx:Button id="pinButton" width="10" height="10" styleName="pinBtn" />
 			<mx:Spacer width="2"/>
