@@ -13,19 +13,40 @@
 		
 		public static function setExamplesFromXML(xml:Object):void {
 			
-			for each (var example:Object in xml.example) {
-				var ex:Example = new Example();
-				for each(var obj:Object in (example.object as ArrayCollection)) {
+			if (xml.example is ArrayCollection) {
+				
+				for each (var example:Object in xml.example) {
+					var ex:Example = new Example();
 					
-					obj.uris = new Array(obj.uri);
+					for each(var obj:Object in (example.object as ArrayCollection)) {
+						
+						obj.uris = new Array(obj.uri);
+						
+						ex.objects.addItem(obj);
+					}
 					
-					ex.objects.addItem(obj);
+					ex.endpointConfig = ConnectionModel.getInstance().getSPARQLByAbbreviation(example.endpoint.toString());
+					
+					((Application.application as Main).tabExamples as ExampleBox).examples.addItem(ex);
 				}
 				
-				ex.endpointConfig = ConnectionModel.getInstance().getSPARQLByAbbreviation(example.endpoint.toString());
+			}else {
 				
-				((Application.application as Main).tabExamples as ExampleBox).examples.addItem(ex);
+				var ex2:Example = new Example();
+				
+				ex2.endpointConfig = ConnectionModel.getInstance().getSPARQLByAbbreviation(xml.example.endpoint.toString());
+				
+				for each(var obj2:Object in (xml.example.object as ArrayCollection)) {
+						
+					obj2.uris = new Array(obj2.uri);
+					
+					ex2.objects.addItem(obj2);
+				}
+				
+				((Application.application as Main).tabExamples as ExampleBox).examples.addItem(ex2);
+				
 			}
+			
 			
 		}
 		
