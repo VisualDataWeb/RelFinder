@@ -73,6 +73,7 @@ import mx.core.Application;
 import mx.managers.PopUpManager;
 import mx.rpc.events.ResultEvent;
 
+import popup.ErrorLog;
 import popup.ExpertSettings;
 import popup.Infos;
 import popup.InputDisambiguation;
@@ -158,7 +159,7 @@ private function setup(): void {
 	
 		StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
 		
-		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelHandler);
+		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelZoomHandler);
 		
 		filterSort.fields = [sortByLabel];
 		_concepts.sort = filterSort;
@@ -173,20 +174,27 @@ private function setup(): void {
 	
 }
 
-private var wheelScale:Number = 1.0;
 
-private function mouseWheelHandler(event:MouseEvent):void {
+
+private function mouseWheelRepulsionHandler(event:MouseEvent):void {
 	if (event.delta > 0) {
-		//wheelScale = wheelScale * 1.05;
 		sGraph.repulsionFactor = sGraph.repulsionFactor * 1.05;
 	}else {
-		//wheelScale = wheelScale / 1.05;
 		sGraph.repulsionFactor= sGraph.repulsionFactor / 1.05;
 	}
+}
+
+private var wheelScale:Number = 1.0;
+
+private function mouseWheelZoomHandler(event:MouseEvent):void {
+	if (event.delta > 0) {
+		wheelScale = wheelScale * 1.05;
+	}else {
+		wheelScale = wheelScale / 1.05;
+	}
 	
-	//sGraph.scaleX = wheelScale;
-	//sGraph.scaleY = wheelScale;
-	trace(sGraph.repulsionFactor);
+	sGraph.scaleX = wheelScale;
+	sGraph.scaleY = wheelScale;
 }
 
 private function setupParams():void {
@@ -1792,6 +1800,13 @@ private function acHBoxMouseOut(event:Event):void {
 
 private function acHBoxMouseOver(event:Event):void {
 	ToolTipManager.enabled = false;
-
-	
 }
+
+private function showErrorLog():void {
+	var log:ErrorLog = PopUpManager.createPopUp(Application.application as DisplayObject, ErrorLog, false) as ErrorLog;
+}
+
+
+
+
+

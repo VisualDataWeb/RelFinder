@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+Copyright (C) 2009 Philipp Heim, Sebastian Hellmann, Jens Lehmann, Steffen Lohmann and Timo Stegemann
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.	
+-->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+		width="600" height="100%" borderAlpha="1.0" creationComplete="{init();}"
+		title="{'send: ' + StatusModel.getInstance().searchCount + ', received: ' + StatusModel.getInstance().foundCount + ', errors: ' + StatusModel.getInstance().errorCount}"
+		>
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import connection.model.ConnectionModel;
+			import flash.display.DisplayObject;
+			import flash.events.Event;
+			import global.LoggedError;
+			import global.StatusModel;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import mx.managers.PopUpManager;
+			
+			
+			private function init():void {
+				callLater(PopUpManager.centerPopUp, [this]);
+				
+				logList.dataProvider = StatusModel.getInstance().errorLog;
+			}
+			
+			
+			public function apply():void {
+				
+			}
+			
+			public function ok():void {
+				
+				apply();
+				
+				cancel();
+			}
+			
+			public function cancel():void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Box width="100%" height="500">
+		<mx:List id="logList" width="100%" height="100%" variableRowHeight="true"
+				itemRenderer="popup.ErrorLogRenderer" alternatingItemColors="[#ffffff, #e7e7e7]"/>
+	</mx:Box>
+	
+	<mx:HBox horizontalAlign="right" width="100%">
+		<mx:Button id="cancelButton" label="close" click="{cancel();}" height="20" paddingLeft="6" paddingRight="6" />
+	</mx:HBox>
+	
+</mx:TitleWindow>

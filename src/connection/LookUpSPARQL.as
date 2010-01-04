@@ -3,6 +3,7 @@
 	import connection.model.ConnectionModel;
 	import connection.model.LookUpCache;
 	import global.GlobalString;
+	import global.StatusModel;
 	
 	import mx.collections.ArrayCollection;
 	import mx.rpc.events.FaultEvent;
@@ -37,12 +38,16 @@
 				
 				//query = createCompleteOutdegQuery(_input, 20);
 				query = createCompleteIndegQuery(_input, limit, offset);
+				
+				StatusModel.getInstance().addSearchLookUp();
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Count_Result, "XML", true, lookUp_Fault);
 				
 				
 			}else {
 				query = createStandardREGEXQuery(_input, limit, offset);
 				//query = createCompleteREGEXIndegQuery(_input, 20);
+				
+				StatusModel.getInstance().addSearchLookUp();
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result, "XML", true, lookUp_Fault);
 			}
 			
@@ -304,6 +309,7 @@
 		}
 		
 		public function lookUp_Count_Result(e:SPARQLResultEvent):void {
+			StatusModel.getInstance().addFoundLookUp();
 			var lastSend:Date = LookUpCache.getInstance().getLastSend(target);
 			var resultSend:Date = e.executenTime;
 			
@@ -408,6 +414,7 @@
 		}
 		
 		public function lookUp_Result(e:SPARQLResultEvent):void {
+			StatusModel.getInstance().addFoundLookUp();
 			var lastSend:Date = LookUpCache.getInstance().getLastSend(target);
 			var resultSend:Date = e.executenTime;
 			
@@ -503,7 +510,8 @@
 			er.toolTip = e.message.toString();
 			results.addItem(er);
 			target.dataProvider = results;
-			trace("lookUp_Fault: " + e.message.toString());
+			StatusModel.getInstance().addFoundLookUp();
+			StatusModel.getInstance().addErrorLookUp(e.clone());
 		}
 		
 	}

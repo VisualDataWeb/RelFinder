@@ -145,9 +145,9 @@ package connection {
 		
 		private function findRelations_Fault(e:FaultEvent):void {
 			StatusModel.getInstance().addFound();
-			StatusModel.getInstance().addError();
+			StatusModel.getInstance().addError(e.clone());
 			trace("SPARQLConnection Fault");
-			trace(e);
+			//trace(e);
 		}
 	}
 }

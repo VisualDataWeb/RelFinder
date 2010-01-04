@@ -3,6 +3,7 @@
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
+	import mx.collections.ArrayCollection;
 	
 	/**
 	 * ...
@@ -30,36 +31,40 @@
 		//************************************************************************	
 		
 		
-		private var _message:String = "Idle";
+		private var _message:String = GlobalString.IDLE;
 		
 		[Bindable(event = "eventMessageChanged")]
 		public function get message():String {
 			
-			if ((_searchCount == 0) && (_queueIsEmpty)) {
-				return "idle";
-			}
-			
-			if (_searchCount == _errorCount) {
+			if (_searchCount == _errorCount && _searchCountLookUp == _errorCountLookUp) {
 				
-				_message = "Database not available. Check network connection.";
+				_message = GlobalString.NOCONNECTION;
 				
 			}else {
 				
-				if ((_searchCount > _foundCount) || (!_queueIsEmpty)) {
-					_message = "Searching for relations";
+				if ((_searchCount > _foundCount) && (_searchCountLookUp == _foundCountLookUp)) {
+					_message = GlobalString.SEARCHINGRELATION;
+				}else if ((_searchCount == _foundCount) && (_searchCountLookUp > _foundCountLookUp)) {
+					_message = GlobalString.LOOKUP;
+				}else if ((_searchCount > _foundCount) && (_searchCountLookUp > _foundCountLookUp)) {
+					_message = GlobalString.SEARCHINGRELATION + " / " + GlobalString.LOOKUP;
 				}else {
 					
 					if (_noRelationFound) {
-						_message = "No Relation found";
+						_message = GlobalString.NORELATION;
 					}else {
-						_message = "Idle";
+						_message = GlobalString.IDLE;
 					}
 				}
 				
 			}
 			
+			if (!_queueIsEmpty) {
+				_message += " / " + GlobalString.BUILDING;
+			}
+			
 			if (_errorsOccured) {
-				_message += " / some Errors occured";
+				_message += " / " + GlobalString.SOMEERRORS;
 			}
 			
 			return _message;
@@ -70,11 +75,33 @@
 			dispatchEvent(new Event("eventMessageChanged"));
 		}
 		
+		private var _searchCountLookUp:int = 0;
+		private var _foundCountLookUp:int = 0;
+		private var _errorCountLookUp:int = 0;
+		
+		public function addSearchLookUp():void {
+			_searchCountLookUp++;
+			dispatchEvent(new Event("eventMessageChanged"));
+		}
+		
+		public function addFoundLookUp():void {
+			_foundCountLookUp++;
+			dispatchEvent(new Event("eventMessageChanged"));
+		}
+		
+		public function addErrorLookUp(error:Object):void {
+			_errorCountLookUp++;
+			_errorsOccured = true;
+			_errorLog.addItem(new LoggedError(error));
+			dispatchEvent(new Event("eventMessageChanged"));
+			dispatchEvent(new Event("errorLogChanged"));
+		}
+		
 		private var _searchCount:int = 0;
 		private var _foundCount:int = 0;
 		private var _errorCount:int = 0;
 		
-		private var _queueIsEmpty:Boolean = false;
+		private var _queueIsEmpty:Boolean = true;
 		
 		public function addSearch():void {
 			_searchCount++;
@@ -86,10 +113,27 @@
 			dispatchEvent(new Event("eventMessageChanged"));
 		}
 		
-		public function addError():void {
+		public function addError(error:Object):void {
 			_errorCount++;
 			_errorsOccured = true;
+			_errorLog.addItem(new LoggedError(error));
 			dispatchEvent(new Event("eventMessageChanged"));
+			dispatchEvent(new Event("errorLogChanged"));
+		}
+		
+		[Bindable(event="eventMessageChanged")]
+		public function get searchCount():int {
+			return _searchCount + _searchCountLookUp;
+		}
+		
+		[Bindable(event="eventMessageChanged")]
+		public function get foundCount():int {
+			return _foundCount + _foundCountLookUp;
+		}
+		
+		[Bindable(event="eventMessageChanged")]
+		public function get errorCount():int {
+			return _errorCount + _errorCountLookUp;
 		}
 		
 		public function set queueIsEmpty(b:Boolean):void {
@@ -97,6 +141,13 @@
 				_queueIsEmpty = b;
 				dispatchEvent(new Event("eventMessageChanged"));
 			}
+		}
+		
+		private var _errorLog:ArrayCollection = new ArrayCollection();
+		
+		[Bindable(event="errorLogChanged")]
+		public function get errorLog():ArrayCollection {
+			return _errorLog;
 		}
 		
 		private var _noRelationFound:Boolean = false;
@@ -118,9 +169,14 @@
 			_searchCount = 0;
 			_foundCount = 0;
 			_errorCount = 0;
-			_message = "Idle";
+			_searchCountLookUp = 0;
+			_foundCountLookUp = 0;
+			_errorCountLookUp = 0;
+			_message = GlobalString.IDLE;
 			_noRelationFound = false;
 			_errorsOccured = false;
+			_queueIsEmpty = true;
+			_errorLog.removeAll();
 			dispatchEvent(new Event("eventMessageChanged"));
 		}
 		

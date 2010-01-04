@@ -162,7 +162,8 @@ You should have received a copy of the GNU General Public License along with thi
 	<!-- STATUS INFO (New Position)-->
 	<mx:ApplicationControlBar id="statusBar" y="10" x="{mainVBox.width - statusBar.width - 10}"
 		paddingBottom="1" paddingLeft="1" paddingRight="1" paddingTop="1" horizontalGap="0"
-		fillAlphas="[0.9, 0.9]" fillColors="[#EEEEEE, #CCCCCC]" dropShadowEnabled="false">
+		fillAlphas="[0.9, 0.9]" fillColors="[#EEEEEE, #CCCCCC]" dropShadowEnabled="false"
+		click="showErrorLog();" useHandCursor="true" mouseChildren="false" buttonMode="true">
 		
 			<mx:Text id="statusLabel" text="Status: Idle" selectable="false" fontWeight="bold"/>
 			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8"/>
