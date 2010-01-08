@@ -30,7 +30,7 @@ package graphElements
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVECHANGE:String = "numberOfVisibleElementsChange";
-		
+		public static var ELEMENTNUMBERCHANGE:String = "elementNumberChange";
 		public function ConnectivityLevel(_id:String, _num:int) {
 			this._id = _id;
 			this._label = _num.toString();
@@ -112,7 +112,7 @@ package graphElements
 				//e.addEventListener(Element.NEWRCHANGE, elementNewRestrictionChange);
 				//dispatchEvent(new PropertyChangedEvent(PropertyChangedEvent.PROPERTY_CHANGED, this, "elementsChange"));
 				//e.addEventListener(Element.VCHANGE, elementVChangeHandler);
-				
+				dispatchEvent(new Event(ELEMENTNUMBERCHANGE));
 			}
 		}
 		

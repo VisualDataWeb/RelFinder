@@ -30,6 +30,7 @@ package graphElements {
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVECHANGE:String = "numberOfVisibleElementsChange";
+		public static var ELEMENTNUMBERCHANGE:String = "elementNumberChange";
 		
 		public function Concept(_id:String, _label:String) {
 			this._id = _id;
@@ -111,6 +112,8 @@ package graphElements {
 				//e.addEventListener(Element.NEWRCHANGE, elementNewRestrictionChange);
 				//dispatchEvent(new PropertyChangedEvent(PropertyChangedEvent.PROPERTY_CHANGED, this, "elementsChange"));
 				//e.addEventListener(Element.VCHANGE, elementVChangeHandler);
+				
+				dispatchEvent(new Event(ELEMENTNUMBERCHANGE));
 				
 			}
 		}

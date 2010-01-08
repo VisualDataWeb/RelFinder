@@ -25,6 +25,7 @@ import mx.collections.SortField;
 import mx.containers.Canvas;
 import mx.containers.HBox;
 import mx.containers.TabNavigator;
+import mx.controls.DataGrid;
 import mx.controls.Menu;
 import mx.core.ClassFactory;
 import mx.core.Repeater;
@@ -161,11 +162,12 @@ private function setup(): void {
 		
 		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelZoomHandler);
 		
-		filterSort.fields = [sortByLabel];
-		_concepts.sort = filterSort;
-		_relTypes.sort = filterSort;
-		_pathLengths.sort = filterSort;
-		_connectivityLevels.sort = filterSort;
+		//filterSort.fields = [sortByLabel];
+		//_concepts.sort = filterSort;
+		//_relTypes.sort = filterSort;
+		//_pathLengths.sort = filterSort;
+		//_connectivityLevels.sort = filterSort;
+		
 		
 		callLater(setupParams);
 	}
@@ -396,13 +398,28 @@ public function getConcept(uri:String, label:String):Concept {
 	_concepts.addItem(newC);
 	newC.addEventListener(Concept.NUMVECHANGE, conceptChangeListener);
 	newC.addEventListener(Concept.VCHANGE, conceptChangeListener);
+
+	newC.addEventListener(Concept.ELEMENTNUMBERCHANGE, conceptChangeListener);
+
+	
 	_concepts.refresh();
 	return newC;
 }
 
 private function conceptChangeListener(event:Event):void {
 	var c:Concept = event.target as Concept;
-	_concepts.itemUpdated(c);
+	
+	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+		if (dgC != null) {
+			(dgC as SortableDataGrid).sortByColumn();
+		}
+	}else {
+		if (dgC != null) {
+			(dgC as DataGrid).invalidateList();
+		}
+	}
+	
+	
 	
 	//check filter sign
 	if (tab12.isVisible) {
@@ -458,6 +475,7 @@ public function getRelType(uri:String, label:String):RelType {
 	_relTypes.addItem(newR);
 	newR.addEventListener(RelType.NUMVRCHANGE, relTypeChangeListener);
 	newR.addEventListener(RelType.VCHANGE, relTypeChangeListener);
+	newR.addEventListener(RelType.ELEMENTNUMBERCHANGE, relTypeChangeListener);
 	
 	if (_graphIsFull) {
 		trace("------------------graphISFULLL -> relType setVisible=false");
@@ -470,8 +488,22 @@ public function getRelType(uri:String, label:String):RelType {
 private function relTypeChangeListener(event:Event):void {
 	
 	var rT:RelType = event.target as RelType;
+	
+	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+		if (dgT != null) {
+			(dgT as SortableDataGrid).sortByColumn();
+		}
+	}else {
+		if (dgT != null) {
+			(dgT as DataGrid).invalidateList();
+		}
+	}
+	
 	//trace("relTypes update : " +rT.numVisibleRelations);
-	_relTypes.itemUpdated(rT);
+	//_relTypes.itemUpdated(rT);
+	//if (dgT != null) {
+		//(dgT as DataGrid).invalidateList();
+	//}
 	
 	//check filter sign
 	if (tab13.isVisible) {
@@ -528,7 +560,7 @@ public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
 	_connectivityLevels.addItem(newCL);
 	newCL.addEventListener(ConnectivityLevel.NUMVECHANGE, conLevelChangeListener);
 	newCL.addEventListener(ConnectivityLevel.VCHANGE, conLevelChangeListener);
-	
+	newCL.addEventListener(ConnectivityLevel.ELEMENTNUMBERCHANGE, conLevelChangeListener);
 	/*if (_graphIsFull) {
 		trace("------------------graphISFULLL -> relType setVisible=false");
 		newR.isVisible = false;
@@ -539,7 +571,21 @@ public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
 
 private function conLevelChangeListener(event:Event):void {
 	var cL:ConnectivityLevel = event.target as ConnectivityLevel;
-	_connectivityLevels.itemUpdated(cL);
+	
+	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+		if (dgCc != null) {
+			(dgCc as SortableDataGrid).sortByColumn();
+		}
+	}else {
+		if (dgCc != null) {
+			(dgCc as DataGrid).invalidateList();
+		}
+	}
+	
+	//_connectivityLevels.itemUpdated(cL);
+	//if (dgCc != null) {
+		//(dgCc as DataGrid).invalidateList();
+	//}
 	
 	//check filter sign
 	if (tab11.isVisible) {	//no filters are registered
@@ -594,7 +640,7 @@ public function getPathLength(uri:String, length:int):PathLength {
 	_pathLengths.addItem(newPL);
 	newPL.addEventListener(PathLength.NUMVPCHANGE, pathLengthChangeListener);
 	newPL.addEventListener(PathLength.VCHANGE, pathLengthChangeListener);
-	
+	newPL.addEventListener(PathLength.ELEMENTNUMBERCHANGE, pathLengthChangeListener);
 	if (_graphIsFull) {
 		//set new pathLength invisible
 		newPL.isVisible = false;
@@ -605,7 +651,21 @@ public function getPathLength(uri:String, length:int):PathLength {
 
 private function pathLengthChangeListener(event:Event):void {
 	var pL:PathLength = event.target as PathLength;
-	_pathLengths.itemUpdated(pL);
+	
+	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+		if (dgL != null) {
+			(dgL as SortableDataGrid).sortByColumn();
+		}
+	}else {
+		if (dgL != null) {
+			(dgL as DataGrid).invalidateList();
+		}
+	}
+	
+	//_pathLengths.itemUpdated(pL);
+	//if (dgL != null) {
+		//(dgL as DataGrid).invalidateList();
+	//}
 	
 	//check filter sign
 	if (tab10.isVisible) {	//no filters are registered
@@ -1806,7 +1866,60 @@ private function showErrorLog():void {
 	var log:ErrorLog = PopUpManager.createPopUp(Application.application as DisplayObject, ErrorLog, false) as ErrorLog;
 }
 
+private function numColumnCompareFunction(itemA:Object, itemB:Object):int {
+	
+	if (itemA is PathLength && itemB is PathLength) {
+		return internalNumColumnStringCompareFunction((itemA as PathLength).stringNumOfPaths, (itemB as PathLength).stringNumOfPaths);
+	}
+	
+	if (itemA is RelType && itemB is RelType) {
+		return internalNumColumnStringCompareFunction((itemA as RelType).stringNumOfRelations, (itemB as RelType).stringNumOfRelations);
+	}
+	
+	if (itemA is Concept && itemB is Concept) {
+		return internalNumColumnStringCompareFunction((itemA as Concept).stringNumOfElements, (itemB as Concept).stringNumOfElements);
+	}
+	
+	if (itemA is ConnectivityLevel && itemB is ConnectivityLevel) {
+		return internalNumColumnStringCompareFunction((itemA as ConnectivityLevel).stringNumOfElements, (itemB as ConnectivityLevel).stringNumOfElements);
+	}
+	
+	return 0;
+}
 
+private function internalNumColumnStringCompareFunction(str1:String, str2:String):int {
+	if ((str1 == null || str1 == "" || str1.indexOf("/") < 0) && (str2 == null || str2 == "" || str2.indexOf("/") < 0)) {
+		return 0;
+	}else if (str1 == null || str1 == "" || str1.indexOf("/") < 0) {
+		return 1;
+	}else if (str2 == null || str2 == "" || str2.indexOf("/") < 0) {
+		return -1;
+	}
+	
+	var val1:Array = str1.split("/");
+	var val2:Array = str2.split("/");
+	
+	val1[0] = new int(val1[0]);
+	val1[1] = new int(val1[1]);
+	val2[0] = new int(val2[0]);
+	val2[1] = new int(val2[1]);
+	
+	if (isNaN(val1[1]) && isNaN(val2[1]))
+		return 0;
+	
+	if (isNaN(val1[1]))
+		return 1;
 
+	if (isNaN(val2[1]))
+	   return -1;
+
+	if (val1[1] < val2[1])
+		return -1;
+
+	if (val1[1] > val2[1])
+		return 1;
+
+	return 0;
+}
 
 

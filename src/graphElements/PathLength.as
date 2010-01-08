@@ -29,6 +29,7 @@ package graphElements
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVPCHANGE:String = "numberOfVisiblePathsChange";
+		public static var ELEMENTNUMBERCHANGE:String = "elementNumberChange";
 		
 		public function PathLength(_id:String, _num:int) {
 			this._id = _id;
@@ -103,6 +104,7 @@ package graphElements
 				}
 				p.addEventListener(Path.VCHANGE, pathVChangeHandler);
 				
+				dispatchEvent(new Event(ELEMENTNUMBERCHANGE));
 			}
 		}
 		

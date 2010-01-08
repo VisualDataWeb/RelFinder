@@ -28,6 +28,7 @@ package graphElements
 		
 		public static var VCHANGE:String = "isVisibleChange";
 		public static var NUMVRCHANGE:String = "numberOfVisibleRelationsChange";
+		public static var ELEMENTNUMBERCHANGE:String = "elementNumberChange";
 		
 		public function RelType(_id:String, _label:String) {
 			this._id = _id;
@@ -98,6 +99,7 @@ package graphElements
 				}
 				r.addEventListener(Relation.VCHANGE, relationVChangeHandler);
 				
+				dispatchEvent(new Event(ELEMENTNUMBERCHANGE));
 			}
 		}
 		

@@ -84,44 +84,44 @@ You should have received a copy of the GNU General Public License along with thi
 									
 									<local:FilterTab id="tab10" label="length" list="{_pathLengths}" >
 									<!--<mx:VBox id="tab11" label="lengths">-->
-										<mx:DataGrid id="dgL" height="100%" width="100%" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
-											<mx:columns>
+										<local:SortableDataGrid id="dgL" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
+											<local:columns>
 												<mx:DataGridColumn dataField="label" wordWrap="true" headerStyleName="myHeader" headerText="number of objects"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfPaths" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfPaths" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
-											</mx:columns>
-										</mx:DataGrid>
+											</local:columns>
+										</local:SortableDataGrid>
 										
 									</local:FilterTab>
 									
 									<local:FilterTab id="tab12" label="class"  list="{_concepts}">
-										<mx:DataGrid id="dgC" height="100%" width="100%" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
-											<mx:columns>
+										<local:SortableDataGrid id="dgC" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
+											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="object class"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
-											</mx:columns>
-										</mx:DataGrid>
+											</local:columns>
+										</local:SortableDataGrid>
 									</local:FilterTab>
 									
 									<local:FilterTab id="tab13" label="link" list="{_relTypes}">
-										<mx:DataGrid id="dgT" height="100%" width="100%" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
-											<mx:columns>
+										<local:SortableDataGrid id="dgT" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
+											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="link type"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
-											</mx:columns>
-										</mx:DataGrid>
+											</local:columns>
+										</local:SortableDataGrid>
 									</local:FilterTab>
 									
 									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityLevels}">
-										<mx:DataGrid id="dgCc" height="100%" width="100%" rowCount="4" dataProvider="{_connectivityLevels}" selectedItem="{selectedConnectivityLevel}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityLevel = dgCc.selectedItem as ConnectivityLevel}" variableRowHeight="true">
-											<mx:columns>
+										<local:SortableDataGrid id="dgCc" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_connectivityLevels}" selectedItem="{selectedConnectivityLevel}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityLevel = dgCc.selectedItem as ConnectivityLevel}" variableRowHeight="true">
+											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="connectivity level"></mx:DataGridColumn>
-												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num"></mx:DataGridColumn>
+												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
 												<mx:DataGridColumn width="35" dataField="isVisible" headerStyleName="myHeader" headerText="vi" itemRenderer="graphElements.VisibilityRenderer"></mx:DataGridColumn>
-											</mx:columns>
-										</mx:DataGrid>
+											</local:columns>
+										</local:SortableDataGrid>
 									</local:FilterTab>
 									
 								</tab:PositionedTabNavigator>
