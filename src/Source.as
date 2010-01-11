@@ -411,7 +411,9 @@ private function conceptChangeListener(event:Event):void {
 	
 	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
 		if (dgC != null) {
-			(dgC as SortableDataGrid).sortByColumn();
+			//(dgC as SortableDataGrid).sortByColumn();
+			
+			_concepts.itemUpdated(c);
 		}
 	}else {
 		if (dgC != null) {
@@ -489,9 +491,11 @@ private function relTypeChangeListener(event:Event):void {
 	
 	var rT:RelType = event.target as RelType;
 	
-	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+	if (event.type == RelType.ELEMENTNUMBERCHANGE) {
 		if (dgT != null) {
-			(dgT as SortableDataGrid).sortByColumn();
+			//(dgT as SortableDataGrid).sortByColumn();
+			
+			_relTypes.itemUpdated(rT);
 		}
 	}else {
 		if (dgT != null) {
@@ -572,9 +576,11 @@ public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
 private function conLevelChangeListener(event:Event):void {
 	var cL:ConnectivityLevel = event.target as ConnectivityLevel;
 	
-	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+	if (event.type == ConnectivityLevel.ELEMENTNUMBERCHANGE) {
 		if (dgCc != null) {
-			(dgCc as SortableDataGrid).sortByColumn();
+			//(dgCc as SortableDataGrid).sortByColumn();
+			
+			_connectivityLevels.itemUpdated(cL);
 		}
 	}else {
 		if (dgCc != null) {
@@ -652,9 +658,11 @@ public function getPathLength(uri:String, length:int):PathLength {
 private function pathLengthChangeListener(event:Event):void {
 	var pL:PathLength = event.target as PathLength;
 	
-	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
+	if (event.type == PathLength.ELEMENTNUMBERCHANGE) {
 		if (dgL != null) {
-			(dgL as SortableDataGrid).sortByColumn();
+			//(dgL as SortableDataGrid).sortByColumn();
+			
+			_pathLengths.itemUpdated(pL);
 		}
 	}else {
 		if (dgL != null) {
