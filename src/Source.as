@@ -104,8 +104,7 @@ private var resultParser:ISPARQLResultParser = new SPARQLResultParser();
 
 private var lastInputs:Array = new Array();
 
-[Bindable]
-private var inputFields:ArrayCollection = new ArrayCollection(new Array(new String("input0"), new String("input1")));
+
 [Bindable]
 private var autoCompleteList:ArrayCollection = new ArrayCollection();
 
@@ -142,7 +141,6 @@ public var PLRCHANGE:String = "selectedPathLengthRangeChange";
 private var _graphIsFull:Boolean = false;	//whether the graph is overcluttered already!
 private var _delayedDrawing:Boolean = true;
 
-private var inputCache:ArrayCollection = new ArrayCollection();
 
 [Bindable]
 private var _showOptions:Boolean = false;	//flag to set filters and infos visible or invisible
@@ -305,7 +303,7 @@ private function validateParamters(key:String, value:String):Boolean {
 		var index:int = new int(key.charAt(3));
 		
 		while (index > inputFieldRepeater.dataProvider.length) {
-			addNewInputField();
+			inputFieldBox.addNewInputField();
 		}
 	
 		if (index != 0) {
@@ -788,69 +786,7 @@ public function moveNodeToPosition(node:GivenNode, x:Number, y:Number):void {
 	(node as GivenNode).moveToPosition(x, y);
 }
 
-public function addNewInputField():void {
-	inputCache = new ArrayCollection();
-	var searchTextCache:ArrayCollection = new ArrayCollection();
-	
-	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
-		if (inputField[i] is AutoComplete) {
-			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
-			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
-		}
-	}
-	
-	inputFields.addItem(new String('input'));
-	
-	(inputFieldRepeater as Repeater).validateNow();
-	
-	for (var j:int = 0; j < inputCache.length; j++) {
-		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
-			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
-		}else {
-			(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
-		}
-	}
-	
-	(inputFieldRepeater as Repeater).validateNow();
-	
-	
-}
 
-public function removeInputField(index:int):void {
-	
-	if (inputFieldRepeater.dataProvider.length <= 2) {
-		return;
-	}
-	
-	inputCache = new ArrayCollection();
-	var searchTextCache:ArrayCollection = new ArrayCollection();
-	
-	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
-		if (i != index && inputField[i] is AutoComplete) {
-			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
-			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
-		}
-	}
-	
-	inputFields.removeItemAt(index);
-	
-	(inputFieldRepeater as Repeater).validateNow();
-	
-	for (var j:int = 0; j < inputCache.length; j++) {
-		
-		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
-			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
-		}else {
-			(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
-		}
-	}
-	
-	(inputFieldRepeater as Repeater).validateNow();
-}
-
-public function addTextToInputField(inputField:AutoComplete, searchText:String):void {
-	inputField.searchText = searchText;
-}
 
 public function getInstanceNode(_id:String, _element:Element):MyNode {
 	if (givenNodes.containsKey(_id)) {	//if the node is a given node!
@@ -1089,12 +1025,12 @@ public function set selectedElement(e:Element):void {
 	}
 }
 
-private function clear():void {
+public function clear():void {
 	trace("clear");
 	
 	clearGraph();
 
-	inputFields = new ArrayCollection(new Array(new String("input0"), new String("input1")));
+	inputFieldBox.dataProvider = new ArrayCollection(new Array(new String("input0"), new String("input1")));
 	autoCompleteList = new ArrayCollection();
 	
 	_showOptions = false;
@@ -1346,18 +1282,18 @@ public function loadExample2(example:Example):void {
 		tn.selectedChild = tab1;	//set current tab
 		
 		// set number of input fields
-		if (inputFields.length != example.objects.length) {
+		if (inputFieldBox.dataProvider.length != example.objects.length) {
 			
-			if (inputFields.length < example.objects.length) {
+			if (inputFieldBox.dataProvider.length < example.objects.length) {
 				// add fields
 				
-				while (inputFields.length < example.objects.length) {
-					addNewInputField();
+				while (inputFieldBox.dataProvider.length < example.objects.length) {
+					inputFieldBox.addNewInputField();
 				}
 			}else {
 				// remove fields
-				while (inputFields.length > example.objects.length && inputFields.length > 2) {
-					removeInputField(inputFields.length - 1);
+				while (inputFieldBox.dataProvider.length > example.objects.length && inputFieldBox.dataProvider.length > 2) {
+					inputFieldBox.removeInputField(inputFieldBox.dataProvider.length - 1);
 				}
 			}
 			
@@ -1435,50 +1371,9 @@ private function autoDisambiguate(ac:AutoComplete):Boolean {
 	return false;
 }
 
-private function removeEmptyInputFields():void {
-	
-	if (inputFieldRepeater.dataProvider.length <= 2) {
-		return;
-	}
-	
-	inputCache = new ArrayCollection();
-	var searchTextCache:ArrayCollection = new ArrayCollection();
-	
-	for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
-		if (inputField[i] is AutoComplete) {
-			searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
-			inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
-		}
-	}
-	
-	var toRemove:Array = new Array();
-	
-	for (var k:int = inputFieldRepeater.dataProvider.length - 1; k >= 0; k--) {
-		if ((inputField[k] as AutoComplete).selectedItem == null &&
-			((inputField[k] as AutoComplete).searchText == null || (inputField[k] as AutoComplete).searchText == "")) {
-			toRemove.push(k);
-		}
-	}
-	
-	for (var l:int = 0; l < toRemove.length; l++) {
-		inputFields.removeItemAt(toRemove[l]);
-	}
-	
-	(inputFieldRepeater as Repeater).validateNow();
-	
-	for (var j:int = 0; j < inputCache.length; j++) {
-		
-		if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
-			callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
-		}else {
-			//(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
-		}
-	}
-	
-	(inputFieldRepeater as Repeater).validateNow();
-}
 
-private function findRelations():void {
+
+public function findRelations():void {
 	
 	//removeEmptyInputFields();
 	
@@ -1517,7 +1412,7 @@ private function findRelationsImmediately():void {
 					var success:Boolean = autoDisambiguate(inputField[j] as AutoComplete);
 					
 					if (!success) {
-						var pop:InputSelection = PopUpManager.createPopUp(findRelationButton, InputSelection) as InputSelection;
+						var pop:InputSelection = PopUpManager.createPopUp(inputFieldBox, InputSelection) as InputSelection;
 						pop.inputIndex = j;
 						pop.dataProvider = (inputField[j] as AutoComplete).dataProvider;
 						pop.inputText = (inputField[j] as AutoComplete).searchText;
@@ -1573,7 +1468,7 @@ private function findRelationsImmediately():void {
 				if (!((inputField[k] as AutoComplete).selectedItem.hasOwnProperty("tempUri") && (inputField[i] as AutoComplete).selectedItem.tempUri != null)) {
 					// several URIs
 					if (!((inputField[k] as AutoComplete).selectedItem && (inputField[k] as AutoComplete).selectedItem.hasOwnProperty('uris') && ((inputField[k] as AutoComplete).selectedItem.uris as Array).length == 1)) {
-						var disambiguation:InputDisambiguation = PopUpManager.createPopUp(findRelationButton, InputDisambiguation) as InputDisambiguation;
+						var disambiguation:InputDisambiguation = PopUpManager.createPopUp(inputFieldBox, InputDisambiguation) as InputDisambiguation;
 						disambiguation.inputIndex = k;
 						disambiguation.inputItem = (inputField[k] as AutoComplete).selectedItem;
 						disambiguation.addEventListener("Disambiguation", inputDisambiguationWindowHandler);
@@ -1744,130 +1639,12 @@ public function set delayedDrawing(b:Boolean):void {
 	}
 }
 
-public function selectedItemClicked(event:Event):void {
-	if (event.currentTarget is AutoComplete) {
-		var ac:AutoComplete = event.currentTarget as AutoComplete;
-		if (ac.selectedItem) {
-			var si:Object = ac.selectedItem;
-			var edit:InputSelection = PopUpManager.createPopUp(Application.application as DisplayObject, InputSelection, true) as InputSelection;
-			edit.inputText = si.label;
-			edit.autoComplete = ac;
-			edit.dataProvider = ac.dataProvider;
-			edit.title = "Change input"
-		}
-	}
+private function get inputField():Array {
+	return inputFieldBox.inputField;
 }
 
-
-private var selectedItemToolTip:Menu;
-
-private var si:Object;
-
-private function mouseOverSelectedItemHandler(event:Event):void {
-	ToolTipModel.getInstance().preventToolTipHide = true;
-	if (event.currentTarget is AutoComplete) {
-		var ac:AutoComplete = event.currentTarget as AutoComplete;
-		if (ac.selectedItem) {
-			si = ac.selectedItem;
-			
-			if (selectedItemToolTip != null) {
-				if (selectedItemToolTip.visible && selectedItemToolTip.data == si) {
-					return;
-				}
-			}
-			
-			toolTipTimer = new Timer(500, 1);
-			toolTipTimer.addEventListener(TimerEvent.TIMER, showToolTip);
-			toolTipTimer.start();
-			
-			showSelectedItemToolTip = true;
-		}
-	}
-}
-
-private var closeTimer:Timer;
-
-private function mouseOutSelectedItemHandler(event:Event):void {
-	ToolTipModel.getInstance().preventToolTipHide = false;
-			
-	if (closeTimer) {
-		closeTimer.stop();
-	}
-	
-	closeTimer = new Timer(2000, 1);
-	closeTimer.addEventListener(TimerEvent.TIMER,
-		function():void {
-			if (!ToolTipModel.getInstance().preventToolTipHide && selectedItemToolTip) {
-				selectedItemToolTip.hide();
-			}
-		});
-	closeTimer.start();
-}
-
-private function showToolTip(event:Event):void {
-	toolTipTimer.stop();
-	
-	if (!showSelectedItemToolTip) {
-		return;
-	}
-	
-	if (selectedItemToolTip && selectedItemToolTip.visible) {
-		ToolTipModel.getInstance().preventToolTipHide = false;
-		selectedItemToolTip.hide();
-	}
-	
-	selectedItemToolTip = Menu.createMenu(this, si, false);
-	selectedItemToolTip.variableRowHeight = true;
-	selectedItemToolTip.selectable = false;
-	selectedItemToolTip.data = si;
-	selectedItemToolTip.itemRenderer = new ClassFactory(SelectedItemToolTipRenderer);
-	selectedItemToolTip.addEventListener(MenuEvent.MENU_HIDE, menuHideHandler);
-	
-	var p:Point = new Point(acHBoxMouseX, acHBoxMouseY);
-	
-	p = acHBox.localToGlobal(p);
-	
-	ToolTipModel.getInstance().preventToolTipHide = true;
-	
-	selectedItemToolTip.show(p.x + 5, p.y + 5);
-	
-}
-
-private function menuHideHandler(event:MenuEvent):void {
-	if (ToolTipModel.getInstance().preventToolTipHide) {
-		event.preventDefault();
-		event.menu.visible = true;
-	}
-}
-
-[Bindable]
-private var acHBoxMouseX:Number = 0;
-
-[Bindable]
-private var acHBoxMouseY:Number = 0;
-
-private var toolTipTimer:Timer;
-
-private var showSelectedItemToolTip:Boolean = false;
-
-private var acHBox:HBox;
-
-private function acHBoxMouseMove(event:Event):void {
-	acHBox = event.currentTarget as HBox;
-	
-	acHBoxMouseX = acHBox.mouseX;
-	acHBoxMouseY = acHBox.mouseY;
-	
-}
-
-private function acHBoxMouseOut(event:Event):void {
-	ToolTipManager.enabled = true;
-	showSelectedItemToolTip = false;
-	
-}
-
-private function acHBoxMouseOver(event:Event):void {
-	ToolTipManager.enabled = false;
+private function get inputFieldRepeater():Repeater {
+	return inputFieldBox.inputFieldRepeater;
 }
 
 private function showErrorLog():void {

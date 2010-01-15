@@ -53,9 +53,6 @@
 				return;
 			}
 			
-			//if (index == -1) {
-				//index = _sortIndex;
-			//}
 			
 			var c:DataGridColumn = columns[index];
 			if (c != null) {
@@ -70,8 +67,6 @@
 			}else {
 				dir = (desc) ? "DESC" : "ASC";
 			}
-			
-			trace("index: " + index, "sortIndex: " + _sortIndex, "sortIndexPre: " + _sortIndexPreInitTemp);
 			
 			if (c.sortable) {
 				

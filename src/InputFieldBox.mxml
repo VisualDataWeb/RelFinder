@@ -1,0 +1,531 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+		xmlns:hc="com.hillelcoren.components.*"
+		horizontalAlign="center"
+		creationComplete="init()">
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import connection.model.ConnectionModel;
+			import flash.events.Event;
+			import global.GlobalString;
+			import global.ToolTipModel;
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IList;
+			import mx.collections.IViewCursor;
+			import mx.collections.ListCollectionView;
+			import mx.collections.XMLListCollection;
+			import mx.containers.Panel;
+			import mx.containers.TabNavigator;
+			import mx.controls.Menu;
+			import mx.core.Application;
+			import mx.core.Repeater;
+			import mx.events.CollectionEvent;
+			import mx.events.CollectionEventKind;
+			import mx.events.FlexEvent;
+			import mx.events.MenuEvent;
+			import mx.events.ResizeEvent;
+			import mx.managers.PopUpManager;
+			import mx.managers.ToolTipManager;
+			import skin.ToggleSizeButtonSkinDown;
+			import skin.ToggleSizeButtonSkinNone;
+			import skin.ToggleSizeButtonSkinUp;
+			
+			import com.hillelcoren.components.AutoComplete;
+			import com.hillelcoren.components.autoComplete.classes.SelectedItem;
+			
+			import popup.InputSelection;
+			import popup.InputSelectionEvent;
+			
+			import toolTip.SelectedItemToolTipRenderer;
+			
+			
+			public static const SIZE_MINIMIZED:int = 0;
+			public static const SIZE_SMALL:int = 1;
+			public static const SIZE_NORMAL:int = 2;
+			public static const SIZE_MAXIMIZED:int = 3;
+			
+			private var _size:int = SIZE_NORMAL;
+			
+			protected var _dataProvider:ICollectionView = new ArrayCollection(new Array(new String("input0"), new String("input1")));
+			
+			private function init():void {
+				_dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, resizeHandler);
+				_dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, sizeUpdateHandler);
+				app().tn.addEventListener(ResizeEvent.RESIZE, resizeHandler);
+				app().tn.addEventListener(FlexEvent.CREATION_COMPLETE, resizeHandler);
+			}
+			
+			private function resizeHandler(event:Event):void {
+				
+				dispatchEvent(new Event("inputFieldWidthChange"));
+			}
+			
+			private function sizeUpdateHandler(event:Event):void {
+				size = size;
+			}
+			
+			
+			[Bindable(event="SizeChange")]
+			public function get size():int {
+				return _size;
+			}
+			
+			public function set size(value:int):void {
+				
+				if (value >= SIZE_MINIMIZED && value <= SIZE_MAXIMIZED) {
+					
+					_size = value;
+					
+					switch(_size) {
+						
+						case SIZE_MINIMIZED:
+							trace("not implemented");
+							break;
+							
+						case SIZE_SMALL:
+							
+							
+							
+							if (dataProvider.length == 2) {
+								
+								inpuitFieldForm.percentHeight = 100;
+								
+							}else {
+								
+								resizeButton.setStyle("skin", ToggleSizeButtonSkinDown);
+								inpuitFieldForm.height = 64;
+							}
+							
+							break;
+							
+						case SIZE_MAXIMIZED:
+							trace("not implemented");
+							break;
+							
+						case SIZE_NORMAL:
+						default:
+							
+							resizeButton.setStyle("skin", ToggleSizeButtonSkinUp);
+							
+							inpuitFieldForm.percentHeight = 100;
+							break;
+						
+						
+						
+					}
+					
+					if (dataProvider.length == 2) {
+						resizeButton.setStyle("skin", ToggleSizeButtonSkinNone);
+					}
+					
+					dispatchEvent(new Event("inputFieldWidthChange"));
+					dispatchEvent(new Event("SizeChange"));
+					
+				}else {
+					throw new Error("Wrong size value");
+				}
+			}
+			
+			protected var iterator:IViewCursor;
+			
+			[Bindable("collectionChange")]
+			[Inspectable(category="Data")]
+			public function get dataProvider():Object {
+				return _dataProvider;
+			}
+			
+			public function set dataProvider(value:Object):void {
+				
+				if (value is Array)
+				{
+					_dataProvider = new ArrayCollection(value as Array);
+				}
+				else if (value is ICollectionView)
+				{
+					_dataProvider = ICollectionView(value);
+				}
+				else if (value is IList)
+				{
+					_dataProvider = new ListCollectionView(IList(value));
+				}
+				else if (value is XMLList)
+				{
+					_dataProvider = new XMLListCollection(value as XMLList);
+				}
+				else
+				{
+					var tmp:Array = [value];
+					_dataProvider = new ArrayCollection(tmp);
+				}
+				
+				iterator = _dataProvider.createCursor();
+				
+				_dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, collectionChangeHandler, false, 0, true);
+				
+				var event:CollectionEvent =	new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+				event.kind = CollectionEventKind.RESET;
+				collectionChangeHandler(event);
+				dispatchEvent(event);
+				
+				invalidateSize();
+				invalidateDisplayList();
+			}
+			
+			protected function collectionChangeHandler(event:Event):void {
+				invalidateDisplayList();
+			}
+			
+			
+			public function selectedItemClicked(event:Event):void {
+				if (event.currentTarget is AutoComplete) {
+					var ac:AutoComplete = event.currentTarget as AutoComplete;
+					if (ac.selectedItem) {
+						var si:Object = ac.selectedItem;
+						var edit:InputSelection = PopUpManager.createPopUp(Application.application as DisplayObject, InputSelection, true) as InputSelection;
+						edit.inputText = si.label;
+						edit.autoComplete = ac;
+						edit.dataProvider = ac.dataProvider;
+						edit.title = "Change input"
+					}
+				}
+			}
+
+
+			private var selectedItemToolTip:Menu;
+
+			private var si:Object;
+
+			private function mouseOverSelectedItemHandler(event:Event):void {
+				ToolTipModel.getInstance().preventToolTipHide = true;
+				if (event.currentTarget is AutoComplete) {
+					var ac:AutoComplete = event.currentTarget as AutoComplete;
+					if (ac.selectedItem) {
+						si = ac.selectedItem;
+						
+						if (selectedItemToolTip != null) {
+							if (selectedItemToolTip.visible && selectedItemToolTip.data == si) {
+								return;
+							}
+						}
+						
+						toolTipTimer = new Timer(500, 1);
+						toolTipTimer.addEventListener(TimerEvent.TIMER, showToolTip);
+						toolTipTimer.start();
+						
+						showSelectedItemToolTip = true;
+					}
+				}
+			}
+
+			private var closeTimer:Timer;
+
+			private function mouseOutSelectedItemHandler(event:Event):void {
+				ToolTipModel.getInstance().preventToolTipHide = false;
+						
+				if (closeTimer) {
+					closeTimer.stop();
+				}
+				
+				closeTimer = new Timer(2000, 1);
+				closeTimer.addEventListener(TimerEvent.TIMER,
+					function():void {
+						if (!ToolTipModel.getInstance().preventToolTipHide && selectedItemToolTip) {
+							selectedItemToolTip.hide();
+						}
+					});
+				closeTimer.start();
+			}
+
+			private function showToolTip(event:Event):void {
+				toolTipTimer.stop();
+				
+				if (!showSelectedItemToolTip) {
+					return;
+				}
+				
+				if (selectedItemToolTip && selectedItemToolTip.visible) {
+					ToolTipModel.getInstance().preventToolTipHide = false;
+					selectedItemToolTip.hide();
+				}
+				
+				selectedItemToolTip = Menu.createMenu(this, si, false);
+				selectedItemToolTip.variableRowHeight = true;
+				selectedItemToolTip.selectable = false;
+				selectedItemToolTip.data = si;
+				selectedItemToolTip.itemRenderer = new ClassFactory(SelectedItemToolTipRenderer);
+				selectedItemToolTip.addEventListener(MenuEvent.MENU_HIDE, menuHideHandler);
+				
+				var p:Point = new Point(acHBoxMouseX, acHBoxMouseY);
+				
+				p = acHBox.localToGlobal(p);
+				
+				ToolTipModel.getInstance().preventToolTipHide = true;
+				
+				selectedItemToolTip.show(p.x + 5, p.y + 5);
+				
+			}
+
+			private function menuHideHandler(event:MenuEvent):void {
+				if (ToolTipModel.getInstance().preventToolTipHide) {
+					event.preventDefault();
+					event.menu.visible = true;
+				}
+			}
+
+			[Bindable]
+			private var acHBoxMouseX:Number = 0;
+
+			[Bindable]
+			private var acHBoxMouseY:Number = 0;
+
+			private var toolTipTimer:Timer;
+
+			private var showSelectedItemToolTip:Boolean = false;
+
+			private var acHBox:HBox;
+
+			private function acHBoxMouseMove(event:Event):void {
+				acHBox = event.currentTarget as HBox;
+				
+				acHBoxMouseX = acHBox.mouseX;
+				acHBoxMouseY = acHBox.mouseY;
+				
+			}
+
+			private function acHBoxMouseOut(event:Event):void {
+				ToolTipManager.enabled = true;
+				showSelectedItemToolTip = false;
+				
+			}
+
+			private function acHBoxMouseOver(event:Event):void {
+				ToolTipManager.enabled = false;
+			}
+			
+			
+			public function get inputField():Array {
+				return _inputField;
+			}
+			
+			public function get inputFieldRepeater():Repeater {
+				return _inputFieldRepeater as Repeater;
+			}
+			
+			// when the text in the search field is changed
+			private function handleAutoCompleteSearchChange(_selectedItem:Object):void {
+				//trace("handleAutoCompleteSearchChange");
+				if (_selectedItem != null && _selectedItem.hasOwnProperty( "searchText" )){
+					var input:String = _selectedItem.searchText;
+					trace(input);
+					//Workaround Case-Sensitivity
+					if (input.length == 1 && input.charAt() == input.charAt().toLowerCase()) {
+						input = input.toUpperCase();
+						if (input != _selectedItem.searchText) {
+							_selectedItem.searchText = input;
+						}
+					}
+					
+					if (input != null && input.length >= 2) {
+						var results:ArrayCollection = new ArrayCollection();
+						var searching:Object = new Object();
+						searching.label = GlobalString.SEARCHING;
+						results.addItem(searching);
+						_selectedItem.dataProvider = results;
+						_selectedItem.validateNow();
+						findAutoComplete(input, _selectedItem as AutoComplete);
+					}
+				}
+			}
+			
+			private function findAutoComplete(_typedText:String, target:AutoComplete):void {
+				ConnectionModel.getInstance().sparqlConfig.lookUp.run(_typedText, target);
+			}
+			
+			
+			private var inputCache:ArrayCollection = new ArrayCollection();
+						
+			public function addNewInputField():void {
+				inputCache = new ArrayCollection();
+				var searchTextCache:ArrayCollection = new ArrayCollection();
+				
+				for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
+					if (inputField[i] is AutoComplete) {
+						searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
+						inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
+					}
+				}
+				
+				dataProvider.addItem(new String('input'));
+				
+				(inputFieldRepeater as Repeater).validateNow();
+				
+				for (var j:int = 0; j < inputCache.length; j++) {
+					if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+						callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+					}else {
+						(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+					}
+				}
+				
+				(inputFieldRepeater as Repeater).validateNow();
+				
+				dispatchEvent(new Event("inputFieldWidthChange"));
+			}
+			
+			public function removeInputField(index:int):void {
+				
+				if (inputFieldRepeater.dataProvider.length <= 2) {
+					return;
+				}
+				
+				inputCache = new ArrayCollection();
+				var searchTextCache:ArrayCollection = new ArrayCollection();
+				
+				for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
+					if (i != index && inputField[i] is AutoComplete) {
+						searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
+						inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
+					}
+				}
+				
+				dataProvider.removeItemAt(index);
+				
+				(inputFieldRepeater as Repeater).validateNow();
+				
+				for (var j:int = 0; j < inputCache.length; j++) {
+					
+					if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+						callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+					}else {
+						(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+					}
+				}
+				
+				(inputFieldRepeater as Repeater).validateNow();
+				
+				dispatchEvent(new Event("inputFieldWidthChange"));
+			}
+			
+			public function addTextToInputField(inputField:AutoComplete, searchText:String):void {
+				inputField.searchText = searchText;
+			}
+						public function removeEmptyInputFields():void {
+				
+				if (inputFieldRepeater.dataProvider.length <= 2) {
+					return;
+				}
+				
+				inputCache = new ArrayCollection();
+				var searchTextCache:ArrayCollection = new ArrayCollection();
+				
+				for (var i:int = 0; i < inputFieldRepeater.dataProvider.length; i++) {
+					if (inputField[i] is AutoComplete) {
+						searchTextCache.addItem((inputField[i] as AutoComplete).searchText);
+						inputCache.addItem((inputField[i] as AutoComplete).selectedItem);
+					}
+				}
+				
+				var toRemove:Array = new Array();
+				
+				for (var k:int = inputFieldRepeater.dataProvider.length - 1; k >= 0; k--) {
+					if ((inputField[k] as AutoComplete).selectedItem == null &&
+						((inputField[k] as AutoComplete).searchText == null || (inputField[k] as AutoComplete).searchText == "")) {
+						toRemove.push(k);
+					}
+				}
+				
+				for (var l:int = 0; l < toRemove.length; l++) {
+					dataProvider.removeItemAt(toRemove[l]);
+				}
+				
+				(inputFieldRepeater as Repeater).validateNow();
+				
+				for (var j:int = 0; j < inputCache.length; j++) {
+					
+					if (searchTextCache.getItemAt(j) as String != null && searchTextCache.getItemAt(j) as String != "") {
+						callLater(addTextToInputField, [inputField[j] as AutoComplete, searchTextCache.getItemAt(j) as String]);
+					}else {
+						//(inputField[j] as AutoComplete).selectedItem = inputCache.getItemAt(j);
+					}
+				}
+				
+				(inputFieldRepeater as Repeater).validateNow();
+			}
+			
+			public function resizeBox():void {
+				
+				if (size == SIZE_NORMAL) {
+					size = SIZE_SMALL;
+				}else {
+					size = SIZE_NORMAL;
+				}
+				
+				
+			}
+			
+			[Bindable(event="inputFieldWidthChange")]
+			private function get inputFieldWidth():Number {
+				
+				if (size == SIZE_SMALL) {
+					if (dataProvider.length == 2) {
+						return app().tn.width - 48;
+					}else if (dataProvider.length > 2 && dataProvider.length < 10) {
+						return app().tn.width - 68 - 16; 
+					}else {
+						return app().tn.width - 75 - 16;
+					}
+				}
+				
+				if (dataProvider.length == 2) {
+					return app().tn.width - 48;
+				}else if (dataProvider.length > 2 && dataProvider.length < 10) {
+					return app().tn.width - 68; 
+				}else {
+					return app().tn.width - 75;
+				}
+			}
+			
+			
+			private function app():Main {
+				return Application.application as Main;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Form id="inpuitFieldForm" width="100%" paddingLeft="6" paddingRight="6" paddingTop="0" paddingBottom="0">
+		<mx:Repeater id="_inputFieldRepeater" dataProvider="{dataProvider}" width="100%" >
+			<mx:FormItem width="100%" label="({_inputFieldRepeater.currentIndex + 1})" paddingRight="0">
+				<mx:HBox width="100%" verticalGap="2" horizontalGap="2"
+						mouseOver="acHBoxMouseOver(event)" mouseOut="acHBoxMouseOut(event)" mouseMove="acHBoxMouseMove(event)">
+					
+					<hc:AutoComplete id="_inputField" width="{inputFieldWidth}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart" 
+							prompt="Relations between what?" 
+							searchChange="handleAutoCompleteSearchChange(event.currentTarget)"
+							itemClick="{selectedItemClicked(event)}"
+							mouseOverSelectedItem="{mouseOverSelectedItemHandler(event)}" mouseOutSelectedItem="{mouseOutSelectedItemHandler(event)}"
+							isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus" 
+							isBrowseable="false" isMultiSelect="false" allowDuplicates="false" areNewItemsEditable="true"
+							dropDownItemRenderer="AutoCompleteDDRenderer" />
+					
+					<mx:Button id="removeInputFieldButton" toolTip="Remove Input Field" click="removeInputField(event.currentTarget.repeaterIndex)" skin="skin.CloseButtonSkin" visible="{(dataProvider.length > 2)}" width="{(dataProvider.length > 2) ? 20 : 0}" />
+				</mx:HBox>
+
+			</mx:FormItem>
+		</mx:Repeater> 
+	</mx:Form>
+	
+	<mx:HBox width="100%"  paddingRight="8" paddingLeft="40" >
+		<mx:Button id="addInputFieldButton" height="20" label="add" paddingLeft="2" paddingRight="2" toolTip="Add Input Field" click="addNewInputField()" skin="skin.EmptyButtonSkin" />
+		<mx:Spacer width="100%" />
+		<mx:Button id="clearButton" label="clear" height="20"  click="{app().clear();}" paddingLeft="2" paddingRight="2" focusEnabled="false" skin="skin.EmptyButtonSkin"/>
+		<!-- <mx:Button id="clearAll" label="clear all" click="clear();" height="20" enabled="{false}"/>	 --> <!-- TODO: sinnvolle sperre einstellen! -->
+		<mx:Button id="findRelationButton" label="Find Relations"  height="20" click="callLater(app().findRelations)" paddingLeft="6" paddingRight="6"/>
+	</mx:HBox>
+
+	<mx:Button id="resizeButton" paddingTop="0" height="10" width="100%" skin="skin.ToggleSizeButtonSkinNone" click="resizeBox()" />
+	
+</mx:VBox>

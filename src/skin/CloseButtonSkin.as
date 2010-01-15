@@ -90,6 +90,10 @@
 			
 			graphics.clear();
 			
+			graphics.beginFill(0x000000, 0);
+			graphics.drawRect(0, 0, width, height);
+			graphics.endFill();
+			
 			switch (name)
 			{			
 				case "selectedUpSkin":

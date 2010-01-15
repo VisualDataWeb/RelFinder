@@ -38,43 +38,15 @@ You should have received a copy of the GNU General Public License along with thi
 		<mx:HDividedBox id="hdivbox" width="100%" backgroundColor="#EEEEEE" height="100%" liveDragging="true" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2">
 			
 			<bbp:ButtonBarPanel id="findRelationPanel" width="300" height="100%" titleIcon="@Embed('../assets/img/RelFinder-Logo-kl.png')"  buttons="{getButtons()}" >	<!-- title="Find Relations" -->
-				<mx:TabNavigator width="100%" height="100%" id="tn" tabWidth="{tn.width/2 + 1}" cornerRadius="0" borderThickness="0" horizontalAlign="center" >
+				<mx:TabNavigator width="100%" height="100%" minWidth="280" id="tn" tabWidth="{tn.width/2 + 1}" cornerRadius="0" borderThickness="0" horizontalAlign="center" >
 					<mx:VBox id="tab1" label="between" width="100%" horizontalScrollPolicy="off" verticalGap="0" >
 						
-						<!--<mx:VBox width="100%" verticalGap="0" >-->
-					
-						<mx:Form width="100%" paddingLeft="6" paddingRight="6" paddingTop="0">
-							<mx:Repeater id="inputFieldRepeater" dataProvider="{inputFields}" width="100%" >
-								<mx:FormItem width="100%" label="({inputFieldRepeater.currentIndex + 1})" paddingRight="0">	<!-- label="{(inputFieldRepeater.currentIndex >= 1) ? 'and:' : 'Between:'}" -->
-									<mx:HBox width="100%" verticalGap="2" horizontalGap="2"
-											mouseOver="acHBoxMouseOver(event)" mouseOut="acHBoxMouseOut(event)" mouseMove="acHBoxMouseMove(event)">
-										
-										<hc:AutoComplete id="inputField" width="{(inputFields.length > 2) ? findRelationPanel.width - 88 : findRelationPanel.width - 68}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart" 
-												prompt="Relations between what?" 
-												searchChange="handleAutoCompleteSearchChange(event.currentTarget)"
-												itemClick="{selectedItemClicked(event)}"
-												mouseOverSelectedItem="{mouseOverSelectedItemHandler(event)}" mouseOutSelectedItem="{mouseOutSelectedItemHandler(event)}"
-												isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus" 
-												isBrowseable="false" isMultiSelect="false" allowDuplicates="false" areNewItemsEditable="true"
-												dropDownItemRenderer="AutoCompleteDDRenderer" />
-										
-										<mx:Button id="removeInputFieldButton" toolTip="Remove Input Field" click="removeInputField(event.currentTarget.repeaterIndex)" skin="skin.CloseButtonSkin" visible="{(inputFields.length > 2)}" width="{(inputFields.length > 2) ? 20 : 0}" />
-									</mx:HBox>
-	
-								</mx:FormItem>
-							</mx:Repeater> 
-							<mx:FormItem width="100%" defaultButton="{findRelationButton}">
-								<mx:HBox width="100%"  paddingRight="0" >
-									<mx:Button id="addInputFieldButton" height="20" label="add" paddingLeft="2" paddingRight="2" toolTip="Add Input Field" click="addNewInputField()" skin="skin.EmptyButtonSkin" />
-									<mx:Spacer width="100%" />
-									<mx:Button id="clearButton" label="clear" height="20"  click="{clear();}" paddingLeft="2" paddingRight="2" focusEnabled="false" skin="skin.EmptyButtonSkin"/>
-									<!-- <mx:Button id="clearAll" label="clear all" click="clear();" height="20" enabled="{false}"/>	 --> <!-- TODO: sinnvolle sperre einstellen! -->
-									<mx:Button id="findRelationButton" label="Find Relations"  height="20" click="callLater(findRelations)" paddingLeft="6" paddingRight="6"/>
-								</mx:HBox>
-							</mx:FormItem>
-						</mx:Form>
+						<local:InputFieldBox id="inputFieldBox" width="100%" paddingTop="0" paddingLeft="0"
+								paddingBottom="0" paddingRight="0" />
+							
 						
-						<mx:HRule width="100%"/>
+						
+						<!--mx:HRule width="100%"/-->
 							
 						<mx:VDividedBox id="vdivbox" visible="{_showOptions}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
 							<mx:VBox id="filterOptions" width="100%" height="100%" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" horizontalGap="2">
@@ -127,7 +99,7 @@ You should have received a copy of the GNU General Public License along with thi
 								</tab:PositionedTabNavigator>
 							</mx:VBox>
 							
-							<local:InfoBox id="infoBox" findRelationPanel="{findRelationPanel}" selectedElement="{selectedElement}" />
+							<local:InfoBox id="infoBox" findRelationPanel="{tn}" selectedElement="{selectedElement}" />
 							
 						</mx:VDividedBox>
 						

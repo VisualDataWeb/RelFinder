@@ -2,7 +2,7 @@
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="*"
 	xmlns:utils="utils.*"
 	paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" 
-	width="{findRelationPanel.width - 20}" height="100%" 
+	width="{findRelationPanel.width}" height="100%" 
 	
 	visible="{selectedElement != null}" initialize="init()"
 	horizontalScrollPolicy="off" verticalScrollPolicy="on"
@@ -13,12 +13,14 @@
 	<mx:Script>
 		<![CDATA[
 			import components.ButtonBarPanel;
+			import flash.display.DisplayObject;
 			import flash.events.Event;
 			import flash.xml.XMLDocument;
 			import global.Languages;
 			import graphElements.Element;
 			import mx.containers.Panel;
 			import mx.controls.TextArea;
+			import mx.core.Container;
 			
 			private function init():void {
 				Languages.getInstance().addEventListener("eventSelectedLanguageChanged", selectedLanguageChangedHandler);
@@ -106,14 +108,14 @@
 			}
 			
 			
-			private var _findRelationPanel:Panel = new Panel();
+			private var _findRelationPanel:Container = new Container();
 			
 			[Bindable]
-			public function get findRelationPanel():Panel {
+			public function get findRelationPanel():Container {
 				return _findRelationPanel;
 			}
 			
-			public function set findRelationPanel(value:Panel):void {
+			public function set findRelationPanel(value:Container):void {
 				_findRelationPanel = value;
 				dispatchEvent(new Event("findRelationPanelChange"));
 			}
@@ -148,21 +150,21 @@
 	</mx:Script>
 	
 	<mx:HBox id="labelBox">
-		<mx:Label truncateToFit="true" width="{findRelationPanel.width - 24 - langCombo.width - 8 - 20}" fontWeight="bold" fontSize="16" text="{selectedElement.rdfLabel}" /> 
+		<mx:Label truncateToFit="true" width="{findRelationPanel.width - 24 - langCombo.width - 8}" fontWeight="bold" fontSize="16" text="{selectedElement.rdfLabel}" /> 
 		<mx:ComboBox id="langCombo" dataProvider="{Languages.getInstance().asDataProvider}" width="60" close="{changeLang();}" />
 	</mx:HBox>
 	
 	<mx:Form id="infoForm" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0" indicatorGap="4">
 		<mx:FormItem label="More Infos:" width="100%" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
 			<mx:VBox paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" horizontalGap="0" verticalGap="0">
-				<mx:Label id="resourceLink" truncateToFit="true"  width="{findRelationPanel.width - 100 - 20}" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
-				<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{findRelationPanel.width - 100 - 25}" />
+				<mx:Label id="resourceLink" truncateToFit="true"  width="{findRelationPanel.width - 100}" htmlText="{selectedElement.uriLink}" toolTip="{selectedElement.resourceURI}" selectable="true" link="openWebsite(event);"  />
+				<local:InfoLinkBox dataProvider="{selectedElement.pages}" width="{findRelationPanel.width - 100 - 5}" />
 			</mx:VBox>
 		</mx:FormItem>
 	</mx:Form>
 	
 	<mx:VBox id="infoVBox" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" width="100%" height="100%" >
-		<local:ImageView id="imageView" width="{findRelationPanel.width - 24 - 20}" image_path="{selectedElement.imageURL}" />
+		<local:ImageView id="imageView" width="{findRelationPanel.width - 24}" image_path="{selectedElement.imageURL}" />
 		<utils:DynamicTextArea  id="abstarctText" wordWrap="true" editable="false" borderStyle="none" width="100%"
 				visible="{selectedElement.abstract != 'no abstract available'}"
 				htmlText="{htmlUnescape(selectedElement.abstract)}" verticalScrollPolicy="off" horizontalScrollPolicy="off" />
