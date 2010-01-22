@@ -36,6 +36,7 @@ package connection
 		private var strBooleanResult:String;
 		
 		private var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
+		private var rdfNS:Namespace = new Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		private var result:XML;
 		
 		public static var idCounter:int = 0;
@@ -76,24 +77,38 @@ package connection
 		 */
 		public function parse(_xmlInput:XML, _between:ArrayCollection, parsingInformations:int):void{
 			
-			setVariables(_xmlInput);
-			
 			var invertDirection:Boolean = false;
 			
 			var results:Array = new Array();
-			for each (var result:XML in _xmlInput..resultNS::results.resultNS::result) {
-				var resultArr:Array = new Array();
-				for each (var bind:String in getVariables()) {
-					var elem:Helper = new Helper;
-					elem.binding = bind;
-					elem.uri = result.resultNS::binding.(@name == bind).resultNS::uri;
-					resultArr.push(elem);
+			
+			if (_xmlInput.toXMLString().indexOf("<sparql") == 0) {
+				
+				setVariables(_xmlInput);
+				
+				for each (var result:XML in _xmlInput..resultNS::results.resultNS::result) {
+					var resultArr:Array = new Array();
+					for each (var bind:String in getVariables()) {
+						var elem:Helper = new Helper();
+						elem.binding = bind;
+						elem.uri = result.resultNS::binding.(@name == bind).resultNS::uri;
+						resultArr.push(elem);
+					}
+					results.push(resultArr);
 				}
-				results.push(resultArr);
-				//if (!collectionContainsEntry(results, resultArr)) {
-					//results.push(resultArr);
-				//}
+			}else {
+				for each (var result2:XML in _xmlInput..resultNS::results.resultNS::result) {
+					var resultArr2:Array = new Array();
+					for each (var binding:XML in result2..resultNS::binding) {
+						var elem2:Helper = new Helper();
+						elem2.binding = binding.@resultNS::name;
+						elem2.uri = binding.resultNS::value.@rdfNS::resource;
+						resultArr2.push(elem2);
+					}
+					results.push(resultArr2);
+				}
 			}
+			
+			
 			
 			if (results.length == 0) {
 				StatusModel.getInstance().addWasRelationFound(false);

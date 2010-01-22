@@ -82,7 +82,9 @@
 					switch(_size) {
 						
 						case SIZE_MINIMIZED:
-							trace("not implemented");
+							resizeButton.setStyle("skin", ToggleSizeButtonSkinDown);
+							inpuitFieldForm.height = 0;
+							buttonBox.height = 0;
 							break;
 							
 						case SIZE_SMALL:
@@ -97,6 +99,7 @@
 								
 								resizeButton.setStyle("skin", ToggleSizeButtonSkinDown);
 								inpuitFieldForm.height = 64;
+								buttonBox.percentHeight = 100;
 							}
 							
 							break;
@@ -111,15 +114,16 @@
 							resizeButton.setStyle("skin", ToggleSizeButtonSkinUp);
 							
 							inpuitFieldForm.percentHeight = 100;
+							buttonBox.percentHeight = 100;
 							break;
 						
 						
 						
 					}
 					
-					if (dataProvider.length == 2) {
-						resizeButton.setStyle("skin", ToggleSizeButtonSkinNone);
-					}
+					//if (dataProvider.length == 2) {
+						//resizeButton.setStyle("skin", ToggleSizeButtonSkinNone);
+					//}
 					
 					dispatchEvent(new Event("inputFieldWidthChange"));
 					dispatchEvent(new Event("SizeChange"));
@@ -458,7 +462,7 @@
 			public function resizeBox():void {
 				
 				if (size == SIZE_NORMAL) {
-					size = SIZE_SMALL;
+					size = SIZE_MINIMIZED;
 				}else {
 					size = SIZE_NORMAL;
 				}
@@ -518,7 +522,7 @@
 		</mx:Repeater> 
 	</mx:Form>
 	
-	<mx:HBox width="100%"  paddingRight="8" paddingLeft="40" >
+	<mx:HBox id="buttonBox" width="100%"  paddingRight="8" paddingLeft="40" >
 		<mx:Button id="addInputFieldButton" height="20" label="add" paddingLeft="2" paddingRight="2" toolTip="Add Input Field" click="addNewInputField()" skin="skin.EmptyButtonSkin" />
 		<mx:Spacer width="100%" />
 		<mx:Button id="clearButton" label="clear" height="20"  click="{app().clear();}" paddingLeft="2" paddingRight="2" focusEnabled="false" skin="skin.EmptyButtonSkin"/>
@@ -526,6 +530,6 @@
 		<mx:Button id="findRelationButton" label="Find Relations"  height="20" click="callLater(app().findRelations)" paddingLeft="6" paddingRight="6"/>
 	</mx:HBox>
 
-	<mx:Button id="resizeButton" paddingTop="0" height="10" width="100%" skin="skin.ToggleSizeButtonSkinNone" click="resizeBox()" />
+	<mx:Button id="resizeButton" paddingTop="0" height="10" width="100%" skin="skin.ToggleSizeButtonSkinUp" click="resizeBox()" />
 	
 </mx:VBox>

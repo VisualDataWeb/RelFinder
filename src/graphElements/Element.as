@@ -59,10 +59,11 @@ package graphElements {
 		private var rdf:XML;
 		
 		private var dbppropNS:Namespace = new Namespace("http://dbpedia.org/property/");
-		private var xmlns:Namespace = new Namespace("http://www.w3.org/XML/1998/namespace");
+		private var xmlNS:Namespace = new Namespace("http://www.w3.org/XML/1998/namespace");
 		private var rdfNS:Namespace = new Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		private var rdfsNS:Namespace = new Namespace("http://www.w3.org/2000/01/rdf-schema#");
 		private var foafNS:Namespace = new Namespace("http://xmlns.com/foaf/0.1/");
+		private var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
 		
 		private var _relations:Array = new Array();
 		private var _paths:Array = new Array();
@@ -377,8 +378,7 @@ package graphElements {
 		}
 		
 		private function sparqlResultHandler(e:SPARQLResultEvent):void {
-			var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
-			var xmlNS:Namespace = new Namespace("http://www.w3.org/XML/1998/namespace");
+			
 			var result:XML = new XML();
 			
 			try {
@@ -396,43 +396,89 @@ package graphElements {
 			
 			var config:IConfig = ConnectionModel.getInstance().sparqlConfig;
 			
+			var useNS:Boolean = false;
+			
 			if (result..resultNS::results != "") {
+				
+				if (result..resultNS::results.toXMLString().indexOf("<result") == 0) {
+					useNS = false;
+				}else {
+					useNS = true;
+				}
+				
 				for each (var res:XML in result..resultNS::results.resultNS::result) {
 					
 					// links
 					for each(definedURI in config.linkURIs) {
-						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
-							pages.addItem(res.resultNS::binding.(@name == "hasValue").resultNS::uri);
+						
+						if (useNS) {
+							if ((res.resultNS::binding.(@resultNS::name == "property").resultNS::value.@rdfNS::resource.toString()) == definedURI) {
+								pages.addItem(res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.toString());
+								trace(pages.toArray());
+							}
+						}else {
+							if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+								pages.addItem(res.resultNS::binding.(@name == "hasValue").resultNS::uri);
+							}
 						}
 					}
 					
 					// label
 					for each(definedURI in config.autocompleteURIs) {
-						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
-							var rdfLang:String = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang;
-							if (rdfLang == null || rdfLang == "") {
-								rdfLang = _defaultLang;
+						if (useNS) {
+							if ((res.resultNS::binding.(@resultNS::name == "property").resultNS::value.@rdfNS::resource) == definedURI) {
+								var rdfLang:String = res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.@xmlNS::lang.toString();
+								if (rdfLang == null || rdfLang == "") {
+									rdfLang = _defaultLang;
+								}
+								addRDFLabel(res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.toString(), rdfLang);
 							}
-							addRDFLabel(res.resultNS::binding.(@name == "hasValue").resultNS::literal, rdfLang);
+						}else {
+							if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+								var rdfLang2:String = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang;
+								if (rdfLang2 == null || rdfLang2 == "") {
+									rdfLang2 = _defaultLang;
+								}
+								addRDFLabel(res.resultNS::binding.(@name == "hasValue").resultNS::literal, rdfLang2);
+							}
 						}
 					}
 					
 					var lang:String = "";
 					// abstarct or comment
 					for each(definedURI in config.abstractURIs) {
-						if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+						if (useNS) {
+							if ((res.resultNS::binding.(@resultNS::name == "property").resultNS::value.@rdfNS::resource.toString()) == definedURI) {
 							
-							lang = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang
-							if (lang == "") {
-								lang = _defaultLang;
+								lang = res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.@xmlNS::lang.toString();
+								if (lang == "") {
+									lang = _defaultLang;
+								}
+								if (_abstractLevels[lang] == undefined) {
+									_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
+									addAbstract(res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.toString(), lang);
+								}else {
+									if ((_abstractLevels[lang] as int) > config.abstractURIs.getItemIndex(definedURI)) {
+										_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
+										addAbstract(res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.toString(), lang);
+									}
+								}
 							}
-							if (_abstractLevels[lang] == undefined) {
-								_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
-								addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, lang);
-							}else {
-								if ((_abstractLevels[lang] as int) > config.abstractURIs.getItemIndex(definedURI)) {
+						}else {
+							if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+							
+								lang = res.resultNS::binding.(@name == "hasValue").resultNS::literal.@xmlNS::lang
+								if (lang == "") {
+									lang = _defaultLang;
+								}
+								if (_abstractLevels[lang] == undefined) {
 									_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
 									addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, lang);
+								}else {
+									if ((_abstractLevels[lang] as int) > config.abstractURIs.getItemIndex(definedURI)) {
+										_abstractLevels[lang] = config.abstractURIs.getItemIndex(definedURI);
+										addAbstract(res.resultNS::binding.(@name == "hasValue").resultNS::literal, lang);
+									}
 								}
 							}
 						}
@@ -440,9 +486,17 @@ package graphElements {
 					
 					// depiction (image)
 					if (imageURL == "") {
-						for each(definedURI in config.imageURIs) {
-							if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
-								imageURL = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
+						if (useNS) {
+							for each(definedURI in config.imageURIs) {
+								if ((res.resultNS::binding.(@resultNS::name == "property").resultNS::value.@rdfNS::resource.toString()) == definedURI) {
+									imageURL = res.resultNS::binding.(@resultNS::name == "hasValue").resultNS::value.toString();
+								}
+							}
+						}else {
+							for each(definedURI in config.imageURIs) {
+								if ((res.resultNS::binding.(@name == "property").resultNS::uri) == definedURI) {
+									imageURL = res.resultNS::binding.(@name == "hasValue").resultNS::uri;
+								}
 							}
 						}
 					}
@@ -475,19 +529,25 @@ package graphElements {
 		}
 		
 		private function loadClassResultHandler(e:SPARQLResultEvent):void {
-			var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
-			var xmlNS:Namespace = new Namespace("http://www.w3.org/XML/1998/namespace");
 			var result:XML = new XML(e.result);
 			
 			if (result..resultNS::results !== "") {
 				for each (var res:XML in result..resultNS::results.resultNS::result) {
-					var conceptURI:String = res.resultNS::binding.(@name == "class").resultNS::uri;
+					
+					var conceptURI:String = ""
+					if (res.toXMLString().indexOf("<result") == 0) {
+						conceptURI = res.resultNS::binding.(@name == "class").resultNS::uri;
+					}else {
+						conceptURI = res.resultNS::binding.(@resultNS::name == "class").resultNS::value.@rdfNS::resource ;
+					}
+					
 					var cLabel:String =
 								conceptURI.replace("http://dbpedia.org/ontology/", "db:")
 								.replace("http://dbpedia.org/class/yago/", "yago:")
 								.replace("http://sw.opencyc.org/2008/06/10/concept/", "cyc:")
 								.replace("http://xmlns.com/foaf/0.1/", "foaf:")
-								.replace("http://umbel.org/umbel/sc/", "umb:");
+								.replace("http://umbel.org/umbel/sc/", "umb:")
+								.replace("http://www.w3.org/2000/01/rdf-schema#", "rdfs:");
 					if (this.concept == null) {
 						var c:Concept = app().getConcept(conceptURI, cLabel);
 						//this.addConcept(c);

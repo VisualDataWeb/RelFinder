@@ -330,6 +330,7 @@
 				try {
 					result = new XML(e.result);
 					var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
+					var rdfNS:Namespace = new Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 					
 					var contains:Boolean = false;
 					var containsLabel:Boolean = false;
@@ -337,9 +338,23 @@
 					if (result..resultNS::results != "") {
 						for each (var res:XML in result..resultNS::results.resultNS::result) {
 							
-							var newLabel:String = res.resultNS::binding.(@name == 'l').resultNS::literal;
-							var newUri:String = res.resultNS::binding.(@name == 's').resultNS::uri;
-							var newCount:int = new int(res.resultNS::binding.(@name == 'count').resultNS::literal);
+							var newLabel:String = "";
+							var newUri:String = "";
+							var newCount:int = 0;
+							
+							// Crap but working. Other solutions cause Flex Player + Browser crashing
+							for each (var binding:XML in res.resultNS::binding) {
+								if ((binding as XML).toXMLString().indexOf("<binding") == 0) {
+									newLabel = res.resultNS::binding.(@name == 'l').resultNS::literal;
+									newUri = res.resultNS::binding.(@name == 's').resultNS::uri
+									newCount = new int(res.resultNS::binding.(@name == 'count').resultNS::literal);
+								}else {
+									newLabel = res.resultNS::binding.(@resultNS::name == "l").resultNS::value;
+									newUri = res.resultNS::binding.(@resultNS::name == "s").resultNS::value.@rdfNS::resource;
+									newCount = new int(res.resultNS::binding.(@resultNS::name == "count").resultNS::value);
+								}
+							}
+							
 							
 							if (newUri == null || newUri == "") {
 								newUri = res.resultNS::binding.(@name == 's').resultNS::literal;
@@ -439,7 +454,9 @@
 					trace(error);
 					trace(e.result);
 				}
+				
 				var resultNS:Namespace = new Namespace("http://www.w3.org/2005/sparql-results#");
+				var rdfNS:Namespace = new Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 				
 				var contains:Boolean = false;
 				var containsLabel:Boolean = false;
@@ -447,8 +464,20 @@
 				if (result..resultNS::results != "") {
 					for each (var res:XML in result..resultNS::results.resultNS::result) {
 						
-						var newLabel:String = res..resultNS::literal;
-						var newUri:String = res..resultNS::uri;
+						var newLabel:String = "";
+						var newUri:String = "";
+						
+						// Crap but working. Other solutions cause Flex Player + Browser crashing
+						for each (var binding:XML in res.resultNS::binding) {
+							if ((binding as XML).toXMLString().indexOf("<binding") == 0) {
+								newLabel = res.resultNS::binding.(@name == 'l').resultNS::literal;
+								newUri = res.resultNS::binding.(@name == 's').resultNS::uri
+							}else {
+								newLabel = res.resultNS::binding.(@resultNS::name == "l").resultNS::value;
+								newUri = res.resultNS::binding.(@resultNS::name == "s").resultNS::value.@rdfNS::resource;
+							}
+						}
+						
 						
 						contains = false;
 						containsLabel = false;
