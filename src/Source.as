@@ -84,14 +84,14 @@ import popup.InputSelectionEvent;
 import toolTip.SelectedItemToolTipRenderer;
 
 [Bindable]
-private var graph:Graph = new Graph();
-private var foundNodes:HashMap = new HashMap();
-private var givenNodes:HashMap = new HashMap();
-private var givenNodesInsertionTime:HashMap = new HashMap();
-private var _relationNodes:HashMap = new HashMap();
-private var relations:HashMap = new HashMap();
-private var elements:HashMap = new HashMap();
-private var toDrawPaths:ArrayedQueue = new ArrayedQueue(1000);
+private var graph:Graph = new Graph(); /*~*/
+private var foundNodes:HashMap = new HashMap(); /*~*/
+private var givenNodes:HashMap = new HashMap(); /*~*/
+private var givenNodesInsertionTime:HashMap = new HashMap(); /*~*/
+private var _relationNodes:HashMap = new HashMap(); /*~*/
+private var relations:HashMap = new HashMap(); /*~*/
+private var elements:HashMap = new HashMap(); /*~*/
+private var toDrawPaths:ArrayedQueue = new ArrayedQueue(1000); /*~*/
 //private var iter:Iterator;
 //[Bindable]
 //public var currentNode:MyNode = null;	//the currently selected node in the graph
@@ -127,7 +127,7 @@ private var _selectedRelType:RelType = null;
 private var _pathLengths:ArrayCollection = new ArrayCollection();
 private var _selectedPathLength:PathLength = null;	//??? braucht man ??
 
-private var _paths:HashMap = new HashMap();
+private var _paths:HashMap = new HashMap(); /*~*/
 //[Bindable(event = "maxPathLengthChange")]
 //private var _maxPathLength:int = 0;
 //private var _selectedMaxPathLength:int = 0;	
@@ -159,13 +159,6 @@ private function setup(): void {
 		StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
 		
 		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelZoomHandler);
-		
-		//filterSort.fields = [sortByLabel];
-		//_concepts.sort = filterSort;
-		//_relTypes.sort = filterSort;
-		//_pathLengths.sort = filterSort;
-		//_connectivityLevels.sort = filterSort;
-		
 		
 		callLater(setupParams);
 	}
@@ -230,7 +223,7 @@ private function preInitHandler(event:Event):void {
 	
 	configLoader.addEventListener(ResultEvent.RESULT, xmlCompleteHandler);
 	configLoader.addEventListener(FaultEvent.FAULT, xmlCompleteHandler);
-	configLoader.url = "config/Config.xml";	//TODO: unterscheiden zwischen dbpedia und semanticweb.org
+	configLoader.url = "config/Config.xml";
 	configLoader.send();
    
 }
@@ -355,33 +348,6 @@ private function getUrlParamateres():Dictionary {
 	return urlParams;
 }
 
-public function pathLengthRangeChanged(limit1:int, limit2:int):void {
-	/*if (_delayedDrawing) {
-		//emptyToDrawPaths();	//empties the queue
-		//delayedDrawing = false;
-	}*/
-	
-	//trace("new lengthRange: " + limit1 + ", " + limit2);
-	if (limit1 < limit2) {
-		//_selectedMaxPathLength = limit2;
-		//_selectedMinPathLength = limit1;
-	}else {
-		//_selectedMaxPathLength = limit1;
-		//_selectedMinPathLength = limit2;
-	}
-	//pathLengthRange.values = new Array(_selectedMinPathLength, _selectedMaxPathLength);
-	//dispatchEvent(new Event(PLRCHANGE));
-}
-
-/*[Bindable(event=PLRCHANGE)]
-public function get selectedMaxPathLength():int {
-	return _selectedMaxPathLength;
-}*/
-
-/*[Bindable(event=RLRPLCHANGE)]
-public function get selectedMinPathLength():int {
-	return _selectedMinPathLength;
-}*/
 
 public function getConcept(uri:String, label:String):Concept {
 	//trace("getConcept : " + uri);
@@ -658,8 +624,6 @@ private function pathLengthChangeListener(event:Event):void {
 	
 	if (event.type == PathLength.ELEMENTNUMBERCHANGE) {
 		if (dgL != null) {
-			//(dgL as SortableDataGrid).sortByColumn();
-			
 			_pathLengths.itemUpdated(pL);
 		}
 	}else {
@@ -667,11 +631,6 @@ private function pathLengthChangeListener(event:Event):void {
 			(dgL as DataGrid).invalidateList();
 		}
 	}
-	
-	//_pathLengths.itemUpdated(pL);
-	//if (dgL != null) {
-		//(dgL as DataGrid).invalidateList();
-	//}
 	
 	//check filter sign
 	if (tab10.isVisible) {	//no filters are registered
@@ -712,7 +671,7 @@ public function set selectedPathLength(p:PathLength):void {
 }
 
 
-
+/*~*/
 public function getGivenNode(_uri:String, _element:Element):GivenNode {
 	if (!givenNodes.containsKey(_uri)) {
 		var newGivenNode:GivenNode = new GivenNode(_uri, _element);
@@ -721,22 +680,13 @@ public function getGivenNode(_uri:String, _element:Element):GivenNode {
 		
 		var givenNodesArray:Array = new Array();
 		
-		//var itr:Iterator = 
 		var keys:Array = givenNodesInsertionTime.getKeySet();
-		
-		//var uri:String = "";
 		
 		for each(var uri:String in keys) {
 			if (givenNodes.containsKey(uri)) {
 				givenNodesArray.push({time:(givenNodesInsertionTime.find(uri) as Date).time, node:givenNodes.find(uri)});
 			}
 		}
-		/*while (itr.hasNext()) {
-			uri = itr.next() as String;
-			if (givenNodes.containsKey(uri)) {
-				givenNodesArray.push({time:(givenNodesInsertionTime.find(uri) as Date).time, node:givenNodes.find(uri)});
-			}
-		}*/
 		
 		givenNodesArray.sortOn("time", Array.NUMERIC);
 		
@@ -764,30 +714,17 @@ public function getGivenNode(_uri:String, _element:Element):GivenNode {
 			}
 		}
 		
-		//trace("add givenNode: " + newGivenNode.id);
-		
-		
-		//switch(givenNodes.size) {
-			//case 1:
-				//newGivenNode.setPosition(120, (this.sGraph.height / 2));
-				//break;
-			//case 2: 
-				//newGivenNode.setPosition((this.sGraph.width - 120), (this.sGraph.height / 2));
-				//break;
-			//default:
-				//newGivenNode.setPosition(Math.random() * this.sGraph.width, Math.random() * this.sGraph.height);
-				//break;
-		//}
 	}
 	return givenNodes.find(_uri);
 }
 
+/*~*/
 public function moveNodeToPosition(node:GivenNode, x:Number, y:Number):void {
 	(node as GivenNode).moveToPosition(x, y);
 }
 
 
-
+/*~*/
 public function getInstanceNode(_id:String, _element:Element):MyNode {
 	if (givenNodes.containsKey(_id)) {	//if the node is a given node!
 		
@@ -802,6 +739,7 @@ public function getInstanceNode(_id:String, _element:Element):MyNode {
 	return foundNodes.find(_id) as MyNode;
 }
 
+/*~*/
 public function getRelationNode(id:String, relation:Relation):RelationNode {
 	if (!_relationNodes.containsKey(id)) {
 		//trace("<<<< do not exist yet: " + id);
@@ -812,6 +750,7 @@ public function getRelationNode(id:String, relation:Relation):RelationNode {
 	return _relationNodes.find(id);
 }
 
+/*~*/
 public function drawPath(p:Path, immediatly:Boolean = false):void {
 	
 	if (delayedDrawing && !immediatly) {
@@ -827,6 +766,7 @@ public function drawPath(p:Path, immediatly:Boolean = false):void {
 	
 }
 
+/*~*/
 private function drawRelation(_r:Relation, layout:Object = null):void {
 	
 	var subject:Element = _r.subject;
@@ -852,6 +792,7 @@ private function drawRelation(_r:Relation, layout:Object = null):void {
 	addRelationToGraph(subjectNode, predicateNode, objectNode, layout);
 }
 
+/*~*/
 private function addNodeToGraph(node:MyNode):void {	//TODO: relations need to be added too!
 	//trace(">>> add node to graph: " + node.id);
 	graph.add(node);
@@ -859,6 +800,7 @@ private function addNodeToGraph(node:MyNode):void {	//TODO: relations need to be
 	//setCurrentItem(node);
 }
 
+/*~*/
 public function hideNode(node:MyNode):void {
 	//trace("hideNode " + node.id);
 	if (graph.hasNode(node.id)) {	//if part of the graph
@@ -866,12 +808,14 @@ public function hideNode(node:MyNode):void {
 	}
 }
 
+/*~*/
 public function showNode(node:MyNode):void {
 	trace("---- showNode: " + node.id);
 	//TODO: Relationen wieder aufbauen!
 	addNodeToGraph(node);
 }
 
+/*~*/
 private function removeNodeFromGraph(node:MyNode):void {	//TODO: the whole connection must be removed too! And the relation!
 	trace("Remove node from graph: " + node.id);
 	node.element.isVisible = false;
@@ -881,6 +825,7 @@ private function removeNodeFromGraph(node:MyNode):void {	//TODO: the whole conne
 	//setCurrentItem(null);
 }
 
+/*~*/
 private function addRelationToGraph(subjectNode:MyNode, predicateNode:MyNode, objectNode:MyNode, layout:Object = null):void {
 	
 	var object1:Object = new Object();
@@ -898,6 +843,7 @@ private function addRelationToGraph(subjectNode:MyNode, predicateNode:MyNode, ob
 	//setCurrentItem(subjectNode);
 }
 
+/*~*/
 public function getRelation(_subject:Element, _predicate:Element, _object:Element):Relation {
 	var relId:String = _subject.id + _predicate.id + _object.id; //_subject.label.toLowerCase() + _predicate.label.toLowerCase() + _object.label.toLowerCase();
 	if (!relations.containsKey(relId)) {
@@ -911,6 +857,7 @@ public function getRelation(_subject:Element, _predicate:Element, _object:Elemen
 	return relations.find(relId);
 }
 
+/*~*/
 public function getElement(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, _abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = ""):Element {
 	
 	//WARNING: This is just a workaround!! It should get index by its id instead of by its label!!
@@ -937,20 +884,13 @@ public function getElement(_id:String, _resourceURI:String, _label:String, isPre
 	
 }
 
+/*~*/
 public function getPath(pathId:String, pathRelations:Array):Path {
 	if (!_paths.containsKey(pathId)) {
 		var pL:PathLength = getPathLength(pathRelations.length.toString(), pathRelations.length - 1);
 		var newPath:Path = new Path(pathId, pathRelations, pL);
 		
-		/*var rS:Relation = pathRelations[0];	//start
-		newPath.startElement = rS.subject;
-		var rE:Relation = pathRelations[pathRelations.length - 1];	//end
-		newPath.endElement = rE.object;*/
-		
 		_paths.insert(pathId, newPath);
-		/*if (_maxPathLength < newPath.pathLength.num) {
-			maxPathLength = newPath.pathLength.num;
-		}*/
 		
 		if (!_graphIsFull) {
 			//if (selectedMaxPathLength < newPath.pathLength.num) {
@@ -958,8 +898,7 @@ public function getPath(pathId:String, pathRelations:Array):Path {
 					trace("graph is full!!!");
 					_graphIsFull = true;
 				}else {
-					//pathLengthRangeChanged(_selectedMinPathLength, newPath.pathLength.num);	//update slider
-					//selectedMaxPathLength = newPath.pathLength;	
+					
 				}
 			//}
 		}
@@ -969,21 +908,6 @@ public function getPath(pathId:String, pathRelations:Array):Path {
 	return _paths.find(pathId);
 }
 
-/*public function set maxPathLength(m:int):void {
-	_maxPathLength =m;
-	//pathLengthRange.maximum = _maxPathLength;
-	//var a:Array = new Array();
-	//for (var i:int = 0; i <= _maxPathLength; i++) {
-	//	a.push(i);
-	//}
-	//pathLengthRange.labels = a;
-	//dispatchEvent(new Event("maxPathLengthChange"));
-}*/
-
-/*public function setCurrentItem(_i:Item):void {
-	//trace("set current item " + _i.id);
-	//sGraph.currentItem = _i;
-}*/
 
 [Bindable]
 public function get selectedElement():Element {
