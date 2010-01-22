@@ -173,6 +173,30 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
+	<endpoint>
+      <name>Catalogus Professorum</name>
+      <abbreviation>prof</abbreviation>
+      <description>Professors catalouge from University Leipzig</description>
+      <endpointURI>http://catalogus-professorum.org</endpointURI>
+      <defaultGraphURI>http://catalogus-professorum.org/lipsiensis/</defaultGraphURI>
+      <isVirtuoso>false</isVirtuoso>
+      <useProxy>false</useProxy>
+      <autocompleteURIs>
+        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
+      </autocompleteURIs>
+      <abstractURIs>
+        <abstractURI>http://catalogus-professorum.org/cpm/furtherInformation</abstractURI>
+      </abstractURIs>
+      <imageURIs>
+        <imageURI>http://xmlns.com/foaf/0.1/depiction</imageURI>
+        <imageURI>http://catalogus-professorum.org/cpm/picture</imageURI>
+      </imageURIs>
+      <linkURIs>
+        <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
+        <linkURI>http://catalogus-professorum.org/cpm/webLinks</linkURI>
+      </linkURIs>
+      <maxRelationLength>2</maxRelationLength>
+    </endpoint>
     <endpoint>
       <name>Linking Open Drug Data (LODD)</name>
       <abbreviation>lodd</abbreviation>
