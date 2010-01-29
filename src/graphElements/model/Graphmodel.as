@@ -33,6 +33,9 @@
 	{
 		
 		public static const GRAPH_MODEL_PROPERTY_CHANGED:String = "GRAPH_MODEL_PROPERTY_CHANGED";
+		public static const ZOOM_COMPLETE:int = 0;
+		public static const ZOOM_AGGREGATED_EDGES:int = 1;
+		public static const ZOOM_AGGREGATED_NODES:int = 2;
 		
 		public static var graphIsFullValue:int = 10;
 		
@@ -66,6 +69,8 @@
 		[Bindable]
 		public var pathLengths:ArrayCollection = new ArrayCollection();
 		private var _selectedPathLength:PathLength = null;
+		
+		private var zoomFactor:int = ZOOM_COMPLETE;
 		
 		private static var instance:Graphmodel;
 		

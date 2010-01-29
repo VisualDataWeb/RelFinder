@@ -84,6 +84,9 @@ import popup.InputSelectionEvent;
 
 import toolTip.SelectedItemToolTipRenderer;
 
+
+
+
 private var _selectedElement:Element = null;	//so ist es besser!
 
 private var myConnection:SPARQLConnection = null;
@@ -121,7 +124,7 @@ private function setup(): void {
 	
 		StatusModel.getInstance().addEventListener("eventMessageChanged", statusChangedHandler);
 		
-		//(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelZoomHandler);
+		(sGraph as Canvas).addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelZoomHandler);
 		
 		callLater(setupParams);
 	}
@@ -146,13 +149,26 @@ private var wheelScale:Number = 1.0;
 
 private function mouseWheelZoomHandler(event:MouseEvent):void {
 	if (event.delta > 0) {
-		wheelScale = wheelScale * 1.05;
+		zoomSliderUp();
+		//wheelScale = wheelScale * 1.05;
 	}else {
-		wheelScale = wheelScale / 1.05;
+		//wheelScale = wheelScale / 1.05;
 	}
 	
-	sGraph.scaleX = wheelScale;
-	sGraph.scaleY = wheelScale;
+	//sGraph.scaleX = wheelScale;
+	//sGraph.scaleY = wheelScale;
+	
+	
+}
+
+public function zoomSliderUp():void {
+	if (zoomSlider.value < Graphmodel.ZOOM_AGGREGATED_NODES) {
+		zoomSlider.value++;
+	}
+}
+
+private function zoomSliderChangeHandler(event:Event):void {
+	
 }
 
 private function setupParams():void {

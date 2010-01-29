@@ -134,10 +134,13 @@ You should have received a copy of the GNU General Public License along with thi
 						</fc:addItemEffect>
 						
 				</fc:SpringGraph>
-				
 			</mx:VBox>
 		</mx:HDividedBox>
 	</mx:VBox>
+	
+	<!-- Graph "Zoom" -->
+	<mx:VSlider id="zoomSlider" x="{findRelationPanel.width + 30}" y="10" tickInterval="1" 
+            labels="['min', 'max']" maximum="{Graphmodel.ZOOM_AGGREGATED_NODES}" snapInterval="1" change="zoomSliderChangeHandler(event);" />
 	
 	<!-- STATUS INFO (New Position)-->
 	<mx:ApplicationControlBar id="statusBar" y="10" x="{mainVBox.width - statusBar.width - 10}"
