@@ -20,6 +20,7 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import global.GlobalString;
 import global.ToolTipModel;
+import graphElements.model.Graphmodel;
 import mx.collections.Sort;
 import mx.collections.SortField;
 import mx.containers.Canvas;
@@ -83,19 +84,6 @@ import popup.InputSelectionEvent;
 
 import toolTip.SelectedItemToolTipRenderer;
 
-[Bindable]
-private var graph:Graph = new Graph(); /*~*/
-private var foundNodes:HashMap = new HashMap(); /*~*/
-private var givenNodes:HashMap = new HashMap(); /*~*/
-private var givenNodesInsertionTime:HashMap = new HashMap(); /*~*/
-private var _relationNodes:HashMap = new HashMap(); /*~*/
-[Bindable]
-private var relations:HashMap = new HashMap(); /*~*/
-private var elements:HashMap = new HashMap(); /*~*/
-private var toDrawPaths:ArrayedQueue = new ArrayedQueue(1000); /*~*/
-//private var iter:Iterator;
-//[Bindable]
-//public var currentNode:MyNode = null;	//the currently selected node in the graph
 private var _selectedElement:Element = null;	//so ist es besser!
 
 private var myConnection:SPARQLConnection = null;
@@ -112,36 +100,10 @@ private var autoCompleteList:ArrayCollection = new ArrayCollection();
 private var filterSort:Sort = new Sort();
 private var sortByLabel:SortField = new SortField("label", true);
 
-[Bindable]
-private var _concepts:ArrayCollection = new ArrayCollection();
-private var _selectedConcept:Concept = null;
-
-[Bindable]
-private var _connectivityLevels:ArrayCollection = new ArrayCollection();
-private var _selectedConnectivityLevel:ConnectivityLevel = null;
-
-[Bindable]
-private var _relTypes:ArrayCollection = new ArrayCollection();
-private var _selectedRelType:RelType = null;
-
-[Bindable]
-private var _pathLengths:ArrayCollection = new ArrayCollection();
-private var _selectedPathLength:PathLength = null;	//??? braucht man ??
-
-private var _paths:HashMap = new HashMap(); /*~*/
-//[Bindable(event = "maxPathLengthChange")]
-//private var _maxPathLength:int = 0;
-//private var _selectedMaxPathLength:int = 0;	
-//private var _selectedMinPathLength:int = 0;
-
 [Bindable(event = "eventLangsChanged")]
 private var languageDP:Array = Languages.getInstance().asDataProvider;
 
 public var PLRCHANGE:String = "selectedPathLengthRangeChange";
-
-private var _graphIsFull:Boolean = false;	//whether the graph is overcluttered already!
-private var _delayedDrawing:Boolean = true;
-
 
 [Bindable]
 private var _showOptions:Boolean = false;	//flag to set filters and infos visible or invisible
@@ -168,7 +130,9 @@ private function setup(): void {
 	
 }
 
-
+private function get graphModel():Graphmodel {
+	return Graphmodel.getInstance();
+}
 
 private function mouseWheelRepulsionHandler(event:MouseEvent):void {
 	if (event.delta > 0) {
@@ -280,9 +244,9 @@ private function statusChangedHandler(event:Event):void {
 		la.startRotation();
 	}else{
 		la.stopRotation();
-		delayedDrawing = false;
+		graphModel.delayedDrawing = false;
 		//build connectivityLevels
-		var iter:Iterator = elements.getIterator();
+		var iter:Iterator = graphModel.elements.getIterator();
 		while (iter.hasNext()) {
 			var e:Element = iter.next();
 			if ((!e.isGiven)  && (!e.isPredicate)) {
@@ -350,580 +314,6 @@ private function getUrlParamateres():Dictionary {
 }
 
 
-public function getConcept(uri:String, label:String):Concept {
-	//trace("getConcept : " + uri);
-	for each(var c:Concept in _concepts) {
-		if (c.id == uri) {
-			
-			return c;
-		}
-	}
-	//trace("build new concpet " + uri);
-	var newC:Concept = new Concept(uri, label);
-	_concepts.addItem(newC);
-	newC.addEventListener(Concept.NUMVECHANGE, conceptChangeListener);
-	newC.addEventListener(Concept.VCHANGE, conceptChangeListener);
-
-	newC.addEventListener(Concept.ELEMENTNUMBERCHANGE, conceptChangeListener);
-
-	
-	_concepts.refresh();
-	return newC;
-}
-
-private function conceptChangeListener(event:Event):void {
-	var c:Concept = event.target as Concept;
-	
-	if (event.type == Concept.ELEMENTNUMBERCHANGE) {
-		if (dgC != null) {
-			//(dgC as SortableDataGrid).sortByColumn();
-			
-			_concepts.itemUpdated(c);
-		}
-	}else {
-		if (dgC != null) {
-			(dgC as DataGrid).invalidateList();
-		}
-	}
-	
-	
-	
-	//check filter sign
-	if (tab12.isVisible) {
-		if ((!c.isVisible) && c.canBeChanged) {
-			tab12.isVisible = false; //.icon = filterSign;
-		}
-	}else {
-		var noFilters:Boolean = true;
-		for each(var c1:Concept in _concepts) {
-			if ((!c1.isVisible) && c1.canBeChanged) {
-				noFilters = false;	//there is at least one filter!
-				break;
-			}
-		}
-		if (noFilters) {
-			tab12.isVisible = true; // icon = null;
-		}
-	}
-}
-
-[Bindable]
-public function get selectedConcept():Concept {
-	return _selectedConcept;
-}
-
-public function set selectedConcept(c:Concept):void {
-	if (_selectedConcept != c) {
-		//trace("selectedConcept change "+c.id);
-		
-		//deselect all other selections
-		selectedRelType = null;
-		selectedPathLength = null;
-		selectedConnectivityLevel = null;
-		
-		_selectedConcept = c;
-		//dispatchEvent(new Event("selectedConceptChange"));
-	}
-}
-
-
-/** RelTypes **/
-
-public function getRelType(uri:String, label:String):RelType {
-	//trace("getConcept : " + uri);
-	for each(var r:RelType in _relTypes) {
-		if (r.id == uri) {
-			
-			return r;
-		}
-	}
-	trace("build new reltype " + uri);
-	var newR:RelType = new RelType(uri, label);
-	_relTypes.addItem(newR);
-	newR.addEventListener(RelType.NUMVRCHANGE, relTypeChangeListener);
-	newR.addEventListener(RelType.VCHANGE, relTypeChangeListener);
-	newR.addEventListener(RelType.ELEMENTNUMBERCHANGE, relTypeChangeListener);
-	
-	if (_graphIsFull) {
-		trace("------------------graphISFULLL -> relType setVisible=false");
-		newR.isVisible = false;
-	}
-	_relTypes.refresh();
-	return newR;
-}
-
-private function relTypeChangeListener(event:Event):void {
-	
-	var rT:RelType = event.target as RelType;
-	
-	if (event.type == RelType.ELEMENTNUMBERCHANGE) {
-		if (dgT != null) {
-			//(dgT as SortableDataGrid).sortByColumn();
-			
-			_relTypes.itemUpdated(rT);
-		}
-	}else {
-		if (dgT != null) {
-			(dgT as DataGrid).invalidateList();
-		}
-	}
-	
-	//trace("relTypes update : " +rT.numVisibleRelations);
-	//_relTypes.itemUpdated(rT);
-	//if (dgT != null) {
-		//(dgT as DataGrid).invalidateList();
-	//}
-	
-	//check filter sign
-	if (tab13.isVisible) {
-		if ((!rT.isVisible) && rT.canBeChanged) {
-			tab13.isVisible = false; // icon = filterSign;
-		}
-	}else {
-		var noFilters:Boolean = true;
-		for each(var rT1:RelType in _relTypes) {
-			if ((!rT1.isVisible) && rT1.canBeChanged) {
-				noFilters = false;	//there is at least one filter!
-				break;
-			}
-		}
-		if (noFilters) {
-			tab13.isVisible = true; // icon = null;
-		}
-	}
-}
-
-[Bindable]
-public function get selectedRelType():RelType {
-	return _selectedRelType;
-}
-
-public function set selectedRelType(r:RelType):void {
-	if (_selectedRelType != r) {
-		//trace("selectedConcept change "+c.id);
-		
-		//deselect all other selections
-		selectedConcept = null;
-		selectedPathLength = null;
-		selectedConnectivityLevel = null;
-		
-		_selectedRelType = r;
-		//dispatchEvent(new Event("selectedConceptChange"));
-	}
-}
-
-
-
-/** ConnectivityLevels **/
-
-public function getConnectivityLevel(id:String, num:int):ConnectivityLevel {
-	//trace("getConcept : " + uri);
-	for each(var cL:ConnectivityLevel in _connectivityLevels) {
-		if (cL.id == id) {
-			
-			return cL;
-		}
-	}
-	trace("build new conLevel " + id);
-	var newCL:ConnectivityLevel = new ConnectivityLevel(id, num);
-	_connectivityLevels.addItem(newCL);
-	newCL.addEventListener(ConnectivityLevel.NUMVECHANGE, conLevelChangeListener);
-	newCL.addEventListener(ConnectivityLevel.VCHANGE, conLevelChangeListener);
-	newCL.addEventListener(ConnectivityLevel.ELEMENTNUMBERCHANGE, conLevelChangeListener);
-	/*if (_graphIsFull) {
-		trace("------------------graphISFULLL -> relType setVisible=false");
-		newR.isVisible = false;
-	}*/
-	_connectivityLevels.refresh();
-	return newCL;
-}
-
-private function conLevelChangeListener(event:Event):void {
-	var cL:ConnectivityLevel = event.target as ConnectivityLevel;
-	
-	if (event.type == ConnectivityLevel.ELEMENTNUMBERCHANGE) {
-		if (dgCc != null) {
-			//(dgCc as SortableDataGrid).sortByColumn();
-			
-			_connectivityLevels.itemUpdated(cL);
-		}
-	}else {
-		if (dgCc != null) {
-			(dgCc as DataGrid).invalidateList();
-		}
-	}
-	
-	//_connectivityLevels.itemUpdated(cL);
-	//if (dgCc != null) {
-		//(dgCc as DataGrid).invalidateList();
-	//}
-	
-	//check filter sign
-	if (tab11.isVisible) {	//no filters are registered
-		if ((!cL.isVisible) && cL.canBeChanged) {
-			tab11.isVisible = false;	// icon = filterSign;
-		}
-	}else {
-		var noFilters:Boolean = true;
-		for each(var cL1:ConnectivityLevel in _connectivityLevels) {
-			if ((!cL1.isVisible) && cL1.canBeChanged) {
-				noFilters = false;	//there is at least one filter!
-				break;
-			}
-		}
-		if (noFilters) {
-			tab11.isVisible = true; //tab10.icon = null;
-		}
-	}
-}
-
-[Bindable]
-public function get selectedConnectivityLevel():ConnectivityLevel {
-	return _selectedConnectivityLevel;
-}
-
-public function set selectedConnectivityLevel(cL:ConnectivityLevel):void {
-	if (_selectedConnectivityLevel != cL) {
-		//trace("selectedConcept change "+c.id);
-		
-		//deselect all other selections
-		selectedRelType = null;
-		selectedConcept = null;
-		selectedPathLength = null;
-		
-		_selectedConnectivityLevel = cL;
-	}
-}
-
-
-
-/** PathLenghts **/
-
-public function getPathLength(uri:String, length:int):PathLength {
-	for each(var pL:PathLength in _pathLengths) {
-		if (pL.id == uri) {
-			
-			return pL;
-		}
-	}
-	//trace("build new concpet " + uri);
-	var newPL:PathLength = new PathLength(uri, length);
-	_pathLengths.addItem(newPL);
-	newPL.addEventListener(PathLength.NUMVPCHANGE, pathLengthChangeListener);
-	newPL.addEventListener(PathLength.VCHANGE, pathLengthChangeListener);
-	newPL.addEventListener(PathLength.ELEMENTNUMBERCHANGE, pathLengthChangeListener);
-	if (_graphIsFull) {
-		//set new pathLength invisible
-		newPL.isVisible = false;
-	}
-	_pathLengths.refresh();
-	return newPL;
-}
-
-private function pathLengthChangeListener(event:Event):void {
-	var pL:PathLength = event.target as PathLength;
-	
-	if (event.type == PathLength.ELEMENTNUMBERCHANGE) {
-		if (dgL != null) {
-			_pathLengths.itemUpdated(pL);
-		}
-	}else {
-		if (dgL != null) {
-			(dgL as DataGrid).invalidateList();
-		}
-	}
-	
-	//check filter sign
-	if (tab10.isVisible) {	//no filters are registered
-		if ((!pL.isVisible) && pL.canBeChanged) {
-			tab10.isVisible = false;	// icon = filterSign;
-		}
-	}else {
-		var noFilters:Boolean = true;
-		for each(var pL1:PathLength in _pathLengths) {
-			if ((!pL1.isVisible) && pL1.canBeChanged) {
-				noFilters = false;	//there is at least one filter!
-				break;
-			}
-		}
-		if (noFilters) {
-			tab10.isVisible = true; //tab10.icon = null;
-		}
-	}
-	
-	dispatchEvent(new Event("RelationCountChanged"));
-}
-
-[Bindable]
-public function get selectedPathLength():PathLength {
-	return _selectedPathLength;
-}
-
-public function set selectedPathLength(p:PathLength):void {
-	if (_selectedPathLength != p) {
-		//trace("selectedConcept change "+c.id);
-		
-		//deselect all other selections
-		selectedRelType = null;
-		selectedConcept = null;
-		selectedConnectivityLevel = null;
-		
-		_selectedPathLength = p;
-		//dispatchEvent(new Event("selectedConceptChange"));
-	}
-}
-
-[Bindable(event="RelationCountChanged")]
-public function getRelationCountInfo():String {
-	var all:int = 0;
-	var visible:int = 0;
-	for each(var pl:PathLength in _pathLengths) {
-		all += (pl as PathLength).numAllPaths;
-		visible += (pl as PathLength).numVisiblePaths;
-	}
-	return "(" + visible + "/" + all + ")";
-}
-
-
-/*~*/
-public function getGivenNode(_uri:String, _element:Element):GivenNode {
-	if (!givenNodes.containsKey(_uri)) {
-		var newGivenNode:GivenNode = new GivenNode(_uri, _element);
-		givenNodes.insert(_uri, newGivenNode);
-		givenNodesInsertionTime.insert(_uri, new Date());
-		
-		var givenNodesArray:Array = new Array();
-		
-		var keys:Array = givenNodesInsertionTime.getKeySet();
-		
-		for each(var uri:String in keys) {
-			if (givenNodes.containsKey(uri)) {
-				givenNodesArray.push({time:(givenNodesInsertionTime.find(uri) as Date).time, node:givenNodes.find(uri)});
-			}
-		}
-		
-		givenNodesArray.sortOn("time", Array.NUMERIC);
-		
-		addNodeToGraph(newGivenNode);
-		
-		var angle:Number = 360 / givenNodesArray.length;
-		var centerX:Number = this.sGraph.width / 2;
-		var centerY:Number = this.sGraph.height / 2
-		//var radius:Number = Math.min(centerX - 80, centerY - 40);
-		var a:Number = centerX - 120;
-		var b:Number = centerY - 60;
-		
-		for (var i:int = 0; i < givenNodesArray.length; i++) {
-			if ((givenNodesArray[i].node as GivenNode).getX() == 0 && (givenNodesArray[i].node as GivenNode).getY() == 0) {
-				// Ellipse
-				(givenNodesArray[i].node as GivenNode).setPosition(a * Math.cos((i * angle - 180) * (Math.PI / 180)) + centerX, b * Math.sin((i * angle - 180) * (Math.PI / 180)) + centerY);
-				
-				// Circle
-				//(givenNodesArray[i].node as GivenNode).setPosition( (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, (-radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
-			}else {
-				// Ellipse
-				moveNodeToPosition((givenNodesArray[i].node as GivenNode), a * Math.cos((i * angle - 180) * (Math.PI / 180)) + centerX, b * Math.sin((i * angle - 180) * (Math.PI / 180)) + centerY);
-				// Circle
-				//moveNodeToPosition((givenNodesArray[i].node as GivenNode), (radius) * Math.sin((i * angle - 90) * (Math.PI / 180)) + centerX, ( -radius) * Math.cos((i * angle - 90) * (Math.PI / 180)) + centerY);
-			}
-		}
-		
-	}
-	return givenNodes.find(_uri);
-}
-
-/*~*/
-public function moveNodeToPosition(node:GivenNode, x:Number, y:Number):void {
-	(node as GivenNode).moveToPosition(x, y);
-}
-
-
-/*~*/
-public function getInstanceNode(_id:String, _element:Element):MyNode {
-	if (givenNodes.containsKey(_id)) {	//if the node is a given node!
-		
-		return givenNodes.find(_id) as MyNode;
-	}
-	if (!foundNodes.containsKey(_id)) {
-		var newFoundNode:FoundNode = new FoundNode(_id, _element);
-		//trace("new FoundNode: " + newFoundNode.id);
-		foundNodes.insert(_id, newFoundNode);
-		addNodeToGraph(newFoundNode);
-	}
-	return foundNodes.find(_id) as MyNode;
-}
-
-/*~*/
-public function getRelationNode(id:String, relation:Relation):RelationNode {
-	if (!_relationNodes.containsKey(id)) {
-		//trace("<<<< do not exist yet: " + id);
-		var newRelationNode:RelationNode = new RelationNode(id, relation);
-		_relationNodes.insert(id, newRelationNode);
-		addNodeToGraph(newRelationNode);
-	}
-	return _relationNodes.find(id);
-}
-
-/*~*/
-public function drawPath(p:Path, immediatly:Boolean = false):void {
-	
-	if (delayedDrawing && !immediatly) {
-		//trace("want to draw path: " + p.id);
-		toDrawPaths.enqueue(p);
-		startDrawing();
-	}else {
-		//trace("draw path: " + p.id);
-		for each(var r:Relation in p.relations) {
-			drawRelation(r, p.layout);
-		}
-	}
-	
-}
-
-/*~*/
-private function drawRelation(_r:Relation, layout:Object = null):void {
-	
-	var subject:Element = _r.subject;
-	var object:Element = _r.object;
-	var predicate:Element = _r.predicate;
-	
-	//trace("draw relation: " + subject.id + ", " + predicate.id + ", " + object.id);
-	var subjectNode:MyNode = getInstanceNode(subject.id, subject);
-	if (!graph.hasNode(subjectNode.id)) {
-		showNode(subjectNode);
-	}
-	
-	var predicateNode:RelationNode = getRelationNode(_r.id, _r); // new RelationNode(_r.id, _r);	//important: _r.id and not _r.predicate.id!!
-	if (!graph.hasNode(predicateNode.id)) {
-		showNode(predicateNode);
-	}
-	
-	var objectNode:MyNode = getInstanceNode(object.id, object);
-	if (!graph.hasNode(objectNode.id)) {
-		showNode(objectNode);
-	}
-	
-	addRelationToGraph(subjectNode, predicateNode, objectNode, layout);
-}
-
-/*~*/
-private function addNodeToGraph(node:MyNode):void {	//TODO: relations need to be added too!
-	//trace(">>> add node to graph: " + node.id);
-	graph.add(node);
-	node.element.isVisible = true;
-	//setCurrentItem(node);
-}
-
-/*~*/
-public function hideNode(node:MyNode):void {
-	//trace("hideNode " + node.id);
-	if (graph.hasNode(node.id)) {	//if part of the graph
-		node.unpin();
-		removeNodeFromGraph(node);
-	}
-}
-
-/*~*/
-public function showNode(node:MyNode):void {
-	trace("---- showNode: " + node.id);
-	//TODO: Relationen wieder aufbauen!
-	addNodeToGraph(node);
-}
-
-/*~*/
-private function removeNodeFromGraph(node:MyNode):void {	//TODO: the whole connection must be removed too! And the relation!
-	trace("Remove node from graph: " + node.id);
-	node.element.isVisible = false;
-	graph.remove(node);
-	//sGraph.removeFromHistory(node);
-	
-	//setCurrentItem(null);
-}
-
-/*~*/
-private function addRelationToGraph(subjectNode:MyNode, predicateNode:MyNode, objectNode:MyNode, layout:Object = null):void {
-	
-	var object1:Object = new Object();
-	object1.startId = subjectNode.id;	//defines the direction of the link!
-	if (layout != null) object1.settings = layout.settings;
-	graph.link(subjectNode, predicateNode, object1);
-	
-	var object2:Object = new Object();
-	object2.startId = predicateNode.id;
-	if (layout != null) object2.settings = layout.settings;
-	graph.link(predicateNode, objectNode, object2);
-	
-	//setCurrentItem(objectNode);
-	//setCurrentItem(predicateNode);
-	//setCurrentItem(subjectNode);
-}
-
-/*~*/
-public function getRelation(_subject:Element, _predicate:Element, _object:Element):Relation {
-	var relId:String = _subject.id + _predicate.id + _object.id; //_subject.label.toLowerCase() + _predicate.label.toLowerCase() + _object.label.toLowerCase();
-	if (!relations.containsKey(relId)) {
-		var rT:RelType = getRelType(_predicate.id, _predicate.label);
-		var newRel:Relation = new Relation(relId, _subject, _predicate, _object, rT);
-		
-		relations.insert(relId, newRel);
-		
-		//toDrawRelations.enqueue(newRel);
-	}
-	return relations.find(relId);
-}
-
-/*~*/
-public function getElement(_id:String, _resourceURI:String, _label:String, isPredicate:Boolean = false, _abstract:Dictionary = null, _imageURL:String = "", _linkToWikipedia:String = ""):Element {
-	
-	//WARNING: This is just a workaround!! It should get index by its id instead of by its label!!
-	
-	//what was the reason for this workaround?
-	//changed it back to id!!! needed for autocomplete tooltip (Timo)
-	
-	//ok, its not working properly if predicates are indexed by its id. So we are using label, if its a predicate (Timo)
-	if (isPredicate) {
-		if (!elements.containsKey(_label)) {	//_id
-			var e:Element = new Element(_label, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
-			
-			elements.insert(_label, e);
-		}
-		return elements.find(_label);
-	}else {
-		if (!elements.containsKey(_id)) {	//_id
-			var e2:Element = new Element(_id, _resourceURI, _label, isPredicate, _abstract, _imageURL, _linkToWikipedia);
-			
-			elements.insert(_id, e2);
-		}
-		return elements.find(_id);
-	}
-	
-}
-
-/*~*/
-public function getPath(pathId:String, pathRelations:Array):Path {
-	if (!_paths.containsKey(pathId)) {
-		var pL:PathLength = getPathLength(pathRelations.length.toString(), pathRelations.length - 1);
-		var newPath:Path = new Path(pathId, pathRelations, pL);
-		
-		_paths.insert(pathId, newPath);
-		
-		if (!_graphIsFull) {
-			//if (selectedMaxPathLength < newPath.pathLength.num) {
-				if (_paths.size > 7) {
-					trace("graph is full!!!");
-					_graphIsFull = true;
-				}else {
-					
-				}
-			//}
-		}
-		
-		
-	}
-	return _paths.find(pathId);
-}
-
-
 [Bindable]
 public function get selectedElement():Element {
 	return _selectedElement;
@@ -935,16 +325,16 @@ public function set selectedElement(e:Element):void {
 	
 	if (e == null) {
 		_selectedElement = null;
-		selectedConcept = null;
+		graphModel.selectedConcept = null;
 	}else if ((_selectedElement == null) || (e != null && _selectedElement != null && _selectedElement.id != null && e.id != null && _selectedElement.id != e.id)) {
 		_selectedElement = e;
-		selectedConcept = _selectedElement.concept;
-		var iter:Iterator = _paths.getIterator();
+		graphModel.selectedConcept = _selectedElement.concept;
+		var iter:Iterator = graphModel.paths.getIterator();
 		while (iter.hasNext()) {
 			var p1:Path = iter.next();
 			p1.isHighlighted = false;
 		}
-		if (foundNodes.containsKey(e.id)) {	//only for found nodes
+		if (graphModel.foundNodes.containsKey(e.id)) {	//only for found nodes
 			
 			for each(var r:Relation in _selectedElement.relations) {
 				for each(var p:Path in r.paths) {
@@ -975,8 +365,8 @@ public function clear():void {
 	_showOptions = false;
 	
 	trace("check clear!!");
-	trace("graph: " + graph.nodeCount);
-	trace("paths: " + _paths.size);
+	trace("graph: " + graphModel.graph.nodeCount);
+	trace("paths: " + graphModel.paths.size);
 }
 
 public function clearGraph():void {
@@ -992,94 +382,63 @@ public function clearGraph():void {
 	/**
 	 * REMOVE ALL LISTENER ----------------
 	 */
-	var iter:Iterator = _paths.getIterator();
+	var iter:Iterator = graphModel.paths.getIterator();
 	while (iter.hasNext()) {
 		var p:Path = iter.next();
 		p.removeListener();
 	}
 	
-	var iter2:Iterator = relations.getIterator();
+	var iter2:Iterator = graphModel.relations.getIterator();
 	while (iter2.hasNext()) {
 		var r:Relation = iter2.next();
 		r.removeListener();
 	}
 	
-	var iter4:Iterator = elements.getIterator();
+	var iter4:Iterator = graphModel.elements.getIterator();
 	while (iter4.hasNext()) {
 		var e:Element = iter4.next();
 		e.removeListener();
 	}
 	
-	for each(var c:Concept in _concepts) {
+	for each(var c:Concept in graphModel.concepts) {
 		c.removeListener();
 	}
 	
-	for each(var pL:PathLength in _pathLengths) {
+	for each(var pL:PathLength in graphModel.pathLengths) {
 		pL.removeListener();
 	}
 	
-	for each(var rT:RelType in _relTypes) {
+	for each(var rT:RelType in graphModel.relTypes) {
 		rT.removeListener();
 	}
 	
-	for each(var cL:ConnectivityLevel in _connectivityLevels) {
+	for each(var cL:ConnectivityLevel in graphModel.connectivityLevels) {
 		cL.removeListener();
 	}
 	
 	/**
 	 * RESET VARIABLES -----------------------
 	 */
-	graph = new Graph();
-	selectedElement = null;
-	_selectedConnectivityLevel = null;
-	_selectedConcept = null;
-	_selectedPathLength = null;
-	_selectedRelType = null;
-	_selectedConnectivityLevel = null;
-	_graphIsFull = false;	//whether the graph is overcluttered already!
-	_delayedDrawing = true;
 	
-	_relationNodes = new HashMap();
-	foundNodes = new HashMap();
-	givenNodes = new HashMap();
-
-	toDrawPaths = new ArrayedQueue(1000);
-	timer.stop();
-	timer.delay = 2000;
-	StatusModel.getInstance().queueIsEmpty = true;
-	
-	//trace("before",_paths.size);
-	_connectivityLevels = new ArrayCollection();
-	_pathLengths = new ArrayCollection();
-	_paths = new HashMap();
-	//trace("after", _paths.size);
-	_relTypes = new ArrayCollection();
-	relations = new HashMap();
-	_concepts = new ArrayCollection();
-	elements = new HashMap();
-	
-	//_maxPathLength = 0;
-	//_selectedMinPathLength = 0;
-	//_selectedMaxPathLength = 0;
-	
-	
+	graphModel.clear();
 	
 	myConnection = new SPARQLConnection();
 	
+	StatusModel.getInstance().queueIsEmpty = true;
 	StatusModel.getInstance().clear();
 	
 	Languages.getInstance().clear();
 	
-	_selectedElement = null;	//so ist es besser!
+	selectedElement = null;	//so ist es besser!
 	
 	sparqlEndpoint = "";
 	basicGraph = "";
 	resultParser = new SPARQLResultParser();
 	
-	tab10.isVisible = true;// icon = null;
+	tab10.isVisible = true;
 	tab11.isVisible = true;
-	tab12.isVisible = true;// .icon = null;
-	tab13.isVisible = true;// icon = null;
+	tab12.isVisible = true;
+	tab13.isVisible = true;
 }
 
 //--Expert-Settings + Info-------------------------------------
@@ -1283,15 +642,6 @@ private function autoDisambiguate(ac:AutoComplete):Boolean {
 			}
 		}
 	}
-	// directly match only the first element
-	//if (dp.length > 0) {
-		//if ((StringUtil.trim(dp.getItemAt(0).label)).toLowerCase() == (StringUtil.trim(input)).toLowerCase()) {
-			//ac.selectedItem = dp.getItemAt(0);
-			//ac.validateNow();
-			//trace("direct match found");
-			//return true;
-		//}
-	//}
 	trace("no direct match found");
 	
 	// results of this method weren't really satisfying, so it was disabled
@@ -1325,7 +675,7 @@ public function findRelations():void {
 	
 	//removeEmptyInputFields();
 	
-	if (givenNodes.isEmpty()) {
+	if (graphModel.givenNodes.isEmpty()) {
 		findRelationsImmediately();
 	}else {
 		Alert.show("Do you want to clear all old results before searching for new relations?", "Clear", Alert.YES + Alert.NO, this, dispatchCloseEvent);
@@ -1408,7 +758,7 @@ private function findRelationsImmediately():void {
 			
 			myConnection.findRelations(between, 10, ConnectionModel.getInstance().sparqlConfig.maxRelationLength + 1, resultParser);
 			
-			delayedDrawing = true;
+			graphModel.delayedDrawing = true;
 			
 		}else {
 			// disambiguate
@@ -1479,80 +829,6 @@ public function setAutoCompleteList(_list:ArrayCollection):void {
 	autoCompleteList = _list;
 }
 
-// when an item is selected or de-selelcted
-private function handleAutoCompleteChange(_selectedItem:Object):void {
-//	//trace("handleAutoCompleteChange");
-	if (_selectedItem != null && _selectedItem.hasOwnProperty( "label" )){
-		//trace(_selectedItem.label);
-	}
-}
-
-
-//--Delayed Drawing----------------------
-private var timer:Timer = new Timer(2000);
-public function startDrawing():void {
-	//timer = new Timer(2000, results.length);
-	if (!timer.running) {
-		timer.addEventListener(TimerEvent.TIMER, drawNextPath);
-		//trace("start timer");
-		timer.start();
-		StatusModel.getInstance().queueIsEmpty = false;
-		//trace("timer start");
-	}
-}
-
-/**
- * Only called by timer
- * @param	event
- */
-private function drawNextPath(event:Event):void {
-	if (toDrawPaths.isEmpty()) {
-		timer.stop();
-		StatusModel.getInstance().queueIsEmpty = true;	//TODO: direkt an toDrawPaths.isEmpty mit EventListener binden!
-		//trace("timer stop");
-	}else {
-		
-		var p:Path = toDrawPaths.dequeue();
-		if (!p.isVisible) {	//if it is not visible, try the next one
-			drawNextPath(null);
-		}else {
-			for each(var r:Relation in p.relations) {
-				drawRelation(r, p.layout);
-			}
-		}
-		
-	}
-}
-
-[Bindable(event="delayedDrawingChanged")]
-public function get delayedDrawing():Boolean {
-	return _delayedDrawing;
-}
-
-public function set delayedDrawing(b:Boolean):void {
-	if (_delayedDrawing != b) {
-		_delayedDrawing = b;
-		
-		if (_delayedDrawing) {
-			timer.delay = 2000;
-		}else {
-			timer.delay = 100;	//make the drawing fast!
-		}
-		
-		dispatchEvent(new Event("delayedDrawingChanged"));
-		
-		/*timer.stop();
-		StatusModel.getInstance().queueIsEmpty = true;
-		while (!toDrawPaths.isEmpty()) {	//dump all!!
-			var p:Path = toDrawPaths.dequeue();
-			for each(var r:Relation in p.relations) {
-				drawRelation(r, p.layout);
-			}
-		}
-		toDrawPaths.clear();*/
-	}
-}
-
 private function get inputField():Array {
 	return inputFieldBox.inputField;
 }
@@ -1620,5 +896,3 @@ private function internalNumColumnStringCompareFunction(str1:String, str2:String
 
 	return 0;
 }
-
-

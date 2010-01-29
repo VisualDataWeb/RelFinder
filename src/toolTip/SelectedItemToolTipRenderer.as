@@ -6,6 +6,7 @@
 	import flash.utils.Timer;
 	import global.ToolTipModel;
 	import graphElements.Element;
+	import graphElements.model.Graphmodel;
 	import mx.controls.Button;
 	import mx.controls.ComboBox;
 	import mx.controls.Label;
@@ -93,10 +94,10 @@
 			trace(uriIndex, data.uris[uriIndex], data.tempUri);
 			
 			if (data.hasOwnProperty("tempUri") && data.tempUri != null) {
-				infoBox.selectedElement = (Application.application as Main).getElement(data.tempUri, data.tempUri, data.label);
+				infoBox.selectedElement = Graphmodel.getInstance().getElement(data.tempUri, data.tempUri, data.label);
 				showNavButtons = false;
 			}else if (data.hasOwnProperty("uris")) {
-				infoBox.selectedElement = (Application.application as Main).getElement(data.uris[uriIndex], data.uris[uriIndex], data.label);
+				infoBox.selectedElement = Graphmodel.getInstance().getElement(data.uris[uriIndex], data.uris[uriIndex], data.label);
 				
 				if ((data.uris as Array).length > 1) {
 					showNavButtons = true;

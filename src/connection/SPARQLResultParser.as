@@ -15,6 +15,7 @@ package connection
 	import flash.utils.Dictionary;
 	import global.StatusModel;
 	import graphElements.Concept;
+	import graphElements.model.Graphmodel;
 	import graphElements.Path;
 	import graphElements.Relation;
 	
@@ -44,6 +45,10 @@ package connection
 		public function SPARQLResultParser() 
 		{
 			
+		}
+		
+		private function get graphModel():Graphmodel {
+			return Graphmodel.getInstance();
 		}
 		
 		public function handleSPARQLResultEvent(event:SPARQLResultEvent):void {
@@ -131,11 +136,11 @@ package connection
 				var subURI:String = _between.getItemAt(0).toString();
 				var subLabel:String = getLabelFromURI(subURI);
 				subLabel = unescapeMultiByte(subLabel).split("_").join(" ");
-				subject = app().getElement(subURI, subURI, subLabel);
-				startE = app().getElement(subURI, subURI, subLabel);	//important!
+				subject = graphModel.getElement(subURI, subURI, subLabel);
+				startE = graphModel.getElement(subURI, subURI, subLabel);	//important!
 				//trace("startO: " + subject.id);
 				
-				app().getGivenNode(subject.id, subject);	// addGivenElement(subject);
+				graphModel.getGivenNode(subject.id, subject);	// addGivenElement(subject);
 				
 				var pathRelations:Array = new Array();	//contains all the relations in one path
 				var pathId:String = "";
@@ -146,14 +151,14 @@ package connection
 						var predURI:String = ((results[i] as Array)[j].uri).toString();
 						var predLabel:String = getLabelFromURI(predURI);
 						predLabel = trimHashSign(unescapeMultiByte(predLabel).split("_").join(" "));
-						predicate = app().getElement(predURI, predURI, predLabel, true);
+						predicate = graphModel.getElement(predURI, predURI, predLabel, true);
 						
 					}else {
 						var objURI:String = ((results[i] as Array)[j].uri).toString();
 						var objLabel:String = getLabelFromURI(objURI);
 						objLabel = unescapeMultiByte(objLabel).split("_").join(" ");
 						
-						object = app().getElement(objURI, objURI, objLabel);
+						object = graphModel.getElement(objURI, objURI, objLabel);
 						
 						//only for testing
 						//setConceptOfElement(object, "testCid", "testC");
@@ -175,7 +180,7 @@ package connection
 						
 						//app().addRelation(subject, predicate, object);	// getRelation(subURI, subLabel, predURI, predLabel, objURI, objLabel);
 						
-						subject = app().getElement(objURI, objURI, objLabel);
+						subject = graphModel.getElement(objURI, objURI, objLabel);
 						subjectBinding = objectBinding;
 					}
 				}
@@ -184,12 +189,12 @@ package connection
 				
 				endLabel = unescapeMultiByte(endLabel).split("_").join(" ");
 				
-				object = app().getElement(endURI, endURI, endLabel);
+				object = graphModel.getElement(endURI, endURI, endLabel);
 				objectBinding = "os0";
-				endE = app().getElement(endURI, endURI, endLabel);	//important!
+				endE = graphModel.getElement(endURI, endURI, endLabel);	//important!
 				//trace("endO: "+object.id);
 				
-				app().getGivenNode(object.id, object);	// addGivenElement(object);
+				graphModel.getGivenNode(object.id, object);	// addGivenElement(object);
 				
 				invertDirection = false;
 				if (parsingInformations == SPARQLQueryBuilder.connectedDirectlyInverted || parsingInformations == SPARQLQueryBuilder.connectedViaMiddleInverted) {
@@ -200,14 +205,14 @@ package connection
 				pathRelations.push(r2);
 				pathId += r2.id;
 				
-				var p:Path = app().getPath(pathId, pathRelations);
+				var p:Path = graphModel.getPath(pathId, pathRelations);
 				p.startElement = startE;
 				p.endElement = endE;
 				//app().addRelation(subject, predicate, object);	// .getRelation(subURI, subLabel, predURI, predLabel, endNode.id, endNode.eLabel);
 				
 			}
 			
-			app().startDrawing();
+			graphModel.startDrawing();
 		}
 		
 		private function trimURI(uri:String):String {
@@ -263,9 +268,9 @@ package connection
 			}
 			
 			if (invert) {
-				return app().getRelation(object, predicate, subject);
+				return graphModel.getRelation(object, predicate, subject);
 			}else {
-				return app().getRelation(subject, predicate, object);
+				return graphModel.getRelation(subject, predicate, object);
 			}
 			
 		}
@@ -415,7 +420,7 @@ package connection
 		 */
 		//do not delete I might need it later to look at it again , Sebastian
 		public function setConceptOfElement(e:Element, cURI:String, cLabel:String):void {
-			var c:Concept = app().getConcept(cURI, cLabel);
+			var c:Concept = graphModel.getConcept(cURI, cLabel);
 			//c.addElement(e);
 			e.concept = c;
 		}

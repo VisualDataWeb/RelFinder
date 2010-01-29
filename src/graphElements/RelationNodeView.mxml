@@ -12,7 +12,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:flexlib="http://code.google.com/p/flexlib/" xmlns:local="*" creationComplete="setup()"
 	borderStyle="solid"
-	backgroundColor="{getBackgroundColor(app().selectedRelType)}"
+	backgroundColor="{getBackgroundColor(Graphmodel.getInstance().selectedRelType)}"
 	borderColor="{getColor(app().selectedElement)}">
 	
 	<!-- filters="{calcFilters(data.hasChanged)}" -->
@@ -45,9 +45,10 @@ You should have received a copy of the GNU General Public License along with thi
 	
 	<mx:Script>
 		<![CDATA[
-			//  {data.label} ({data.objectClass.numberOfObjectInstances}
+			
 			import flash.events.MouseEvent;
 			import flash.filters.GlowFilter;
+			import graphElements.model.Graphmodel;
 			import graphElements.RelType;
 			import mx.collections.ArrayCollection;
 			import mx.controls.Button;
@@ -61,19 +62,11 @@ You should have received a copy of the GNU General Public License along with thi
 				
 			}
 			
+			
 			private function app(): Main {
 				return Application.application as Main;
 			}
 			
-			/*private function calcFilters(_hasChanged:Boolean): Array {
-				if (_hasChanged) {
-					var radius:int = 5;
-					var alpha:Number = 1.0;<
-					return [new GlowFilter(data.highlightColor, alpha, radius, radius, 15, 2)];
-				}else {
-					return null;
-				}
-			}*/
 			
 			private function getColor(selectedElement:Element): int {
 				/*if (selectedElement == data.element) {

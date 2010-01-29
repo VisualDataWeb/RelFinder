@@ -20,6 +20,7 @@ package graphElements {
 	import flash.utils.Dictionary;
 	import global.Languages;
 	import graphElements.events.PropertyChangedEvent;
+	import graphElements.model.Graphmodel;
 	import mx.events.CollectionEvent;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
@@ -216,7 +217,7 @@ package graphElements {
 						//wird über path gesteuert!
 					}else {
 						//trace("hide elementNode: " + id);
-						app().hideNode(app().getInstanceNode(id, this));
+						Graphmodel.getInstance().hideNode(Graphmodel.getInstance().getInstanceNode(id, this));
 					}
 				}
 			}
@@ -549,7 +550,7 @@ package graphElements {
 								.replace("http://umbel.org/umbel/sc/", "umb:")
 								.replace("http://www.w3.org/2000/01/rdf-schema#", "rdfs:");
 					if (this.concept == null) {
-						var c:Concept = app().getConcept(conceptURI, cLabel);
+						var c:Concept = Graphmodel.getInstance().getConcept(conceptURI, cLabel);
 						//this.addConcept(c);
 						//bitte nur ein Konzept!!
 						this.concept = c;
@@ -596,7 +597,7 @@ package graphElements {
 					}
 				}
 				if (setIsInvisible) {
-					var i:MyNode = app().getInstanceNode(id, this);
+					var i:MyNode = Graphmodel.getInstance().getInstanceNode(id, this);
 					if (i is FoundNode) {	//only if foundNode!!
 						this.isVisible = false;
 					}
@@ -625,7 +626,7 @@ package graphElements {
 			}
 			var num:int = list.size;
 			trace("num: " + num + ", id: "+id);
-			var cL:ConnectivityLevel = app().getConnectivityLevel(num.toString(), num);
+			var cL:ConnectivityLevel = Graphmodel.getInstance().getConnectivityLevel(num.toString(), num);
 			this.connectivityLevel = cL;
 		}
 		

@@ -36,7 +36,7 @@
 		[Bindable(event = "eventMessageChanged")]
 		public function get message():String {
 			
-			if (_searchCount == _errorCount && _searchCountLookUp == _errorCountLookUp) {
+			if (_searchCount == _errorCount && _searchCountLookUp == _errorCountLookUp && _searchCount != 0) {
 				
 				_message = GlobalString.NOCONNECTION;
 				
@@ -172,11 +172,11 @@
 			_searchCountLookUp = 0;
 			_foundCountLookUp = 0;
 			_errorCountLookUp = 0;
-			_message = GlobalString.IDLE;
 			_noRelationFound = false;
 			_errorsOccured = false;
 			_queueIsEmpty = true;
 			_errorLog.removeAll();
+			_message = GlobalString.IDLE;
 			dispatchEvent(new Event("eventMessageChanged"));
 		}
 		

@@ -11,6 +11,7 @@
 package graphElements {
 	import global.StatusModel;
 	import graphElements.events.PropertyChangedEvent;
+	import graphElements.model.Graphmodel;
 	import mx.collections.ArrayCollection;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -90,13 +91,13 @@ package graphElements {
 		
 		public function set isVisible(b:Boolean):void {
 			if (_isVisible != b) {
-				trace("set path("+id+") visible: " + b);
+				//trace("set path("+id+") visible: " + b);
 				_isVisible = b;
 				dispatchEvent(new Event(Path.VCHANGE));
 				//dispatchEvent(new PropertyChangedEvent(Concept.VCHANGE, this, "isVisible", _currentUserAction));
 				
 				if (_isVisible) {
-					app().drawPath(this);
+					Graphmodel.getInstance().drawPath(this);
 				}
 				//trace("dispatch event");
 				
@@ -146,7 +147,7 @@ package graphElements {
 			r.subject.addEventListener(Element.CONLEVELCHANGE, connectivityLevelChangeHandler);
 			r.object.addEventListener(Element.CONLEVELCHANGE, connectivityLevelChangeHandler);
 			
-			trace("dispatch event, relType.visible: " + r.relType.isVisible + ", " + r.relType.id);
+			//trace("dispatch event, relType.visible: " + r.relType.isVisible + ", " + r.relType.id);
 		}
 		
 		private function conceptChangeHandler(event:Event):void {
@@ -185,10 +186,10 @@ package graphElements {
 				
 				if (_isHighlighted) {
 					_layout.settings = { alpha: 1, color: 0xD2001E /*0xFF0000*/, thickness: 2 };
-					if(_isVisible)	app().drawPath(this, true);	//only if is visible
+					if(_isVisible)	Graphmodel.getInstance().drawPath(this, true);	//only if is visible
 				}else {
 					_layout.settings = { alpha: 1, color: 0xcccccc, thickness: 1 }; 
-					if(_isVisible)	app().drawPath(this, true);	//only if is visible
+					if(_isVisible)	Graphmodel.getInstance().drawPath(this, true);	//only if is visible
 				}
 				
 			}

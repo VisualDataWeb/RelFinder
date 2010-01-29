@@ -54,14 +54,14 @@ You should have received a copy of the GNU General Public License along with thi
 								<mx:HBox width="100%">
 									<mx:Label fontWeight="bold" text='Filter by: '/>
 									<mx:Spacer width="100%" />
-									<mx:Label text="relations: {getRelationCountInfo()}" />
+									<mx:Label text="relations: {Graphmodel.getInstance().getRelationCountInfo()}" />
 								</mx:HBox>
 								
 								<tab:PositionedTabNavigator width="100%" tabStyleName="myTabStyle" height="100%" id="tn2" tabWidth="{tn2.width/4}" cornerRadius="0" borderThickness="0">
 									
-									<local:FilterTab id="tab10" label="length" list="{_pathLengths}" >
+									<local:FilterTab id="tab10" label="length" list="{Graphmodel.getInstance().pathLengths}" >
 									<!--<mx:VBox id="tab11" label="lengths">-->
-										<local:SortableDataGrid id="dgL" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_pathLengths}" selectedItem="{selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
+										<local:SortableDataGrid id="dgL" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{Graphmodel.getInstance().pathLengths}" selectedItem="{Graphmodel.getInstance().selectedPathLength}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{Graphmodel.getInstance().selectedPathLength = dgL.selectedItem as PathLength}" variableRowHeight="true">
 											<local:columns>
 												<mx:DataGridColumn dataField="label" wordWrap="true" headerStyleName="myHeader" headerText="number of objects"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfPaths" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
@@ -71,8 +71,8 @@ You should have received a copy of the GNU General Public License along with thi
 										
 									</local:FilterTab>
 									
-									<local:FilterTab id="tab12" label="class"  list="{_concepts}">
-										<local:SortableDataGrid id="dgC" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_concepts}" selectedItem="{selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
+									<local:FilterTab id="tab12" label="class"  list="{Graphmodel.getInstance().concepts}">
+										<local:SortableDataGrid id="dgC" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{Graphmodel.getInstance().concepts}" selectedItem="{Graphmodel.getInstance().selectedConcept}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{Graphmodel.getInstance().selectedConcept = dgC.selectedItem as Concept}" variableRowHeight="true">
 											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="object class"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
@@ -81,8 +81,8 @@ You should have received a copy of the GNU General Public License along with thi
 										</local:SortableDataGrid>
 									</local:FilterTab>
 									
-									<local:FilterTab id="tab13" label="link" list="{_relTypes}">
-										<local:SortableDataGrid id="dgT" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_relTypes}" selectedItem="{selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
+									<local:FilterTab id="tab13" label="link" list="{Graphmodel.getInstance().relTypes}">
+										<local:SortableDataGrid id="dgT" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{Graphmodel.getInstance().relTypes}" selectedItem="{Graphmodel.getInstance().selectedRelType}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{Graphmodel.getInstance().selectedRelType = dgT.selectedItem as RelType}" variableRowHeight="true">
 											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="link type"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfRelations" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
@@ -91,8 +91,8 @@ You should have received a copy of the GNU General Public License along with thi
 										</local:SortableDataGrid>
 									</local:FilterTab>
 									
-									<local:FilterTab id="tab11" label="connectivity"  list="{_connectivityLevels}">
-										<local:SortableDataGrid id="dgCc" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{_connectivityLevels}" selectedItem="{selectedConnectivityLevel}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{selectedConnectivityLevel = dgCc.selectedItem as ConnectivityLevel}" variableRowHeight="true">
+									<local:FilterTab id="tab11" label="connectivity"  list="{Graphmodel.getInstance().connectivityLevels}">
+										<local:SortableDataGrid id="dgCc" height="100%" width="100%" sortIndex="0" rowCount="4" dataProvider="{Graphmodel.getInstance().connectivityLevels}" selectedItem="{Graphmodel.getInstance().selectedConnectivityLevel}" selectionColor="0xCDFFC1" rollOverColor="0xE3FFD6" change="{Graphmodel.getInstance().selectedConnectivityLevel = dgCc.selectedItem as ConnectivityLevel}" variableRowHeight="true">
 											<local:columns>
 												<mx:DataGridColumn dataField="label" headerStyleName="myHeader" wordWrap="true" headerText="connectivity level"></mx:DataGridColumn>
 												<mx:DataGridColumn width="50" dataField="stringNumOfElements" headerStyleName="myHeader" headerText="num" sortCompareFunction="numColumnCompareFunction"></mx:DataGridColumn>
@@ -119,7 +119,10 @@ You should have received a copy of the GNU General Public License along with thi
 			
 			<mx:VBox width="100%" height="100%">
 				
-				<fc:SpringGraph id="sGraph" creationComplete="setup();" backgroundColor="#ffffff" height="100%" width="100%" left="0" right="0" top="0" bottom="0" viewFactory="{new ViewFactory()}" edgeRenderer="{new DirectedEdge()}" dataProvider="{graph}"
+				<fc:SpringGraph id="sGraph" creationComplete="setup();"
+					backgroundColor="#ffffff" height="100%" width="100%" left="0" right="0" top="0" bottom="0"
+					viewFactory="{new ViewFactory()}" edgeRenderer="{new DirectedEdge()}"
+					dataProvider="{Graphmodel.getInstance().graph}"
 					repulsionFactor="0.5" >
 						
 						<fc:removeItemEffect>
@@ -146,7 +149,7 @@ You should have received a copy of the GNU General Public License along with thi
 			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8"/>
 	</mx:ApplicationControlBar>
 	<mx:Button id="stopDelayed" label="stop delayed graph building" y="{statusBar.height + 10 + 5}" x="{mainVBox.width - stopDelayed.width - 10}"
-			visible="{!(!la.isRotating() || !delayedDrawing)}" click="{delayedDrawing = false;}" 
+			visible="{!(!la.isRotating() || !Graphmodel.getInstance().delayedDrawing)}" click="{Graphmodel.getInstance().delayedDrawing = false;}" 
 			height="20" paddingLeft="6" paddingRight="6" />
 	
 </mx:Application>

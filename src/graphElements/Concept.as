@@ -11,6 +11,7 @@
 package graphElements {
 	import de.polygonal.ds.HashMap;
 	import graphElements.events.PropertyChangedEvent;
+	import graphElements.model.Graphmodel;
 	import mx.collections.ArrayCollection;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -73,9 +74,9 @@ package graphElements {
 		}
 		
 		public function set isVisible(b:Boolean):void {
-			if (app().delayedDrawing) {
+			if (Graphmodel.getInstance().delayedDrawing) {
 				//app().emptyToDrawPaths();
-				app().delayedDrawing = false;
+				Graphmodel.getInstance().delayedDrawing = false;
 			}
 			//trace("Test"+b);
 			if (_isVisible != b) {
@@ -85,13 +86,6 @@ package graphElements {
 				dispatchEvent(new Event(Concept.VCHANGE));
 				//trace("event dispatched "+id);
 			}
-			/*for each(var e:Element in _elements) {
-				if (_isVisible) {
-					app().showNode(app().getInstanceNode(e.id, e));
-				}else {
-					app().hideNode(app().getInstanceNode(e.id, e));
-				}
-			}*/
 		}
 		
 		/*[Bindable(event="elementsChange")]

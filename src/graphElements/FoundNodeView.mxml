@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License along with thi
 	
 	
 	
-	backgroundColor="{getBackgroundColor(app().selectedConcept, app().selectedConnectivityLevel)}"
+	backgroundColor="{getBackgroundColor(Graphmodel.getInstance().selectedConcept, Graphmodel.getInstance().selectedConnectivityLevel)}"
 	borderThickness="{getBorderThickness(app().selectedElement)}"
 	borderColor="{getColor(app().selectedElement)}"
 
@@ -55,6 +55,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import graphElements.ConnectivityLevel;
 			import graphElements.Element;
 			import graphElements.FoundNode;
+			import graphElements.model.Graphmodel;
 			import graphElements.MyNode;
 			import graphElements.Path;
 			import graphElements.Relation;

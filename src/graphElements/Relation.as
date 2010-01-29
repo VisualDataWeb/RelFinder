@@ -12,6 +12,7 @@ package graphElements
 {
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
+	import graphElements.model.Graphmodel;
 	import mx.core.Application;
 	import graphElements.events.PropertyChangedEvent;
 	
@@ -75,7 +76,7 @@ package graphElements
 		
 		public function set isVisible(b:Boolean):void {
 			if (_isVisible != b) {
-				trace("set relation("+id+") visibile: " + b);
+				//trace("set relation("+id+") visibile: " + b);
 				_isVisible = b;
 				
 				dispatchEvent(new Event(Relation.VCHANGE));
@@ -83,7 +84,7 @@ package graphElements
 				
 				if (!_isVisible) {
 					//trace("hide relationNode :" + id);
-					app().hideNode(app().getRelationNode(id, this));
+					Graphmodel.getInstance().hideNode(Graphmodel.getInstance().getRelationNode(id, this));
 				}else {
 					//wird über path gesteuert!
 				}
