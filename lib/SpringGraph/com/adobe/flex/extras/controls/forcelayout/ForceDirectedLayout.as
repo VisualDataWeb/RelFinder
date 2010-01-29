@@ -303,7 +303,7 @@ public class ForceDirectedLayout implements IForEachEdge, IForEachNode, IForEach
 	    //}
 	}
 
-	 public function forEachNode(n: Node): void {
+	public function forEachNode(n: Node): void {
 	    //var dx: Number = n.dx;
 	    //var dy: Number = n.dy;
 		
@@ -321,14 +321,14 @@ public class ForceDirectedLayout implements IForEachEdge, IForEachNode, IForEach
 		
 	    var distMoved: Number = Math.sqrt(n.dx * n.dx + n.dy * n.dy); //how far did the node actually move?
 	
-	     if (!n.fixed && !(n==dragNode) ) {
-	        //n.x = n.x + Math.max(-30, Math.min(30, n.dx)); //don't move faster then 30 units at a time.
-	        //n.y = n.y + Math.max(-30, Math.min(30, n.dy)); //I forget when this is important.  Stopping severed nodes from flying away?
-			
+		if (!n.fixed && !(n == dragNode) ) {
+			//n.x = n.x + Math.max(-30, Math.min(30, n.dx)); //don't move faster then 30 units at a time.
+			//n.y = n.y + Math.max(-30, Math.min(30, n.dy)); //I forget when this is important.  Stopping severed nodes from flying away?
+
 			n.x += n.dx;
 			n.y += n.dy;
-	     }
-	     maxMotionA[0]=Math.max(distMoved,maxMotionA[0]);
+		}
+		maxMotionA[0]=Math.max(distMoved,maxMotionA[0]);
 	}
 	
 	public function forEachNodePair(n1: Node, n2: Node): void {

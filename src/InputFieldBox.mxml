@@ -83,7 +83,7 @@
 						
 						case SIZE_MINIMIZED:
 							resizeButton.setStyle("skin", ToggleSizeButtonSkinDown);
-							inpuitFieldForm.height = 0;
+							inputFieldForm.height = 0;
 							buttonBox.height = 0;
 							break;
 							
@@ -93,12 +93,12 @@
 							
 							if (dataProvider.length == 2) {
 								
-								inpuitFieldForm.percentHeight = 100;
+								inputFieldForm.percentHeight = 100;
 								
 							}else {
 								
 								resizeButton.setStyle("skin", ToggleSizeButtonSkinDown);
-								inpuitFieldForm.height = 64;
+								inputFieldForm.height = 64;
 								buttonBox.percentHeight = 100;
 							}
 							
@@ -113,7 +113,7 @@
 							
 							resizeButton.setStyle("skin", ToggleSizeButtonSkinUp);
 							
-							inpuitFieldForm.percentHeight = 100;
+							inputFieldForm.percentHeight = 100;
 							buttonBox.percentHeight = 100;
 							break;
 						
@@ -323,16 +323,18 @@
 				//trace("handleAutoCompleteSearchChange");
 				if (_selectedItem != null && _selectedItem.hasOwnProperty( "searchText" )){
 					var input:String = _selectedItem.searchText;
-					trace(input);
-					//Workaround Case-Sensitivity
-					if (input.length == 1 && input.charAt() == input.charAt().toLowerCase()) {
-						input = input.toUpperCase();
-						if (input != _selectedItem.searchText) {
-							_selectedItem.searchText = input;
-						}
-					}
 					
-					if (input != null && input.length >= 2) {
+					//Workaround Case-Sensitivity
+					//if (input.length == 1 && input.charAt() == input.charAt().toLowerCase()) {
+						//input = input.toUpperCase();
+						//if (input != _selectedItem.searchText) {
+							//_selectedItem.searchText = input;
+						//}
+					//}
+					
+					var directInput:Boolean = input.toLowerCase().indexOf("http://") == 0 || input.toLowerCase().indexOf("https://") == 0;
+					
+					if (input != null && input.length >= 2 && !directInput) {
 						var results:ArrayCollection = new ArrayCollection();
 						var searching:Object = new Object();
 						searching.label = GlobalString.SEARCHING;
@@ -340,6 +342,8 @@
 						_selectedItem.dataProvider = results;
 						_selectedItem.validateNow();
 						findAutoComplete(input, _selectedItem as AutoComplete);
+					}else {
+						trace("direct input");
 					}
 				}
 			}
@@ -500,7 +504,7 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Form id="inpuitFieldForm" width="100%" paddingLeft="6" paddingRight="6" paddingTop="0" paddingBottom="0">
+	<mx:Form id="inputFieldForm" width="100%" paddingLeft="6" paddingRight="6" paddingTop="0" paddingBottom="0">
 		<mx:Repeater id="_inputFieldRepeater" dataProvider="{dataProvider}" width="100%" >
 			<mx:FormItem width="100%" label="({_inputFieldRepeater.currentIndex + 1})" paddingRight="0">
 				<mx:HBox width="100%" verticalGap="2" horizontalGap="2"

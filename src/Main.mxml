@@ -51,7 +51,12 @@ You should have received a copy of the GNU General Public License along with thi
 						<mx:VDividedBox id="vdivbox" visible="{_showOptions}" width="100%" height="100%" liveDragging="true" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0">
 							<mx:VBox id="filterOptions" width="100%" height="100%" paddingBottom="2" paddingTop="2" paddingRight="2" paddingLeft="2" horizontalGap="2">
 								<!-- FILTER OPTIONS -->
-								<mx:Label fontWeight="bold" text='Filter by: '/>
+								<mx:HBox width="100%">
+									<mx:Label fontWeight="bold" text='Filter by: '/>
+									<mx:Spacer width="100%" />
+									<mx:Label text="relations: {getRelationCountInfo()}" />
+								</mx:HBox>
+								
 								<tab:PositionedTabNavigator width="100%" tabStyleName="myTabStyle" height="100%" id="tn2" tabWidth="{tn2.width/4}" cornerRadius="0" borderThickness="0">
 									
 									<local:FilterTab id="tab10" label="length" list="{_pathLengths}" >

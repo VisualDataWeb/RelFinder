@@ -89,6 +89,7 @@ private var foundNodes:HashMap = new HashMap(); /*~*/
 private var givenNodes:HashMap = new HashMap(); /*~*/
 private var givenNodesInsertionTime:HashMap = new HashMap(); /*~*/
 private var _relationNodes:HashMap = new HashMap(); /*~*/
+[Bindable]
 private var relations:HashMap = new HashMap(); /*~*/
 private var elements:HashMap = new HashMap(); /*~*/
 private var toDrawPaths:ArrayedQueue = new ArrayedQueue(1000); /*~*/
@@ -649,6 +650,8 @@ private function pathLengthChangeListener(event:Event):void {
 			tab10.isVisible = true; //tab10.icon = null;
 		}
 	}
+	
+	dispatchEvent(new Event("RelationCountChanged"));
 }
 
 [Bindable]
@@ -668,6 +671,17 @@ public function set selectedPathLength(p:PathLength):void {
 		_selectedPathLength = p;
 		//dispatchEvent(new Event("selectedConceptChange"));
 	}
+}
+
+[Bindable(event="RelationCountChanged")]
+public function getRelationCountInfo():String {
+	var all:int = 0;
+	var visible:int = 0;
+	for each(var pl:PathLength in _pathLengths) {
+		all += (pl as PathLength).numAllPaths;
+		visible += (pl as PathLength).numVisiblePaths;
+	}
+	return "(" + visible + "/" + all + ")";
 }
 
 
@@ -804,6 +818,7 @@ private function addNodeToGraph(node:MyNode):void {	//TODO: relations need to be
 public function hideNode(node:MyNode):void {
 	//trace("hideNode " + node.id);
 	if (graph.hasNode(node.id)) {	//if part of the graph
+		node.unpin();
 		removeNodeFromGraph(node);
 	}
 }
@@ -1238,6 +1253,15 @@ private function autoDisambiguate(ac:AutoComplete):Boolean {
 	var input:String = ac.searchText;
 	var dp:ArrayCollection = ac.dataProvider;
 	
+	if (input.toLowerCase().indexOf("http://") == 0 || input.toLowerCase().indexOf("https://") == 0) {
+		var result:Object = new Object();
+		result.label = input;
+		result.uris = new Array(input);
+		ac.selectedItem = result;
+		ac.validateNow();
+		return true;
+	}
+	
 	trace("auto disambiguate: " + input);
 	trace("searching for direct match");
 	for each (var obj:Object in dp) {
@@ -1324,6 +1348,7 @@ private function findRelationsImmediately():void {
 	
 	if (!isInputValid()) {
 		for (var j:int = 0; j < inputFieldRepeater.dataProvider.length; j++) {
+			trace((inputField[j] as AutoComplete).selectedItem);
 			if (!((inputField[j] as AutoComplete).selectedItem && (inputField[j] as AutoComplete).selectedItem.hasOwnProperty('uris'))) {
 				
 				var select:Object = getInputFromAC(j);
@@ -1446,17 +1471,8 @@ private function isInputValid():Boolean {
 	return valid;
 }
 
-private function findRelationXMLResultHandler(event:ResultEvent, resources:ArrayCollection):void {
-	var result:XML = new XML(event.result);
-	//trace(result);
-}
-
 private function replaceWhitspaces(str:String):String {
 	return str.split(" ").join("_");
-}
-
-private function findAutoComplete(_typedText:String, target:AutoComplete):void {
-	ConnectionModel.getInstance().sparqlConfig.lookUp.run(_typedText, target);
 }
 
 public function setAutoCompleteList(_list:ArrayCollection):void {
@@ -1468,32 +1484,6 @@ private function handleAutoCompleteChange(_selectedItem:Object):void {
 //	//trace("handleAutoCompleteChange");
 	if (_selectedItem != null && _selectedItem.hasOwnProperty( "label" )){
 		//trace(_selectedItem.label);
-	}
-}
-
-// when the text in the search field is changed
-private function handleAutoCompleteSearchChange(_selectedItem:Object):void {
-	//trace("handleAutoCompleteSearchChange");
-	if (_selectedItem != null && _selectedItem.hasOwnProperty( "searchText" )){
-		var input:String = _selectedItem.searchText;
-		trace(input);
-		//Workaround Case-Sensitivity
-		if (input.length == 1 && input.charAt() == input.charAt().toLowerCase()) {
-			input = input.toUpperCase();
-			if (input != _selectedItem.searchText) {
-				_selectedItem.searchText = input;
-			}
-		}
-		
-		if (input != null && input.length >= 2) {
-			var results:ArrayCollection = new ArrayCollection();
-			var searching:Object = new Object();
-			searching.label = GlobalString.SEARCHING;
-			results.addItem(searching);
-			_selectedItem.dataProvider = results;
-			_selectedItem.validateNow();
-			findAutoComplete(input, _selectedItem as AutoComplete);
-		}
 	}
 }
 

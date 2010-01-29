@@ -31,6 +31,7 @@ package graphElements
 			_element = value;
 			_element.addEventListener("rdfLabelChange", rdfLabelChangeHandler);
 			_element.addEventListener("isLoadingChange", isLoadingChangeHandler);
+			_element.addEventListener(Element.VCHANGE, isVisibleChangeHandler);
 			dispatchEvent(new Event("elementChange"));
 		}
 		
@@ -38,10 +39,15 @@ package graphElements
 			if (_element != null) {
 				_element.removeEventListener("rdfLabelChange", rdfLabelChangeHandler);
 				_element.removeEventListener("isLoadingChange", isLoadingChangeHandler);
+				_element.removeEventListener(Element.VCHANGE, isVisibleChangeHandler);
 			}
 			if (_node != null) {
 				_node.removeEventListener("fixedChange", fixedChangeHandler);
 			}
+		}
+		
+		private function isVisibleChangeHandler(event:Event):void {
+			
 		}
 		
 		private function isLoadingChangeHandler(event:Event):void {

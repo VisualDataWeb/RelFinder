@@ -85,6 +85,11 @@ package graphElements
 			return this._numVisiblePaths;
 		}
 		
+		[Bindable(event=ELEMENTNUMBERCHANGE)]
+		public function get numAllPaths():int {
+			return this._paths.length;
+		}
+		
 		public function set numVisiblePaths(n:int):void {
 			//if (this._numVisiblePaths != n) {
 				this._numVisiblePaths = n;

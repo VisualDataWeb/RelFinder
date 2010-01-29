@@ -11,7 +11,7 @@ You should have received a copy of the GNU General Public License along with thi
 -->
 
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-				xmlns:local="*"
+				xmlns:local="toolTip.*"
 				paddingRight="0" paddingLeft="0" paddingBottom="0"
 				width="400" height="460" borderAlpha="1.0" creationComplete="{init();}" 
 				title="Enter Resource URI">
@@ -96,7 +96,7 @@ You should have received a copy of the GNU General Public License along with thi
 			</mx:FormItem>
 		</mx:Form>
 	</mx:VBox>
-	<local:InfoBox id="infoBox" height="290" findRelationPanel="{this}" selectedElement="{selectedElement}"/>
+	<local:ToolTipInfoBox id="infoBox" height="290" width="380" visible="{infoBox.selectedElement != null}" selectedElement="{selectedElement}"/>
 	<mx:Spacer height="100%" />
 	<mx:HBox width="100%" paddingRight="4" paddingBottom="4">
 		<mx:Spacer width="100%" />
