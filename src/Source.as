@@ -33,6 +33,7 @@ import mx.core.Repeater;
 import mx.events.CloseEvent;
 import mx.events.FlexEvent;
 import mx.events.MenuEvent;
+import mx.events.SliderEvent;
 import mx.managers.ToolTipManager;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.http.HTTPService;
@@ -150,25 +151,38 @@ private var wheelScale:Number = 1.0;
 private function mouseWheelZoomHandler(event:MouseEvent):void {
 	if (event.delta > 0) {
 		zoomSliderUp();
-		//wheelScale = wheelScale * 1.05;
 	}else {
-		//wheelScale = wheelScale / 1.05;
+		zoomSliderDown();
 	}
 	
-	//sGraph.scaleX = wheelScale;
-	//sGraph.scaleY = wheelScale;
-	
-	
 }
+
+private var sliderDamper:int = 0;
 
 public function zoomSliderUp():void {
-	if (zoomSlider.value < Graphmodel.ZOOM_AGGREGATED_NODES) {
+	
+	sliderDamper++;
+	
+	if (sliderDamper > 1 && zoomSlider.value < Graphmodel.ZOOM_AGGREGATED_NODES) {
+		sliderDamper = 0;
 		zoomSlider.value++;
+		graphModel.zoomFactor = zoomSlider.value;
 	}
 }
 
-private function zoomSliderChangeHandler(event:Event):void {
+public function zoomSliderDown():void {
 	
+	sliderDamper++;
+	
+	if (sliderDamper > 1 && zoomSlider.value > Graphmodel.ZOOM_COMPLETE) {
+		sliderDamper = 0;
+		zoomSlider.value--;
+		graphModel.zoomFactor = zoomSlider.value;
+	}
+}
+
+private function zoomSliderChangeHandler(event:SliderEvent):void {
+	graphModel.zoomFactor = event.value;
 }
 
 private function setupParams():void {

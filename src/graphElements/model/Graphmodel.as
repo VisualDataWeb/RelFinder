@@ -70,7 +70,7 @@
 		public var pathLengths:ArrayCollection = new ArrayCollection();
 		private var _selectedPathLength:PathLength = null;
 		
-		private var zoomFactor:int = ZOOM_COMPLETE;
+		private var _zoomFactor:int = ZOOM_COMPLETE;
 		
 		private static var instance:Graphmodel;
 		
@@ -113,6 +113,17 @@
 			_paths = new HashMap();
 			_relations = new HashMap();
 			_elements = new HashMap();
+		}
+		
+		[Bindable(event = "zoomFactorChange")]
+		public function get zoomFactor():int {
+			return _zoomFactor;
+		}
+		
+		public function set zoomFactor(value:int):void {
+			trace(value);
+			_zoomFactor = value;
+			dispatchEvent(new Event("zoomFactorChange"));
 		}
 
 		
@@ -206,8 +217,6 @@
 							
 						}
 				}
-				
-				
 			}
 			return _paths.find(pathId);
 		}
@@ -225,9 +234,7 @@
 			concepts.addItem(newC);
 			newC.addEventListener(Concept.NUMVECHANGE, conceptChangeListener);
 			newC.addEventListener(Concept.VCHANGE, conceptChangeListener);
-
 			newC.addEventListener(Concept.ELEMENTNUMBERCHANGE, conceptChangeListener);
-
 			
 			concepts.refresh();
 			return newC;
@@ -247,8 +254,6 @@
 					(app.dgC as DataGrid).invalidateList();
 				}
 			}
-			
-			
 			
 			//check filter sign
 			if (app.tab12.isVisible) {
@@ -287,10 +292,8 @@
 				dispatchEvent(new Event("selectedConceptChange"));
 			}
 		}
-
-
+		
 		/** RelTypes **/
-
 		public function getRelType(uri:String, label:String):RelType {
 			//trace("getConcept : " + uri);
 			for each(var r:RelType in relTypes) {
@@ -460,7 +463,6 @@
 		}
 
 		/** PathLenghts **/
-
 		public function getPathLength(uri:String, length:int):PathLength {
 			for each(var pL:PathLength in pathLengths) {
 				if (pL.id == uri) {
