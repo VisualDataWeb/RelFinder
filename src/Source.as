@@ -163,7 +163,7 @@ public function zoomSliderUp():void {
 	
 	sliderDamper++;
 	
-	if (sliderDamper > 1 && zoomSlider.value < Graphmodel.ZOOM_AGGREGATED_NODES) {
+	if (sliderDamper > 1 && zoomSlider.value < Graphmodel.ZOOM_MAXIMUM) {
 		sliderDamper = 0;
 		zoomSlider.value++;
 		graphModel.zoomFactor = zoomSlider.value;
@@ -174,7 +174,7 @@ public function zoomSliderDown():void {
 	
 	sliderDamper++;
 	
-	if (sliderDamper > 1 && zoomSlider.value > Graphmodel.ZOOM_COMPLETE) {
+	if (sliderDamper > 1 && zoomSlider.value > Graphmodel.ZOOM_MINIMUM) {
 		sliderDamper = 0;
 		zoomSlider.value--;
 		graphModel.zoomFactor = zoomSlider.value;

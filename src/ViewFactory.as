@@ -32,9 +32,11 @@ package {
 			//trace("getView from the viewFactory for item: "+item.id);
 			if (item is RelationNode) {
 				return new graphElements.RelationNodeView();
-			}/*else if (item is ElementNode) {
-				return new graphElements.ElementNodeView();
-			}*/else if (item is GivenNode) {
+			}else if (item is AggregatedRelationNode) {
+				return new graphElements.AggregatedRelationNodeView();
+			//}else if (item is ElementNode) {
+				//return new graphElements.ElementNodeView();
+			}else if (item is GivenNode) {
 				return new graphElements.GivenNodeView();
 			}else if (item is FoundNode) {
 				return new graphElements.FoundNodeView();

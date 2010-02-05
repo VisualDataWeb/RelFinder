@@ -11,6 +11,7 @@
 	import global.StatusModel;
 	import graphElements.Concept;
 	import graphElements.ConnectivityLevel;
+	import graphElements.controller.GraphController;
 	import graphElements.Element;
 	import graphElements.FoundNode;
 	import graphElements.GivenNode;
@@ -33,6 +34,9 @@
 		public static const ZOOM_COMPLETE:int = 0;
 		public static const ZOOM_AGGREGATED_EDGES:int = 1;
 		public static const ZOOM_AGGREGATED_NODES:int = 2;
+		
+		public static const ZOOM_MINIMUM:int = ZOOM_COMPLETE;
+		public static const ZOOM_MAXIMUM:int = ZOOM_AGGREGATED_EDGES;
 		
 		public static var graphIsFullValue:int = 10;
 		
@@ -119,6 +123,14 @@
 		
 		public function set zoomFactor(value:int):void {
 			_zoomFactor = value;
+			
+			if (_zoomFactor == ZOOM_COMPLETE) {
+				trace("Show everything");
+			}else if (_zoomFactor == ZOOM_AGGREGATED_EDGES) {
+				trace("Collapse parallel edges");
+				GraphController.aggregateAllParallelRelationNodes();
+			}
+			
 			dispatchEvent(new Event("zoomFactorChange"));
 		}
 
@@ -537,6 +549,11 @@
 			if (!_relations.containsKey(relId)) {
 				var rT:RelType = getRelType(predicate.id, predicate.label);
 				var newRel:Relation = new Relation(relId, subject, predicate, object, rT);
+				
+				// Insert into aggregation hierarchy
+				GraphController.insertInAggregationHierarchy(newRel);
+				
+				// Insert into graph
 				_relations.insert(relId, newRel);
 			}
 			return _relations.find(relId);

@@ -30,7 +30,7 @@ package graphElements {
 	import mx.collections.ArrayCollection;
 	import mx.utils.URLUtil;
 	
-	public class Element extends EventDispatcher{
+	public class Element extends AggregatableElement{
 		
 		private var _id:String;
 		private var _resourceURI:String;

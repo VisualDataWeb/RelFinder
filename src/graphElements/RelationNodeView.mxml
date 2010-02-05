@@ -13,7 +13,8 @@ You should have received a copy of the GNU General Public License along with thi
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:flexlib="http://code.google.com/p/flexlib/" xmlns:local="*" creationComplete="setup()"
 	borderStyle="solid"
 	backgroundColor="{getBackgroundColor(Graphmodel.getInstance().selectedRelType)}"
-	borderColor="{getColor(app().selectedElement)}">
+	borderColor="{getColor(app().selectedElement)}"
+	>
 	
 	<!-- filters="{calcFilters(data.hasChanged)}" -->
 	
@@ -36,7 +37,7 @@ You should have received a copy of the GNU General Public License along with thi
 	
 	<mx:HBox id="myHBox" horizontalGap="0" verticalAlign="middle"
 			paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
-		<mx:Label text="{data.element.label}" maxWidth="70" toolTip="{data.element.label}" styleName="chainItemStyle" />
+		<mx:Label text="{data.element.label}" maxWidth="70" toolTip="{getToolTip()}" styleName="chainItemStyle" />
 	</mx:HBox>
 	
 	<!-- <mx:VBox id="myVBox" verticalGap="0" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0"  backgroundColor="#f8f8f8" backgroundAlpha=".8" borderStyle="solid" verticalAlign="middle" borderColor="#cccccc" borderThickness="1">
@@ -50,6 +51,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import flash.events.MouseEvent;
 			import flash.filters.GlowFilter;
 			import graphElements.model.Graphmodel;
+			import graphElements.Relation;
 			import graphElements.RelType;
 			import mx.collections.ArrayCollection;
 			import mx.controls.Button;
@@ -57,7 +59,7 @@ You should have received a copy of the GNU General Public License along with thi
 			import com.adobe.flex.extras.controls.springgraph.Item;
 			import mx.core.Application;
 			import mx.effects.easing.Bounce;
-
+			
 			
 			public function setup():void {
 				Graphmodel.getInstance().addEventListener("selectedReltypeChange", selectedReltypeChangeHandler);
@@ -71,6 +73,9 @@ You should have received a copy of the GNU General Public License along with thi
 				return Application.application as Main;
 			}
 			
+			private function getToolTip():String {
+				return data.element.aggregationLeefs.toArray().toString();
+			}
 			
 			private function getColor(selectedElement:Element): int {
 				/*if (selectedElement == data.element) {
@@ -92,6 +97,10 @@ You should have received a copy of the GNU General Public License along with thi
 					return 0xf8f8f8;
 				}
 			}
+			
+			
+			
+			
 			
 		]]>
 	</mx:Script>				

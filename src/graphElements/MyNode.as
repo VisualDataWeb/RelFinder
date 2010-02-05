@@ -65,7 +65,9 @@ package graphElements
 		
 		public function set node(value:GraphNode):void {
 			_node = value;
-			_node.addEventListener("fixedChange", fixedChangeHandler);
+			if (_node != null) {
+				_node.addEventListener("fixedChange", fixedChangeHandler);
+			}
 			dispatchEvent(new Event("nodeChange"));
 		}
 		

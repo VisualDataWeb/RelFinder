@@ -170,6 +170,11 @@ package graphElements
 			}
 		}
 		
+		override public function toString():String 
+		{
+			return "Relation: " + subject.toString() + " - " + predicate.toString() + " - " + object.toString() + ".\n";
+		}
+		
 		private function app(): Main {
 			return Application.application as Main;
 		}
