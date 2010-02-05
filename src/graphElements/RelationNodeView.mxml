@@ -46,6 +46,7 @@ You should have received a copy of the GNU General Public License along with thi
 	<mx:Script>
 		<![CDATA[
 			
+			import flash.events.Event;
 			import flash.events.MouseEvent;
 			import flash.filters.GlowFilter;
 			import graphElements.model.Graphmodel;
@@ -59,9 +60,12 @@ You should have received a copy of the GNU General Public License along with thi
 
 			
 			public function setup():void {
-				
+				Graphmodel.getInstance().addEventListener("selectedReltypeChange", selectedReltypeChangeHandler);
 			}
 			
+			private function selectedReltypeChangeHandler(event:Event):void {
+				setStyle("backgroundColor", getBackgroundColor(Graphmodel.getInstance().selectedRelType));
+			}
 			
 			private function app(): Main {
 				return Application.application as Main;

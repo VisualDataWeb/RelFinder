@@ -28,11 +28,8 @@
 	 * ...
 	 * @author Timo Stegemann
 	 */
-	[Bindable(event="GRAPH_MODEL_PROPERTY_CHANGED")]
 	public class Graphmodel extends EventDispatcher
 	{
-		
-		public static const GRAPH_MODEL_PROPERTY_CHANGED:String = "GRAPH_MODEL_PROPERTY_CHANGED";
 		public static const ZOOM_COMPLETE:int = 0;
 		public static const ZOOM_AGGREGATED_EDGES:int = 1;
 		public static const ZOOM_AGGREGATED_NODES:int = 2;
@@ -72,7 +69,7 @@
 		
 		private var _zoomFactor:int = ZOOM_COMPLETE;
 		
-		private static var instance:Graphmodel;
+		private static var _instance:Graphmodel;
 		
 		public function Graphmodel(singleton:SingletonEnforcer) 
 		{
@@ -80,20 +77,20 @@
 		}
 		
 		public static function getInstance():Graphmodel{
-			if (Graphmodel.instance == null){
-				Graphmodel.instance = new Graphmodel(new SingletonEnforcer());
+			if (Graphmodel._instance == null){
+				Graphmodel._instance = new Graphmodel(new SingletonEnforcer());
 				
 			}
-			return Graphmodel.instance;
+			return Graphmodel._instance;
 		}
 		
 		public function clear():void {
 			_completeGraph = new Graph();
-			_selectedConnectivityLevel = null;
-			_selectedConcept = null;
-			_selectedPathLength = null;
-			_selectedRelType = null;
-			_selectedConnectivityLevel = null;
+			selectedConnectivityLevel = null;
+			selectedConcept = null;
+			selectedPathLength = null;
+			selectedRelType = null;
+			selectedConnectivityLevel = null;
 			_graphIsFull = false;	//whether the graph is overcluttered already!
 			_delayedDrawing = true;
 			
@@ -121,7 +118,6 @@
 		}
 		
 		public function set zoomFactor(value:int):void {
-			trace(value);
 			_zoomFactor = value;
 			dispatchEvent(new Event("zoomFactorChange"));
 		}
@@ -174,7 +170,6 @@
 				}
 				
 				dispatchEvent(new Event("delayedDrawingChanged"));
-				dispatchEvent(new Event("GRAPH_MODEL_PROPERTY_CHANGED"));
 			}
 		}
 		
@@ -358,14 +353,14 @@
 			}
 		}
 
-		[Bindable]
+		[Bindable(event="selectedReltypeChange")]
 		public function get selectedRelType():RelType {
 			return _selectedRelType;
 		}
 
 		public function set selectedRelType(r:RelType):void {
 			if (_selectedRelType != r) {
-				//trace("selectedConcept change "+c.id);
+				//trace("selectedReltype change "+r.id);
 				
 				//deselect all other selections
 				selectedConcept = null;
@@ -373,7 +368,7 @@
 				selectedConnectivityLevel = null;
 				
 				_selectedRelType = r;
-				//dispatchEvent(new Event("selectedConceptChange"));
+				dispatchEvent(new Event("selectedReltypeChange"));
 			}
 		}
 
@@ -449,7 +444,7 @@
 
 		public function set selectedConnectivityLevel(cL:ConnectivityLevel):void {
 			if (_selectedConnectivityLevel != cL) {
-				//trace("selectedConcept change "+c.id);
+				//trace("selectedConcept change "+cL.id);
 				
 				//deselect all other selections
 				selectedRelType = null;
@@ -518,14 +513,14 @@
 			dispatchEvent(new Event("RelationCountChanged"));
 		}
 
-		[Bindable]
+		[Bindable(evetn="selectedPathLengthChange")]
 		public function get selectedPathLength():PathLength {
 			return _selectedPathLength;
 		}
 
 		public function set selectedPathLength(p:PathLength):void {
 			if (_selectedPathLength != p) {
-				//trace("selectedConcept change "+c.id);
+				//trace("selectedPathLength change "+p.id);
 				
 				//deselect all other selections
 				selectedRelType = null;
@@ -533,7 +528,7 @@
 				selectedConnectivityLevel = null;
 				
 				_selectedPathLength = p;
-				//dispatchEvent(new Event("selectedConceptChange"));
+				dispatchEvent(new Event("selectedPathLengthChange"));
 			}
 		}
 		
