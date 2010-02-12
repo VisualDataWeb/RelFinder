@@ -172,6 +172,7 @@ You should have received a copy of the GNU General Public License along with thi
 				content.removeEventListener(MouseEvent.MOUSE_MOVE, titleBarMoveHandler);
 				this.parent.setChildIndex(this, this.parent.numChildren - 1);
 				this.panelFocusCheckHandler();
+				
 			}
 			
 			public function titleBarDownHandler(event:MouseEvent):void {

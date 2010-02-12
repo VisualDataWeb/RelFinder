@@ -38,7 +38,7 @@
 		public static const ZOOM_MINIMUM:int = ZOOM_COMPLETE;
 		public static const ZOOM_MAXIMUM:int = ZOOM_AGGREGATED_EDGES;
 		
-		public static var graphIsFullValue:int = 10;
+		public static var graphIsFullValue:int = 100;
 		
 		[Bindable]
 		private var _completeGraph:Graph = new Graph();
@@ -122,6 +122,7 @@
 		}
 		
 		public function set zoomFactor(value:int):void {
+			
 			_zoomFactor = value;
 			
 			if (_zoomFactor == ZOOM_COMPLETE) {
@@ -185,6 +186,10 @@
 			}
 		}
 		
+		public function containsElement(id:String):Boolean {
+			return _elements.containsKey(id);
+		}
+		
 		public function getElement(id:String, resourceURI:String, label:String, isPredicate:Boolean = false,
 				abstract:Dictionary = null, imageURL:String = "", linkToWikipedia:String = ""):Element {
 			
@@ -194,12 +199,14 @@
 			//changed it back to id!!! needed for autocomplete tooltip (Timo)
 			
 			//ok, its not working properly if predicates are indexed by its id. So we are using label, if its a predicate (Timo)
+			
 			if (isPredicate) {
-				if (!_elements.containsKey(label)) {
-					var e:Element = new Element(label, resourceURI, label, isPredicate, abstract, imageURL, linkToWikipedia);
-					_elements.insert(label, e);
+				
+				if (!_elements.containsKey(id)) {
+					var e:Element = new Element(id, resourceURI, label, isPredicate, abstract, imageURL, linkToWikipedia);
+					_elements.insert(id, e);
 				}
-				return _elements.find(label);
+				return _elements.find(id);
 			}else {
 				if (!_elements.containsKey(id)) {
 					var e2:Element = new Element(id, resourceURI, label, isPredicate, abstract, imageURL, linkToWikipedia);
@@ -304,13 +311,13 @@
 		public function getRelType(uri:String, label:String):RelType {
 			//trace("getConcept : " + uri);
 			for each(var r:RelType in relTypes) {
-				if (r.id == uri) {
+				if (r.id == label) {
 					
 					return r;
 				}
 			}
 			//trace("build new reltype " + uri);
-			var newR:RelType = new RelType(uri, label);
+			var newR:RelType = new RelType(label, label);
 			relTypes.addItem(newR);
 			newR.addEventListener(RelType.NUMVRCHANGE, relTypeChangeListener);
 			newR.addEventListener(RelType.VCHANGE, relTypeChangeListener);
@@ -545,6 +552,7 @@
 		}
 		
 		public function getRelation(subject:Element, predicate:Element, object:Element):Relation {
+			
 			var relId:String = subject.id + predicate.id + object.id;
 			if (!_relations.containsKey(relId)) {
 				var rT:RelType = getRelType(predicate.id, predicate.label);
@@ -555,6 +563,7 @@
 				
 				// Insert into graph
 				_relations.insert(relId, newRel);
+				
 			}
 			return _relations.find(relId);
 		}
@@ -622,6 +631,7 @@
 		}
 		
 		public function getRelationNode(id:String, relation:Relation):RelationNode {
+			
 			if (!_relationNodes.containsKey(id)) {
 				var newRelationNode:RelationNode = new RelationNode(id, relation);
 				_relationNodes.insert(id, newRelationNode);

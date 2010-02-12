@@ -138,9 +138,8 @@ package connection
 				subLabel = unescapeMultiByte(subLabel).split("_").join(" ");
 				subject = graphModel.getElement(subURI, subURI, subLabel);
 				startE = graphModel.getElement(subURI, subURI, subLabel);	//important!
-				//trace("startO: " + subject.id);
 				
-				graphModel.getGivenNode(subject.id, subject);	// addGivenElement(subject);
+				graphModel.getGivenNode(subject.id, subject);
 				
 				var pathRelations:Array = new Array();	//contains all the relations in one path
 				var pathId:String = "";
@@ -151,7 +150,9 @@ package connection
 						var predURI:String = ((results[i] as Array)[j].uri).toString();
 						var predLabel:String = getLabelFromURI(predURI);
 						predLabel = trimHashSign(unescapeMultiByte(predLabel).split("_").join(" "));
-						predicate = graphModel.getElement(predURI, predURI, predLabel, true);
+						
+						//a prediacte should be unique for a relation, so we can aggregate it. we will create it later, when we know subject and object
+						//predicate = graphModel.getElement(predURI, predURI, predLabel, true);
 						
 					}else {
 						var objURI:String = ((results[i] as Array)[j].uri).toString();
@@ -159,10 +160,6 @@ package connection
 						objLabel = unescapeMultiByte(objLabel).split("_").join(" ");
 						
 						object = graphModel.getElement(objURI, objURI, objLabel);
-						
-						//only for testing
-						//setConceptOfElement(object, "testCid", "testC");
-						
 						
 						objectBinding = ((results[i] as Array)[j].binding).toString();
 						
@@ -172,13 +169,17 @@ package connection
 							invertDirection = true;
 						}
 						
+						// to aviod label dublicates, we use the predLabel for the predicates id
+						if (graphModel.containsElement(subject.id + predLabel + object.id)) {
+							predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
+						}else {
+							predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
+						}
+						
 						var r1:Relation = getRelation(subject, subjectBinding, predicate, object, objectBinding, invertDirection);
 						
 						pathRelations.push(r1);
 						pathId += r1.id;
-						
-						
-						//app().addRelation(subject, predicate, object);	// getRelation(subURI, subLabel, predURI, predLabel, objURI, objLabel);
 						
 						subject = graphModel.getElement(objURI, objURI, objLabel);
 						subjectBinding = objectBinding;
@@ -200,6 +201,11 @@ package connection
 				if (parsingInformations == SPARQLQueryBuilder.connectedDirectlyInverted || parsingInformations == SPARQLQueryBuilder.connectedViaMiddleInverted) {
 					invertDirection = true;
 				}
+				if (graphModel.containsElement(subject.id + predLabel + object.id)) {
+					predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
+				}else {
+					predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
+				}
 				var r2:Relation = getRelation(subject, subjectBinding, predicate, object, objectBinding, invertDirection);
 				
 				pathRelations.push(r2);
@@ -208,7 +214,6 @@ package connection
 				var p:Path = graphModel.getPath(pathId, pathRelations);
 				p.startElement = startE;
 				p.endElement = endE;
-				//app().addRelation(subject, predicate, object);	// .getRelation(subURI, subLabel, predURI, predLabel, endNode.id, endNode.eLabel);
 				
 			}
 			

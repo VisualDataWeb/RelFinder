@@ -68,6 +68,7 @@ package
 		}
 		
 		private function buttonClickHandler(event:MouseEvent):void {
+			
 			var value:Boolean = (!_isVisible);
 			for each(var o:Object in _list) {
 				o.isVisible = value;

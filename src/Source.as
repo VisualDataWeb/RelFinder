@@ -469,6 +469,8 @@ public function clearGraph():void {
 	tab11.isVisible = true;
 	tab12.isVisible = true;
 	tab13.isVisible = true;
+	
+	
 }
 
 //--Expert-Settings + Info-------------------------------------

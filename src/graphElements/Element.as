@@ -625,7 +625,7 @@ package graphElements {
 				}
 			}
 			var num:int = list.size;
-			trace("num: " + num + ", id: "+id);
+			//trace("num: " + num + ", id: "+id);
 			var cL:ConnectivityLevel = Graphmodel.getInstance().getConnectivityLevel(num.toString(), num);
 			this.connectivityLevel = cL;
 		}

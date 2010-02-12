@@ -10,6 +10,8 @@
 	 */
 	public class AggregatableElement extends EventDispatcher
 	{
+		public var leefsAggregatedInThis:Boolean = false;
+		
 		public var aggregationRoot:AggregatableElement = null;
 		
 		public var aggregationLeefs:ArrayCollection = null;
