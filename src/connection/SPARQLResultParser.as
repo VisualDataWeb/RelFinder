@@ -124,7 +124,7 @@ package connection
 			for (var i:int = 0; i < results.length; i++) {
 				
 				var subject:Element;
-				var predicate:Element;
+				var tempPredicate:TempPredicate = new TempPredicate();
 				var object:Element;
 				
 				var startE:Element;
@@ -153,6 +153,8 @@ package connection
 						
 						//a prediacte should be unique for a relation, so we can aggregate it. we will create it later, when we know subject and object
 						//predicate = graphModel.getElement(predURI, predURI, predLabel, true);
+						tempPredicate.predLabel = predLabel;
+						tempPredicate.predURI = predURI;
 						
 					}else {
 						var objURI:String = ((results[i] as Array)[j].uri).toString();
@@ -169,14 +171,13 @@ package connection
 							invertDirection = true;
 						}
 						
-						// to aviod label dublicates, we use the predLabel for the predicates id
-						if (graphModel.containsElement(subject.id + predLabel + object.id)) {
-							predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
-						}else {
-							predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
-						}
+						//if (graphModel.containsElement(subject.id + predLabel + object.id)) {
+							//predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
+						//}else {
+							//predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
+						//}
 						
-						var r1:Relation = getRelation(subject, subjectBinding, predicate, object, objectBinding, invertDirection);
+						var r1:Relation = getRelation(subject, subjectBinding, tempPredicate, object, objectBinding, invertDirection);
 						
 						pathRelations.push(r1);
 						pathId += r1.id;
@@ -201,12 +202,14 @@ package connection
 				if (parsingInformations == SPARQLQueryBuilder.connectedDirectlyInverted || parsingInformations == SPARQLQueryBuilder.connectedViaMiddleInverted) {
 					invertDirection = true;
 				}
-				if (graphModel.containsElement(subject.id + predLabel + object.id)) {
-					predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
-				}else {
-					predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
-				}
-				var r2:Relation = getRelation(subject, subjectBinding, predicate, object, objectBinding, invertDirection);
+				
+				//if (graphModel.containsElement(subject.id + predLabel + object.id)) {
+					//predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
+				//}else {
+					//predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
+				//}
+				
+				var r2:Relation = getRelation(subject, subjectBinding, tempPredicate, object, objectBinding, invertDirection);
 				
 				pathRelations.push(r2);
 				pathId += r2.id;
@@ -236,7 +239,7 @@ package connection
 			return trimmedUri.substr(trimmedUri.lastIndexOf("/") + 1);
 		}
 		
-		private function getRelation(subject:Element, subjectBinding:String, predicate:Element, object:Element, objectBinding:String, invertDirection:Boolean = false):Relation {
+		private function getRelation(subject:Element, subjectBinding:String, tempPredicate:TempPredicate, object:Element, objectBinding:String, invertDirection:Boolean = false):Relation {
 			var invert:Boolean = false;
 			
 			var sub:int;
@@ -258,8 +261,6 @@ package connection
 				obj = new int(objectBinding.charAt(2));
 			}
 			
-			
-			
 			//if (obj < sub) {
 				//invert = true;
 			//}
@@ -272,10 +273,21 @@ package connection
 				invert = !invert;
 			}
 			
+			
+			var predicate:Element;
+			
 			if (invert) {
+				
+				predicate = graphModel.getElement(object.id + tempPredicate.predLabel + subject.id, tempPredicate.predURI, tempPredicate.predLabel, true);
+				
 				return graphModel.getRelation(object, predicate, subject);
+				
 			}else {
+				
+				predicate = graphModel.getElement(subject.id + tempPredicate.predLabel + object.id, tempPredicate.predURI, tempPredicate.predLabel, true);
+				
 				return graphModel.getRelation(subject, predicate, object);
+				
 			}
 			
 		}
@@ -437,6 +449,12 @@ package connection
 		
 	}
 }
+
+class TempPredicate {
+	public var predURI:String;
+	public var predLabel:String;
+}
+
 class Helper {
 	public var uri:String = "";
 	public var binding:String = "";

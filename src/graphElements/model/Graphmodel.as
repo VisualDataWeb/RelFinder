@@ -89,7 +89,7 @@
 		}
 		
 		public function clear():void {
-			_completeGraph = new Graph();
+			graph = new Graph();
 			selectedConnectivityLevel = null;
 			selectedConcept = null;
 			selectedPathLength = null;
@@ -714,7 +714,7 @@
 		}
 		
 		//--Delayed Drawing----------------------
-		private var _timer:Timer = new Timer(2000);
+		private var _timer:Timer = new Timer(1000);
 		public function startDrawing():void {
 			//timer = new Timer(2000, results.length);
 			if (!_timer.running) {

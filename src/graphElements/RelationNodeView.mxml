@@ -74,7 +74,7 @@ You should have received a copy of the GNU General Public License along with thi
 			}
 			
 			private function getToolTip():String {
-				return data.element.aggregationLeefs.toArray().toString();
+				return data.element.id;
 			}
 			
 			private function getColor(selectedElement:Element): int {
