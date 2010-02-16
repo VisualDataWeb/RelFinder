@@ -14,6 +14,8 @@ You should have received a copy of the GNU General Public License along with thi
 	borderStyle="solid"
 	backgroundColor="{getBackgroundColor(Graphmodel.getInstance().selectedRelType)}"
 	borderColor="{getColor(app().selectedElement)}"
+	implements="mx.controls.listClasses.IDropInListItemRenderer, mx.core.IFontContextComponent"
+	mouseOver="{setToolTip()}"
 	>
 	
 	<!-- filters="{calcFilters(data.hasChanged)}" -->
@@ -37,7 +39,8 @@ You should have received a copy of the GNU General Public License along with thi
 	
 	<mx:HBox id="myHBox" horizontalGap="0" verticalAlign="middle"
 			paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
-		<mx:Label text="{data.element.label}" maxWidth="70" toolTip="{getToolTip()}" styleName="chainItemStyle" />
+		<mx:Label id="nodeLabel" text="{data.element.label}" maxWidth="70" toolTip="" styleName="chainItemStyle" />
+		<mx:Label id="aggregationCounter" text="" width="0" toolTip="" styleName="chainItemStyle" click="{expand()}" />
 	</mx:HBox>
 	
 	<!-- <mx:VBox id="myVBox" verticalGap="0" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0"  backgroundColor="#f8f8f8" backgroundAlpha=".8" borderStyle="solid" verticalAlign="middle" borderColor="#cccccc" borderThickness="1">
@@ -50,16 +53,59 @@ You should have received a copy of the GNU General Public License along with thi
 			import flash.events.Event;
 			import flash.events.MouseEvent;
 			import flash.filters.GlowFilter;
+			import graphElements.AggregatableElement;
+			import graphElements.controller.GraphController;
+			import graphElements.Element;
 			import graphElements.model.Graphmodel;
 			import graphElements.Relation;
 			import graphElements.RelType;
 			import mx.collections.ArrayCollection;
 			import mx.controls.Button;
+			import mx.controls.listClasses.BaseListData;
+			import mx.core.IFlexModuleFactory;
 			import mx.effects.Glow;
 			import com.adobe.flex.extras.controls.springgraph.Item;
 			import mx.core.Application;
 			import mx.effects.easing.Bounce;
+			import mx.events.FlexEvent;
 			
+			private var _listData:BaseListData;
+			
+			[Bindable("dataChange")]
+			[Inspectable(environment="none")]
+			public function get listData():BaseListData
+			{
+				return _listData;
+			}
+			
+			public function set listData(value:BaseListData):void
+			{
+				_listData = value;
+			}
+			
+			public function get fontContext():IFlexModuleFactory
+			{
+				return moduleFactory;
+			}
+			
+			public function set fontContext(moduleFactory:IFlexModuleFactory):void
+			{
+				this.moduleFactory = moduleFactory;
+			}
+			
+			private var _data:Object;
+			
+			[Bindable("dataChange")]
+			override public function get data():Object {
+				return _data;
+			}
+			
+			override public function set data(value:Object):void 
+			{
+				_data = value;
+				(_data.element as Element).addEventListener("isAggregatedInRootChange", isAggregatedInRootChangeHandler);
+				dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
+			}
 			
 			public function setup():void {
 				Graphmodel.getInstance().addEventListener("selectedReltypeChange", selectedReltypeChangeHandler);
@@ -69,12 +115,74 @@ You should have received a copy of the GNU General Public License along with thi
 				setStyle("backgroundColor", getBackgroundColor(Graphmodel.getInstance().selectedRelType));
 			}
 			
+			
+			private function isAggregatedInRootChangeHandler(event:Event):void {
+				setCount();
+			}
+			
 			private function app(): Main {
 				return Application.application as Main;
 			}
 			
+			private function setToolTip():void {
+				nodeLabel.toolTip = getToolTip();
+				aggregationCounter.toolTip = nodeLabel.toolTip;
+			}
+			
 			private function getToolTip():String {
-				return data.element.id;
+				
+				var element:Element = data.element as Element;
+				
+				var count:int = 0;
+				for each (var leef:Element in element.aggregationLeefs) {
+					if (leef.isAggregatedInRoot) {
+						count++;
+					}
+				}
+				
+				if (count == 0) {
+					return element.label;
+				}
+				
+				var str:String = element.label + " aggregates " + count + " further ";
+				if (count == 1) {
+					str += "node.\n";
+				}else {
+					str += "nodes.\n"
+				}
+				
+				for each (var leef2:Element in element.aggregationLeefs) {
+					if (leef2.isAggregatedInRoot) {
+						str += "\t\u2022 " + leef2.label + "\n";
+					}
+				}
+				return str;
+			}
+			
+			private function setCount():void {
+				
+				var element:Element = data.element as Element;
+				
+				var count:int = 0;
+				
+				for each (var leef:AggregatableElement in element.aggregationLeefs) {
+					if (leef.isAggregatedInRoot) {
+						count++;
+					}
+				}
+				
+				if (count == 0) {
+					aggregationCounter.text = "";
+					aggregationCounter.width = 0;
+				}else {
+					aggregationCounter.text = "[" + count + "]"; 
+					aggregationCounter.percentWidth = 100;
+				}
+				
+			}
+			
+			private function expand():void {
+				GraphController.expandRelationNode(data.element as Element);
 			}
 			
 			private function getColor(selectedElement:Element): int {

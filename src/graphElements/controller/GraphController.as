@@ -5,6 +5,7 @@
 	import graphElements.Element;
 	import graphElements.model.Graphmodel;
 	import graphElements.MyNode;
+	import graphElements.Path;
 	import graphElements.Relation;
 	import graphElements.RelationNode;
 	import mx.utils.ObjectUtil;
@@ -23,7 +24,7 @@
 		}
 		
 		
-		public static function aggregateAllParallelRelationNodes():void {
+		public static function collapseAllParallelRelationNodes():void {
 			
 			var relations:Array = graphmodel.relations.toArray();
 			var relation:Relation = null;
@@ -35,12 +36,70 @@
 					
 					if (relation.predicate != null && relation.predicate.aggregationRoot != null && relation.predicate.aggregationLeefs == null) {
 						
-						graphmodel.hideNode(graphmodel.getRelationNode(relation.id, relation));
+						relation.predicate.isAggregatedInRoot = true;
+						
+						for each (var path:Path in relation.paths) {
+							path.isVisible = false;
+						}
+						
 					}
 					
 				}
 			}
+		}
+		
+		public static function expandAllParallelRelationNodes():void {
+			var relations:Array = graphmodel.relations.toArray();
+			var relation:Relation = null;
+			var keySet:Array = graphmodel.relations.getKeySet();
 			
+			for (var k:int = 0; k < keySet.length; k++) {
+				if (graphmodel.relations.find(keySet[k]) is Relation) {
+					relation = graphmodel.relations.find(keySet[k]) as Relation;
+					
+					if (relation.predicate != null && relation.predicate.aggregationRoot != null && relation.predicate.aggregationLeefs == null) {
+						
+						relation.predicate.isAggregatedInRoot = false;
+						
+						for each (var path:Path in relation.paths) {
+							path.isVisible = true;
+						}
+						
+					}
+					
+				}
+			}
+		}
+		
+		public static function expandRelationNode(relationNode:Element):void {
+			
+			
+			//var relations:Array = graphmodel.relations.toArray();
+			//var relation:Relation = null;
+			//var keySet:Array = graphmodel.relations.getKeySet();
+			//
+			//for (var k:int = 0; k < keySet.length; k++) {
+				//if (graphmodel.relations.find(keySet[k]) is Relation) {
+					//relation = graphmodel.relations.find(keySet[k]) as Relation;
+					//
+					//for each(var leef:Element in relationNode.aggregationLeefs) {
+						//if (relation.predicate != null && relation.predicate == leef) {
+							//relation.predicate.isAggregatedInRoot = false;
+							//
+							//relation.isVisible = true;
+							//
+							//for each (var path:Path in relation.paths) {
+								//
+								//path.isVisible = true;
+							//}
+							//
+						//}
+					//}
+					//
+					//
+					//
+				//}
+			//}
 			
 		}
 		
@@ -64,7 +123,6 @@
 					
 				}
 			}
-			
 		}
 		
 		

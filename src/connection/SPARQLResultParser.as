@@ -171,12 +171,6 @@ package connection
 							invertDirection = true;
 						}
 						
-						//if (graphModel.containsElement(subject.id + predLabel + object.id)) {
-							//predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
-						//}else {
-							//predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
-						//}
-						
 						var r1:Relation = getRelation(subject, subjectBinding, tempPredicate, object, objectBinding, invertDirection);
 						
 						pathRelations.push(r1);
@@ -202,12 +196,6 @@ package connection
 				if (parsingInformations == SPARQLQueryBuilder.connectedDirectlyInverted || parsingInformations == SPARQLQueryBuilder.connectedViaMiddleInverted) {
 					invertDirection = true;
 				}
-				
-				//if (graphModel.containsElement(subject.id + predLabel + object.id)) {
-					//predicate = graphModel.getElement(subject.id + predLabel + object.id, predURI, predLabel, true);
-				//}else {
-					//predicate = graphModel.getElement(object.id + predLabel + subject.id, predURI, predLabel, true);
-				//}
 				
 				var r2:Relation = getRelation(subject, subjectBinding, tempPredicate, object, objectBinding, invertDirection);
 				

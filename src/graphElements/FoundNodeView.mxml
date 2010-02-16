@@ -23,7 +23,8 @@ You should have received a copy of the GNU General Public License along with thi
 	borderColor="{getColor(app().selectedElement)}"
 
 	width="120" height="25" toolTip="{data.element.label}"
-	verticalScrollPolicy="off" horizontalScrollPolicy="off" click="{data.hasBeenClicked()}"  borderStyle="solid" paddingBottom="2" paddingTop="2" paddingLeft="2" paddingRight="2" cornerRadius="8">
+	verticalScrollPolicy="off" horizontalScrollPolicy="off" click="{data.hasBeenClicked()}" 
+	borderStyle="solid" paddingBottom="2" paddingTop="2" paddingLeft="2" paddingRight="2" cornerRadius="8">
 		
 		<!-- 
 			borderColor="{getColor(app().currentElement)}"

@@ -38,7 +38,7 @@
 		public static const ZOOM_MINIMUM:int = ZOOM_COMPLETE;
 		public static const ZOOM_MAXIMUM:int = ZOOM_AGGREGATED_EDGES;
 		
-		public static var graphIsFullValue:int = 100;
+		public static var graphIsFullValue:int = 50;
 		
 		[Bindable]
 		private var _completeGraph:Graph = new Graph();
@@ -83,7 +83,6 @@
 		public static function getInstance():Graphmodel{
 			if (Graphmodel._instance == null){
 				Graphmodel._instance = new Graphmodel(new SingletonEnforcer());
-				
 			}
 			return Graphmodel._instance;
 		}
@@ -104,7 +103,7 @@
 			
 			_toDrawPaths = new ArrayedQueue(1000);
 			_timer.stop();
-			_timer.delay = 2000;
+			_timer.delay = 1000;
 			
 			connectivityLevels = new ArrayCollection();
 			pathLengths = new ArrayCollection();
@@ -124,15 +123,18 @@
 		public function set zoomFactor(value:int):void {
 			
 			_zoomFactor = value;
-			
+			applyZoomFactor();
+			dispatchEvent(new Event("zoomFactorChange"));
+		}
+		
+		public function applyZoomFactor():void {
 			if (_zoomFactor == ZOOM_COMPLETE) {
 				trace("Show everything");
+				GraphController.expandAllParallelRelationNodes();
 			}else if (_zoomFactor == ZOOM_AGGREGATED_EDGES) {
 				trace("Collapse parallel edges");
-				GraphController.aggregateAllParallelRelationNodes();
+				GraphController.collapseAllParallelRelationNodes();
 			}
-			
-			dispatchEvent(new Event("zoomFactorChange"));
 		}
 
 		
@@ -653,6 +655,8 @@
 			if (layout != null) object2.settings = layout.settings;
 			_completeGraph.link(predicateNode, objectNode, object2);
 			
+			applyZoomFactor();
+			
 		}
 		
 		private function addNodeToGraph(node:MyNode):void {
@@ -673,7 +677,7 @@
 		
 		private function removeNodeFromGraph(node:MyNode):void {	//TODO: the whole connection must be removed too! And the relation!
 			node.element.isVisible = false;
-			_completeGraph.remove(node);
+			graph.remove(node);
 		}
 		
 		public function drawPath(p:Path, immediatly:Boolean = false):void {

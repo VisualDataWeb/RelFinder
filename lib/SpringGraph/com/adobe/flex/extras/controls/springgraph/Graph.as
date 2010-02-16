@@ -101,7 +101,7 @@ package com.adobe.flex.extras.controls.springgraph
 		public function remove(item:Item):void
 		{
 			//trace("has item in graph? :"+this.hasNode(item.id));
-			trace("remove item from graph, "+item.id);
+			//trace("remove item from graph, "+item.id);
 			delete _nodes[item.id];
 			delete _edges[item.id];
 			
