@@ -82,6 +82,7 @@ import popup.Infos;
 import popup.InputDisambiguation;
 import popup.InputSelection;
 import popup.InputSelectionEvent;
+import popup.StableAbout;
 
 import toolTip.SelectedItemToolTipRenderer;
 
@@ -120,6 +121,8 @@ private var setupDone:Boolean = false;
 
 private function setup(): void {
 	
+	trace("Remember to set actual version number before upload");
+	
 	if (!setupDone) {
 		myConnection = new SPARQLConnection();
 	
@@ -150,40 +153,40 @@ private var wheelScale:Number = 1.0;
 
 private function mouseWheelZoomHandler(event:MouseEvent):void {
 	if (event.delta > 0) {
-		zoomSliderUp();
+		//zoomSliderUp();
 	}else {
-		zoomSliderDown();
+		//zoomSliderDown();
 	}
 	
 }
 
 private var sliderDamper:int = 0;
 
-public function zoomSliderUp():void {
-	
-	sliderDamper++;
-	
-	if (sliderDamper > 1 && zoomSlider.value < Graphmodel.ZOOM_MAXIMUM) {
-		sliderDamper = 0;
-		zoomSlider.value++;
-		graphModel.zoomFactor = zoomSlider.value;
-	}
-}
+//public function zoomSliderUp():void {
+	//
+	//sliderDamper++;
+	//
+	//if (sliderDamper > 1 && zoomSlider.value < Graphmodel.ZOOM_MAXIMUM) {
+		//sliderDamper = 0;
+		//zoomSlider.value++;
+		//graphModel.zoomFactor = zoomSlider.value;
+	//}
+//}
 
-public function zoomSliderDown():void {
-	
-	sliderDamper++;
-	
-	if (sliderDamper > 1 && zoomSlider.value > Graphmodel.ZOOM_MINIMUM) {
-		sliderDamper = 0;
-		zoomSlider.value--;
-		graphModel.zoomFactor = zoomSlider.value;
-	}
-}
+//public function zoomSliderDown():void {
+	//
+	//sliderDamper++;
+	//
+	//if (sliderDamper > 1 && zoomSlider.value > Graphmodel.ZOOM_MINIMUM) {
+		//sliderDamper = 0;
+		//zoomSlider.value--;
+		//graphModel.zoomFactor = zoomSlider.value;
+	//}
+//}
 
-private function zoomSliderChangeHandler(event:SliderEvent):void {
-	graphModel.zoomFactor = event.value;
-}
+//private function zoomSliderChangeHandler(event:SliderEvent):void {
+	//graphModel.zoomFactor = event.value;
+//}
 
 private function setupParams():void {
 	
@@ -553,7 +556,7 @@ private function settingsClickHandler(event:MouseEvent):void {
 }
 
 private function infosClickHandler(event:MouseEvent):void {
-	var pop:Infos = PopUpManager.createPopUp(this, Infos) as Infos;
+	var pop:StableAbout = PopUpManager.createPopUp(this, StableAbout) as StableAbout;
 }
 
 [Bindable]

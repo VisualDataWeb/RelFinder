@@ -259,7 +259,7 @@ You should have received a copy of the GNU General Public License along with thi
 				<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Max Relation Length:"
-					toolTip="The maximal lenght of relations RelFinder will search for.">
+					toolTip="The maximum length of relations RelFinder will search for.">
 				<mx:NumericStepper id="inMaxRelationLength" minimum="0" value="{config.maxRelationLength}" />
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Autocomplete URIs:"

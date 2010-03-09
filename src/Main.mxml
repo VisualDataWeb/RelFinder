@@ -139,8 +139,8 @@ You should have received a copy of the GNU General Public License along with thi
 	</mx:VBox>
 	
 	<!-- Graph "Zoom" -->
-	<mx:VSlider id="zoomSlider" x="{findRelationPanel.width + 30}" y="10" tickInterval="1" 
-            labels="['min', 'max']" minimum="{Graphmodel.ZOOM_MINIMUM}" maximum="{Graphmodel.ZOOM_MAXIMUM}" snapInterval="1" change="zoomSliderChangeHandler(event);" />
+	<!--<mx:VSlider id="zoomSlider" x="{findRelationPanel.width + 30}" y="10" tickInterval="1" 
+            labels="['min', 'max']" minimum="{Graphmodel.ZOOM_MINIMUM}" maximum="{Graphmodel.ZOOM_MAXIMUM}" snapInterval="1" change="zoomSliderChangeHandler(event);" />-->
 	
 	<!-- STATUS INFO (New Position)-->
 	<mx:ApplicationControlBar id="statusBar" y="10" x="{mainVBox.width - statusBar.width - 10}"

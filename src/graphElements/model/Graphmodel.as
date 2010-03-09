@@ -123,19 +123,19 @@
 		public function set zoomFactor(value:int):void {
 			
 			_zoomFactor = value;
-			applyZoomFactor();
+			//applyZoomFactor();
 			dispatchEvent(new Event("zoomFactorChange"));
 		}
 		
-		public function applyZoomFactor():void {
-			if (_zoomFactor == ZOOM_COMPLETE) {
-				trace("Show everything");
-				GraphController.expandAllParallelRelationNodes();
-			}else if (_zoomFactor == ZOOM_AGGREGATED_EDGES) {
-				trace("Collapse parallel edges");
-				GraphController.collapseAllParallelRelationNodes();
-			}
-		}
+		//public function applyZoomFactor():void {
+			//if (_zoomFactor == ZOOM_COMPLETE) {
+				//trace("Show everything");
+				//GraphController.expandAllParallelRelationNodes();
+			//}else if (_zoomFactor == ZOOM_AGGREGATED_EDGES) {
+				//trace("Collapse parallel edges");
+				//GraphController.collapseAllParallelRelationNodes();
+			//}
+		//}
 
 		
 		[Bindable(event="changed")]
@@ -655,7 +655,7 @@
 			if (layout != null) object2.settings = layout.settings;
 			_completeGraph.link(predicateNode, objectNode, object2);
 			
-			applyZoomFactor();
+			//applyZoomFactor();
 			
 		}
 		

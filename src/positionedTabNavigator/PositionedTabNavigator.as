@@ -829,7 +829,6 @@ package positionedTabNavigator
 	        if( _tabPositionChanged )
 	        {
 	        	_tabPositionChanged = false;
-				trace("position set to", position);
 	        	tabBar.setStyle( "position", position );
 	        	invalidateDisplayList();
 	        }
