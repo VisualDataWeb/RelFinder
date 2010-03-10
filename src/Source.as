@@ -512,7 +512,7 @@ private function getButtons():ArrayCollection {
 	btns.addItem(_settingsButton);
 	if (_infosButton == null) {
 		_infosButton = new Object();
-		_infosButton.toolTip = "Infos";
+		_infosButton.toolTip = "About";
 		_infosButton.name = "infos";
 		_infosButton.icon = _infosButtonIcon;
 		_infosButton.clickHandler = infosClickHandler;
