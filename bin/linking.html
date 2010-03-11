@@ -19,42 +19,42 @@
   </div>
   <div id="sidebar4">
     <p><img src="img/linkingURL.png" alt="screenshot buttons" /> <br/>
-      Click on the 'URL' button to save the URL of a search result.</p>
+      Click on the 'URL' button to get the URL of the search result and save it to the clipboard.</p>
   </div>
   <div id="mainArea">
     <h3>Linking the RelFinder:</h3>
-    <p>Click on the 'URL' button to get the URL of the current search result and save it to the clipboard. You can use this URL to directly link to a result found with the RelFinder.</p>
+    <p>Click on the 'URL' button to get the URL of the current search result and save it to the clipboard. You can use this URL to directly link to a result.</p>
     <hr />
-    <p>You can also dynamically compose URLs to integrate the RelFinder with your  tool. The URL has the following parameters that just need to be added to the URL of the Flash file (e.g., http://relfinder.semanticweb.org/RelFinder.swf):</p>
+    <p>You can also dynamically compose URLs to integrate the RelFinder with your  tool. The following parameters can be defined and added to the URL of the Flash movie (swf):</p>
     <ul>
-      <li><span class="emph">obj1, obj2, ..., objN</span>: The URIs of the dataset objects between which relationships should be searched.</li>
+      <li><span class="emph">obj1, obj2, ..., objN</span>: The URIs of the objects between which relationships shall be searched within the dataset.</li>
       <li><span class="emph">name</span>: The name of the dataset which will be displayed in the settings menu.<br />
       </li>
-      <li><span class="emph">abbreviation</span>: An abbreviation (or ID) for the dataset configuration. This can be used to load the RelFinder with this configuration as default (e.g., <a href="http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb">http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb</a> loads the RelFinder with the 'Linked Movie Data Base' configuration as default).</li>
+      <li><span class="emph">abbreviation</span>: An abbreviation (or ID) for the dataset configuration. This can be used to load the RelFinder directly with this specific configuration. (For instance, <a href="http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb">http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb</a> loads the RelFinder with the 'Linked Movie Data Base' configuration by default).</li>
       <li><span class="emph">description</span>: A  description of the dataset which will be displayed in the settings menu.<br />
       </li>
-      <li><span class="emph">endpointURI</span>: 				The URL of the SPARQL endpoint.  The RelFinder uses this URL + '/sparql?' + to query the endpoint. Please keep this in mind when defining this value.<br />
+      <li><span class="emph">endpointURI</span>: 				The URL of the SPARQL endpoint.  The RelFinder uses this URL + '/sparql?' to query the endpoint.<br />
       </li>
       <li><span class="emph">defaultGraphURI</span>: The URI of the default graph which should be used for the search (usually not necessary).<br />
       </li>
       <li><span class="emph">isVirtuoso</span>:
-        If the SPARQL server is a &quot;Virtuoso&quot; server you can set this value = 'true'. In this case the RelFinder will use some special Virtuoso dependent commands for an improved autocomplete operation. If you are not sure set this value = 'false'. This should always work.<br />
+        If the SPARQL server is a &quot;Virtuoso&quot; server this value can be set to 'true'. The RelFinder will then use  Virtuoso specific commands for an improved autocompletion. If you are not sure better set this value to 'false'. That should always work.<br />
       </li>
-      <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value = 'true' to forward all queries to the defined proxy server. </li>
-      <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocomplete  and disambiguation features. (In most cases this might be RDF label (http://www.w3.org/2000/01/rdf-schema#label). <br />
+      <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value to 'true' in order to forward all queries to the defined proxy server. </li>
+      <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocompletion  and disambiguation features. (Usually, RDF label works fine - http://www.w3.org/2000/01/rdf-schema#label). <br />
       </li>
       <li><span class="emph">ignoredProperties</span>: URIs of properties that should not be included in the relationship search.</li>
-      <li><span class="emph">abstractURIs</span>*: URIs of  properties that provide short descriptions of objects for the info box. (If no value for the 1st entry is found, the RelFinder continues with the second entry etc.)<br />
+      <li><span class="emph">abstractURIs</span>: URIs of  properties that provide short descriptions  for the info box. (If no value for the 1st property is found, the RelFinder continues with the second property, etc.)<br />
       </li>
-      <li><span class="emph">imageURIs</span>*: URIs of properties that provide images related to objects for the info box. (If no value for the 1st entry is found, the RelFinder continues with the second entry etc.)</li>
-      <li><strong>linkURIs</strong>: URIs of properties that provide  web links for the info boxes. (The links of all properties are displayed.)<br />
+      <li><span class="emph">imageURIs</span>: URIs of properties that provide images  for the info box. (If no value for the 1st property is found, the RelFinder continues with the second property, etc.)</li>
+      <li><strong>linkURIs</strong>: URIs of properties that provide  web links for the info boxes. (The values of all given properties are displayed as links.)<br />
       </li>
-      <li><span class="emph">maxRelationLegth</span>: The maximum length of relationships that the RelFinder searches for (a value of 2 is recommended).<br />
+      <li><span class="emph">maxRelationLegth</span>: The maximum length of relationships that the RelFinder searches for (a value between 1 and 3 is recommended).<br />
       </li>
     </ul>
-    <p>Note that all variables need to be Base64 encoded.</p>
+    <p>Note that all variables have to be Base64 encoded.</p>
     <hr />
-    <p>This results in a link looking like this (Base 64 decoded):</p>
+    <p>Here is how the resulting link could look like (without Base64 encoded values! - <a href="base64-example.html">Base64 encoded version</a>):</p>
     <p class="source_code"><span class="color-code">http://relfinder.semanticweb.org/RelFinder.swf<br />
       ?obj1=Fiat|http://dbpedia.org/resource/Fiat<br />
       &amp;obj2=Ferrari|http://dbpedia.org/resource/Ferrari<br />
