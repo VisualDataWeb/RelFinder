@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>RelFinder - Exploring Relationships in RDF Datasets</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Description" content="RelFinder Homepage" />
+<meta name="language" content="en" />
+<meta name="Keywords" content="relationship discovery, semantic web, graph visualization" />
+<link href="css/relfinder.css" rel="stylesheet" type="text/css" />
+<link rel="shortcut icon" href="http://relfinder.semanticweb.org/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="icon" href="http://relfinder.semanticweb.org/favicon.ico" type="image/vnd.microsoft.icon" />
+<script src="js/spamspan.js" type="text/javascript"></script>
+</head>
+<body class="relfinder">
+<div id="container">
+  <div id="header"><a href="index.html" class="fltlft"><img alt="logo of relfinder" src="img/relfinder-logo-black.png" /></a>
+    <h1>Exploring Relationships in RDF Datasets</h1>
+  </div>
+  <div id="sidebar4">
+    <p><img src="img/linkingURL.png" alt="screenshot buttons" /> <br/>
+      Click on the 'URL' button to save the URL of a search result.</p>
+  </div>
+  <div id="mainArea">
+    <h3>Linking the RelFinder:</h3>
+    <p>Click on the 'URL' button to get the URL of the current search result and save it to the clipboard. You can use this URL to directly link to a result found with the RelFinder.</p>
+    <hr />
+    <p>You can also dynamically compose URLs to integrate the RelFinder with your  tool. The URL has the following parameters that just need to be added to the URL of the Flash file (e.g., http://relfinder.semanticweb.org/RelFinder.swf):</p>
+    <ul>
+      <li><span class="emph">obj1, obj2, ..., objN</span>: The URIs of the dataset objects between which relationships should be searched.</li>
+      <li><span class="emph">name</span>: The name of the dataset which will be displayed in the settings menu.<br />
+      </li>
+      <li><span class="emph">abbreviation</span>: An abbreviation (or ID) for the dataset configuration. This can be used to load the RelFinder with this configuration as default (e.g., <a href="http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb">http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb</a> loads the RelFinder with the 'Linked Movie Data Base' configuration as default).</li>
+      <li><span class="emph">description</span>: A  description of the dataset which will be displayed in the settings menu.<br />
+      </li>
+      <li><span class="emph">endpointURI</span>: 				The URL of the SPARQL endpoint.  The RelFinder uses this URL + '/sparql?' + to query the endpoint. Please keep this in mind when defining this value.<br />
+      </li>
+      <li><span class="emph">defaultGraphURI</span>: The URI of the default graph which should be used for the search (usually not necessary).<br />
+      </li>
+      <li><span class="emph">isVirtuoso</span>:
+        If the SPARQL server is a &quot;Virtuoso&quot; server you can set this value = 'true'. In this case the RelFinder will use some special Virtuoso dependent commands for an improved autocomplete operation. If you are not sure set this value = 'false'. This should always work.<br />
+      </li>
+      <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value = 'true' to forward all queries to the defined proxy server. </li>
+      <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocomplete  and disambiguation features. (In most cases this might be RDF label (http://www.w3.org/2000/01/rdf-schema#label). <br />
+      </li>
+      <li><span class="emph">ignoredProperties</span>: URIs of properties that should not be included in the relationship search.</li>
+      <li><span class="emph">abstractURIs</span>*: URIs of  properties that provide short descriptions of objects for the info box. (If no value for the 1st entry is found, the RelFinder continues with the second entry etc.)<br />
+      </li>
+      <li><span class="emph">imageURIs</span>*: URIs of properties that provide images related to objects for the info box. (If no value for the 1st entry is found, the RelFinder continues with the second entry etc.)</li>
+      <li><strong>linkURIs</strong>: URIs of properties that provide  web links for the info boxes. (The links of all properties are displayed.)<br />
+      </li>
+      <li><span class="emph">maxRelationLegth</span>: The maximum length of relationships that the RelFinder searches for (a value of 2 is recommended).<br />
+      </li>
+    </ul>
+    <p>Note that all variables need to be Base64 encoded.</p>
+    <hr />
+    <p>This results in a link looking like this (Base 64 decoded):</p>
+    <p class="source_code"><span class="color-code">http://relfinder.semanticweb.org/RelFinder.swf<br />
+      ?obj1=Fiat|http://dbpedia.org/resource/Fiat<br />
+      &amp;obj2=Ferrari|http://dbpedia.org/resource/Ferrari<br />
+      &amp;obj3=Maserati|http://dbpedia.org/resource/Maserati<br />
+      &amp;name=DBpedia<br />
+      &amp;abbreviation=dbp<br />
+      &amp;description=Linked Data version of Wikipedia. The DBpedia data set currently provides information about more than 1.95 million “things”, including at least 80,000 persons, 70,000 places, 35,000 music albums, 12,000 films. Provides descriptions in 12 different languages. Altogether, the DBpedia data set consists of (more than) 103 million RDF triples. The data set is interlinked with various other data sources.<br />
+      &amp;endpointURI=http://dbpedia.org/sparql<br />
+      &amp;defautlGraphURI=http://dbpedia.org<br />
+      &amp;isVirtuoso=true<br />
+      &amp;useProxy=false<br />
+      &amp;autocompleteURIs=http://www.w3.org/2000/01/rdf-schema#label<br />
+      &amp;ignoredProperties=http://dbpedia.org/property/wikiPageUsesTemplate, http://dbpedia.org/property/wikilink, http://dbpedia.org/property/wordnet_type, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/2004/02/skos/core#subject<br />
+      &amp;abstractURIs=http://dbpedia.org/property/abstract<br />
+      &amp;imageURIs=http://dbpedia.org/ontology/thumbnail, http://xmlns.com/foaf/0.1/depiction<br />
+      &amp;linkURIs=http://purl.org/ontology/mo/wikipedia, http://xmlns.com/foaf/0.1/homepage, http://xmlns.com/foaf/0.1/page<br />
+      &amp;maxRelationLegth=2<br />
+      </span></p>
+  </div>
+  <div id="footer"> <a href="http://www.interactivesystems.info" target="_blank" class="fltrt"><img alt="logo interactive systems" src="img/is-logo.png" /></a> <a href="http://dei.inf.uc3m.es" target="_blank" class="fltrt"><img alt="logo dei lab" src="img/dei-logo.png" /></a> <a href="http://www.vis.uni-stuttgart.de" target="_blank" class="fltrt"><img alt="logo visualization and interactive systems" src="img/vis-logo.png" /></a>
+    <p>(c) 2009/10 by <span class="spamspan"> <span class="u">philipp.heim</span> [at] <span class="d">vis.uni-stuttgart.de</span> (<span class="t">Philipp Heim</span>)</span>, <span class="spamspan"> <span class="u">slohmann</span> [at] <span class="d">inf.uc3m.es</span> (<span class="t">Steffen Lohmann</span>)</span>, <span class="spamspan"> <span class="u">timo.stegemann</span> [at] <span class="d">uni-due.de</span> (<span class="t">Timo Stegemann</span>)</span> </p>
+  </div>
+</div>
+<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-12619410-8");
+			pageTracker._trackPageview();
+		} catch(err) {}
+    </script>
+</body>
+</html>

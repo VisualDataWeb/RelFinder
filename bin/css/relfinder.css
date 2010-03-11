@@ -1,0 +1,104 @@
+@charset "utf-8";
+
+
+body {
+	font: 83% Verdana, Arial, Helvetica, sans-serif;
+	background: #ececf4;
+	color: #000;			
+	margin: 0; /* set same margin and padding for all browsers */
+	margin-top: 15px;
+	padding: 0;
+	text-align: center; /* center container element (for IE 5*) */
+}
+	
+img {padding: 2px 2px 2px 2px; border: none;}
+
+a {text-decoration: none;}
+
+#container { 
+	width: 75%; 
+	min-width: 70em;
+	background: #ffffff;
+	margin: 1em auto;
+	border: 1px solid #ccc;
+	text-align: left;
+} 
+
+.source_code {
+	font: 0.9em 'Courier New', Courier, Fixed, monospace;
+	color: grey;
+	margin-left: 10px;
+}
+
+.color-code {
+	color: black;
+}
+
+.emph {
+	font-weight: bold; 
+}
+
+#header { 
+	margin: 0;
+	background: #ddd;
+}
+
+#header h1 {
+	font-size: 145%;
+	margin: 0px 0px 0px 130px; /* space for logo */
+	padding: 13px; /* header height */
+}
+
+#sidebar1,
+#sidebar2,
+#sidebar3,
+#sidebar4 {
+	float: right;
+	width: 300px; /* necessary for float element */
+	clear: both;
+	padding: 5px 5px 5px 5px;
+	overflow: hidden;
+}
+
+#sidebar2 {
+	padding-left: 10px;
+	width: 280px;
+}
+
+#sidebar3 {
+	text-align: center;
+	width: 460px;
+}
+
+#sidebar4 {
+	text-align: center;
+	width: 330px;
+}
+
+#mainArea {
+	margin: 0 0px 0 10px;
+	padding-top: 10px;
+} 
+
+#footer { 
+	clear:both; 
+	font-size: 80%;
+	padding: 5px 10px;
+	background: #ddd;
+} 
+
+.relfinder #footer p {
+	margin: 0;
+	padding: 12px 0px 10px 10px;
+}
+
+.fltrt {
+	float: right;
+	margin-left: 0px;
+}
+
+.fltlft {
+	float: left;
+	margin-right: 0px;
+}
+
