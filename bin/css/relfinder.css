@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+/* creator: S Lohmann */
 
 body {
 	font: 83% Verdana, Arial, Helvetica, sans-serif;
@@ -17,7 +18,6 @@ a {text-decoration: none;}
 
 #container { 
 	width: 75%; 
-	min-width: 70em;
 	background: #ffffff;
 	margin: 1em auto;
 	border: 1px solid #ccc;
@@ -26,7 +26,7 @@ a {text-decoration: none;}
 
 .source_code {
 	font: 0.9em 'Courier New', Courier, Fixed, monospace;
-	color: grey;
+	color: DarkGray ;
 	margin-left: 10px;
 }
 
@@ -87,7 +87,7 @@ a {text-decoration: none;}
 	background: #ddd;
 } 
 
-.relfinder #footer p {
+#footer p {
 	margin: 0;
 	padding: 12px 0px 10px 10px;
 }
