@@ -19,7 +19,18 @@ if ($_POST['query']) {
 	curl_setopt ($session, CURLOPT_POSTFIELDS, $postvars);
 }
 
-curl_setopt($session, CURLOPT_URL, $HTTP_SERVER_VARS['QUERY_STRING']);
+//print_r($_SERVER);
+
+//if ( isset($HTTP_SERVER_VARS))
+//  {
+//    reset($HTTP_SERVER_VARS);
+//    while(list($k, $v) = each($HTTP_SERVER_VARS)) {
+//    printf("Name: %s Wert: %s<br>\n", $k, $v);
+//    }
+//  }
+
+//curl_setopt($session, CURLOPT_URL, $HTTP_SERVER_VARS['QUERY_STRING']);
+curl_setopt($session, CURLOPT_URL, $_SERVER['QUERY_STRING']);
 
 curl_setopt($session, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
