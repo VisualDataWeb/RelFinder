@@ -63,6 +63,8 @@ a {text-decoration: none;}
 #sidebar2 {
 	padding-left: 10px;
 	width: 280px;
+	padding-top: 4.9em;
+	/*padding-top: 64px;*/
 }
 
 #sidebar3 {
@@ -75,10 +77,15 @@ a {text-decoration: none;}
 	width: 330px;
 }
 
-#mainArea {
+#mainArea,
+#mainArea2 {
 	margin: 0 0px 0 10px;
 	padding-top: 10px;
 } 
+
+#mainArea2 {
+	overflow: auto;
+}
 
 #footer { 
 	clear:both; 
