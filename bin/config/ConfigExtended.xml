@@ -113,7 +113,7 @@
     <endpoint>
       <name>DBpedia</name>
       <abbreviation>dbp</abbreviation>
-      <description>Linked Data version of Wikipedia. The DBpedia data set currently provides information about more than 1.95 million “things”, including at least 80,000 persons, 70,000 places, 35,000 music albums, 12,000 films. Provides descriptions in 12 different languages. Altogether, the DBpedia data set consists of (more than) 103 million RDF triples. The data set is interlinked with various other data sources.</description>
+      <description>Linked Data version of Wikipedia.</description>
       <endpointURI>http://dbpedia.org/sparql</endpointURI>
       <defaultGraphURI>http://dbpedia.org</defaultGraphURI>
       <isVirtuoso>true</isVirtuoso>
@@ -129,7 +129,7 @@
         <ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
       </ignoredProperties>
       <abstractURIs>
-        <abstractURI>http://dbpedia.org/property/abstract</abstractURI>
+        <abstractURI>http://dbpedia.org/ontology/abstract</abstractURI>
       </abstractURIs>
       <imageURIs>
         <imageURI>http://dbpedia.org/ontology/thumbnail</imageURI>
@@ -160,7 +160,7 @@
         <ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
       </ignoredProperties>
       <abstractURIs>
-        <abstractURI>http://dbpedia.org/property/abstract</abstractURI>
+        <abstractURI>http://dbpedia.org/ontology/abstract</abstractURI>
       </abstractURIs>
       <imageURIs>
         <imageURI>http://dbpedia.org/ontology/thumbnail</imageURI>
