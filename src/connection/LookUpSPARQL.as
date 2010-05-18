@@ -45,7 +45,7 @@
 				
 				
 			}else {
-				query = createStandardREGEXQuery(_input, limit, offset);
+				query = createStandardREGEXQuery(_input, limit, offset, lang);
 				
 				StatusModel.getInstance().addSearchLookUp();
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result, "XML", true, lookUp_Fault);
@@ -134,7 +134,7 @@
 //		Filter regex(?l, 'Bruce', 'i') }
 //		 }
 //		GROUP BY ?s ?l 
-		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0):String {
+		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0, lang:String = "en"):String {
 			input = StringUtil.trim(input);
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
@@ -148,7 +148,7 @@
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
 			query += "FILTER regex(?l, '" + input + "', 'i'). " +
-						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} "; 
 			if (limit != 0) {

@@ -49,7 +49,7 @@
 						URI of this property. In most cases you can find the resources by its label (http://www.w3.org/2000/01/rdf-schema#label)
 						
 			autocompleteLanguage:
-				!!! Only for Virtuoso !!! The language code, the auto complete / auto suggest function will use for filtering. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc.
+				The language code, the auto complete / auto suggest function will use for filtering. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc.
 				
 			ignoredProperties:
 				Properties which should not be contained in the result graph.

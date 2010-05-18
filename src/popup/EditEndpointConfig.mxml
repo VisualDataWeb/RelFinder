@@ -290,10 +290,9 @@ You should have received a copy of the GNU General Public License along with thi
 				</mx:HBox>
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Autocomplete Language:"
-					toolTip="The default graph which should be used for the search. (normally not necessary)" >
+					toolTip="The language code, the auto complete / auto suggest function will use for filtering. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc." >
 				<mx:HBox width="100%">
 					<mx:TextInput id="inACLang" width="50" text="{config.autocompleteLanguage}" />
-					<mx:Label text="Works only with Virtuoso servers" />
 				</mx:HBox>
 				
 			</mx:FormItem>
