@@ -99,13 +99,20 @@ package connection {
 			sparqlService.sources = sources;
 			sparqlService.parsingInformations = parsingInformations;
 			
-			if (config.useProxy) {
-				sparqlService.url = ConnectionModel.getInstance().proxy + "?" + config.endpointURI + "/sparql?";
+			var appendix:String = "";
+			if (config.dontAppendSPARQL) {
+				appendix = "?";
 			}else {
-				sparqlService.url = config.endpointURI + "/sparql?";
+				appendix = "/sparql?"
+			}
+			
+			if (config.useProxy) {
+				sparqlService.url = ConnectionModel.getInstance().proxy + "?" + config.endpointURI + appendix;
+			}else {
+				sparqlService.url = config.endpointURI + appendix;
 			}
 			sparqlService.useProxy = false;
-			sparqlService.method = "POST";
+			sparqlService.method = config.method;
 			sparqlService.contentType = HTTPService.CONTENT_TYPE_FORM;
 			sparqlService.resultFormat = "text";
 			sparqlService.addEventListener(SPARQLResultEvent.SPARQL_RESULT, resultHandler);

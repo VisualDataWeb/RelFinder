@@ -88,18 +88,21 @@ You should have received a copy of the GNU General Public License along with thi
 			public function apply():void {
 				
 				config.abbreviation = inAbbreviation.text;
+				config.abstractURIs = tempAbDP;
 				config.autocompleteURIs = tempACDP;
+				config.autocompleteLanguage = inACLang.text;
 				config.defaultGraphURI = inDefaultGraphURI.text;
 				config.description = inDescription.text;
+				config.dontAppendSPARQL = inDontAppendSPARQL.selected;
 				config.endpointURI = inEndpointURI.text;
+				config.imageURIs = tempImDP;
 				config.ignoredProperties = tempIgPropDP;
 				config.isVirtuoso = inIsVirtuoso.selected;
+				config.linkURIs = tempLiDP;
+				config.maxRelationLength = inMaxRelationLength.value;
+				config.method = inMethod.selectedItem.toString();
 				config.name = inName.text;
 				config.useProxy = inUseProxy.selected;
-				config.maxRelationLength = inMaxRelationLength.value;
-				config.abstractURIs = tempAbDP;
-				config.imageURIs = tempImDP;
-				config.linkURIs = tempLiDP;
 				
 			}
 			
@@ -246,6 +249,10 @@ You should have received a copy of the GNU General Public License along with thi
 					toolTip="The URL of the SPARQL endpoint.  RelFinder will use this URL + '/sparql?' + a Query to send requests to this endpoint. Please keep this in mind, when you define this value." >
 				<mx:TextInput id="inEndpointURI" width="100%" text="{config.endpointURI}" />
 			</mx:FormItem>
+			<mx:FormItem width="100%" label="Don't append '/sparql?':"
+					toolTip="Prevents RelFinder from appending '/sparql?' to the defined endpointURI." >
+				<mx:CheckBox id="inDontAppendSPARQL" width="100%" selected="{config.dontAppendSPARQL}" />
+			</mx:FormItem>
 			<mx:FormItem width="100%" label="Default Graph URI:"
 					toolTip="The default graph which should be used for the search. (normally not necessary)" >
 				<mx:TextInput id="inDefaultGraphURI" width="100%" text="{config.defaultGraphURI}" />
@@ -257,6 +264,15 @@ You should have received a copy of the GNU General Public License along with thi
 			<mx:FormItem width="100%" label="Use Proxy:"
 					toolTip="If the SPARQL server has NO crossdomain.xml, set this value = true, to forward all queries to the defined proxy server.">
 				<mx:CheckBox id="inUseProxy" width="100%" selected="{config.useProxy}" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Method:"
+					toolTip="HTTP method for SPARQL requests. Possible values are POST and GET. POST is default." >
+				<mx:ComboBox id="inMethod" selectedItem="{config.method}">
+					<mx:ArrayCollection>
+						<mx:String>POST</mx:String>
+						<mx:String>GET</mx:String>
+					</mx:ArrayCollection>
+				</mx:ComboBox>
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Max Relation Length:"
 					toolTip="The maximum length of relations RelFinder will search for.">
@@ -272,6 +288,14 @@ You should have received a copy of the GNU General Public License along with thi
 						<mx:Button id="bRemoveACURI" label="-" click="{removeACURI();}" width="19" height="19" fontStyle="bold" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0"/>
 					</mx:VBox>
 				</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Autocomplete Language:"
+					toolTip="The default graph which should be used for the search. (normally not necessary)" >
+				<mx:HBox width="100%">
+					<mx:TextInput id="inACLang" width="50" text="{config.autocompleteLanguage}" />
+					<mx:Label text="Works only with Virtuoso servers" />
+				</mx:HBox>
+				
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Ignored Properties:"
 					toolTip="Properties which should not be contained in the result graph.">

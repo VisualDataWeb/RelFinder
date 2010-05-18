@@ -44,12 +44,19 @@
 		
 		private var _maxRelationLength:int = 2;
 		
+		private var _dontAppendSPARQL:Boolean = false;
+		
+		private var _method:String = "POST";
+		
+		private var _autocompleteLanguage:String = "en";
+		
 		public function Config(name:String = "", abbreviation:String = "", description:String = "",
 					endpointURI:String = "", defaultGraphURI:String = "", isVirtuoso:Boolean = false,
 					ignoredProperties:ArrayCollection = null, useProxy:Boolean = true,
 					autocompleteURIs:ArrayCollection = null, abstarctURIs:ArrayCollection = null,
 					imageURIs:ArrayCollection = null, linkURIs:ArrayCollection = null,
-					maxRelationLength:int = 2,
+					maxRelationLength:int = 2, dontAppendSPARQL:Boolean = false, method:String = "POST",
+					autocompleteLanguage:String = "en",
 					lookUp:ILookUp = null) {
 			
 			this.name = (name == null || name == "") ? "New Config" : name;
@@ -64,6 +71,8 @@
 			this.imageURIs = imageURIs;
 			this.linkURIs = linkURIs;
 			this.maxRelationLength = maxRelationLength;
+			this.autocompleteLanguage = autocompleteLanguage;
+			
 			
 			this.lookUp = lookUp;
 		}
@@ -209,6 +218,38 @@
 		public function set useProxy(value:Boolean):void {
 			_useProxy = value;
 			dispatchEvent(new Event("useProxyChange"));
+		}
+		
+		[Bindable(event="dontAppendSPARQLChange")]
+		public function get dontAppendSPARQL():Boolean {
+			return _dontAppendSPARQL;
+		}
+		
+		public function set dontAppendSPARQL(value:Boolean):void {
+			_dontAppendSPARQL = value;
+			dispatchEvent(new Event("dontAppendSPARQLChange"));
+		}
+		
+		[Bindable(event="methodChange")]
+		public function get method():String {
+			return _method;
+		}
+		
+		public function set method(value:String):void {
+			if (value.toUpperCase() == "GET" || value.toUpperCase() == "POST") {
+				_method = value;
+				dispatchEvent(new Event("methodChange"));
+			}
+		}
+		
+		[Bindable(event="autocompleteLanguageChange")]
+		public function get autocompleteLanguage():String {
+			return _autocompleteLanguage;
+		}
+		
+		public function set autocompleteLanguage(value:String):void {
+			_autocompleteLanguage = value;
+			dispatchEvent(new Event("autocompleteLanguageChange"));
 		}
 		
 		public function equals(config:IConfig):Boolean {

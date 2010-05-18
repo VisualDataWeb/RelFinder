@@ -85,6 +85,21 @@
 		
 		function set maxRelationLength(value:int):void
 		
+		[Bindable(event="dontAppendSPARQLChange")]
+		function get dontAppendSPARQL():Boolean;
+		
+		function set dontAppendSPARQL(value:Boolean):void;
+		
+		[Bindable(event="methodChange")]
+		function get method():String;
+		
+		function set method(value:String):void;
+		
+		[Bindable(event="autocompleteLanguageChange")]
+		function get autocompleteLanguage():String;
+		
+		function set autocompleteLanguage(value:String):void;
+		
 		function equals(value:IConfig):Boolean
 	}
 	

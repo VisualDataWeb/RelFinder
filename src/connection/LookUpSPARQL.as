@@ -32,12 +32,13 @@
 			var inputArrayCollection:ArrayCollection = new ArrayCollection();
 			inputArrayCollection.addItem(_input);
 			
+			var lang:String = ConnectionModel.getInstance().sparqlConfig.autocompleteLanguage;
+			
 			var query:String = "";
 			
 			if (ConnectionModel.getInstance().sparqlConfig.isVirtuoso) {
 				
-				//query = createCompleteOutdegQuery(_input, 20);
-				query = createCompleteIndegQuery(_input, limit, offset);
+				query = createCompleteIndegQuery(_input, limit, offset, lang);
 				
 				StatusModel.getInstance().addSearchLookUp();
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Count_Result, "XML", true, lookUp_Fault);
@@ -45,7 +46,6 @@
 				
 			}else {
 				query = createStandardREGEXQuery(_input, limit, offset);
-				//query = createCompleteREGEXIndegQuery(_input, 20);
 				
 				StatusModel.getInstance().addSearchLookUp();
 				sparqlConnection.executeSparqlQuery(inputArrayCollection, query, lookUp_Result, "XML", true, lookUp_Fault);
@@ -53,17 +53,17 @@
 			
 		}
 		
-		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
+		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
-				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit, offset);
+				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit, offset, lang);
 			}else {
 				var newInput:String = input.split(" ").join("' and '");
-				return createMultipleWordsCompleteCountIndegQuery("'" + newInput + "'", limit, offset);
+				return createMultipleWordsCompleteCountIndegQuery("'" + newInput + "'", limit, offset, lang);
 			}
 		}
 		
-		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
+		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -79,7 +79,7 @@
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
 						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
-						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). " +
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
@@ -93,7 +93,7 @@
 			return query;
 		}
 		
-		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0):String {
+		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -109,7 +109,7 @@
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " + 
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
 						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
-						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). " +
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
@@ -148,8 +148,8 @@
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
 			query += "FILTER regex(?l, '" + input + "', 'i'). " +
-						//"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
-						//"FILTER (!isLiteral(?someobj)). " +
+						"FILTER (lang(?l) = '' || langMatches(lang(?l), 'en')). " +
+						"FILTER (!isLiteral(?someobj)). " +
 						"} "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";

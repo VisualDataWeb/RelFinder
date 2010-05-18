@@ -8,6 +8,7 @@
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.core.Application;
+	import mx.utils.ObjectProxy;
 	import mx.utils.ObjectUtil;
 	/**
 	 * ...
@@ -39,14 +40,20 @@
 			if (config.description != null && config.description != "") {
 				data += "&description=" + Base64.encode(config.description);
 			}
+			
 			if (config.endpointURI != null && config.endpointURI != "") {
 				data += "&endpointURI=" + Base64.encode(config.endpointURI);
 			}
+			
+			data += "&dontAppendSPARQL=" + Base64.encode(config.dontAppendSPARQL.toString());
+			
 			if (config.defaultGraphURI != null && config.defaultGraphURI != "") {
 				data += "&defaultGraphURI=" + Base64.encode(config.defaultGraphURI);
 			}
 			data += "&isVirtuoso=" + Base64.encode(config.isVirtuoso.toString()) +
-				"&useProxy=" + Base64.encode(config.useProxy.toString());
+				"&useProxy=" + Base64.encode(config.useProxy.toString()) +
+				"&method=" + Base64.encode(config.method) +
+				"&autocompleteLanguage=" + Base64.encode(config.autocompleteLanguage);
 
 			if (config.autocompleteURIs != null && config.autocompleteURIs.length > 0) {
 				
@@ -170,6 +177,10 @@
 					example.endpointConfig.endpointURI = Base64.decode(param[key]);
 				}
 				
+				if (key == "dontAppendSPARQL") {
+					example.endpointConfig.dontAppendSPARQL = (Base64.decode(param[key]) == "true") ? true : false;
+				}
+				
 				if (key == "defaultGraphURI") {
 					example.endpointConfig.defaultGraphURI = Base64.decode(param[key]);
 				}
@@ -182,8 +193,16 @@
 					example.endpointConfig.useProxy = (Base64.decode(param[key]) == "true") ? true : false;
 				}
 				
+				if (key == "method") {
+					example.endpointConfig.method = Base64.decode(param[key]);
+				}
+				
 				if (key == "autocompleteURIs") {
 					example.endpointConfig.autocompleteURIs = new ArrayCollection(Base64.decode(param[key]).split(","));
+				}
+				
+				if (key == "autocompleteLanguage") {
+					example.endpointConfig.autocompleteLanguage = Base64.decode(param[key]);
 				}
 				
 				if (key == "ignoredProperties") {
@@ -240,6 +259,10 @@
 			//}
 			
 			if (conf1.endpointURI != conf2.endpointURI) {
+				compare++;
+			}
+			
+			if (conf1.dontAppendSPARQL != conf2.dontAppendSPARQL) {
 				compare++;
 			}
 			
@@ -307,16 +330,22 @@
 		public static function setConfigurationFromXML(xml:Object):void {
 			
 			// set proxy
-			ConnectionModel.getInstance().proxy = xml.proxy.url;
-			ConnectionModel.getInstance().defaultProxy = xml.proxy.url;
+			if (xml.proxy != null && xml.proxy.url != null) {
+				ConnectionModel.getInstance().proxy = xml.proxy.url;
+				ConnectionModel.getInstance().defaultProxy = xml.proxy.url;
+			}
 			
 			// for old versions
 			if (xml && xml.hasOwnProperty("endpoints") && xml.endpoints.hasOwnProperty("defaultEndpoint")) {
 				ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(xml.endpoints.defaultEndpoint));
 			}
 			
-			for each (var obj:Object in xml.endpoints.endpoint) {
-				ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(obj));
+			if (xml.endpoints.endpoint is ArrayCollection) {
+				for each (var obj:Object in xml.endpoints.endpoint) {
+					ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(obj));
+				}
+			}else {
+				ConnectionModel.getInstance().sparqlConfigs.addItem(getConfig(xml.endpoints.endpoint));
 			}
 			
 			ConnectionModel.getInstance().sparqlConfig = ConnectionModel.getInstance().sparqlConfigs.getItemAt(0) as IConfig;
@@ -333,9 +362,12 @@
 			config.abbreviation = (conf.abbreviation != null) ? conf.abbreviation : "no id " + time;
 			config.description = (conf.description != null) ? conf.description : "";
 			config.endpointURI = (conf.endpointURI != null) ? conf.endpointURI : "";
+			config.dontAppendSPARQL = (conf.dontAppendSPARQL != null && conf.dontAppendSPARQL.toString().toLowerCase() == "true") ? true : false;
 			config.defaultGraphURI = (conf.defaultGraphURI != null) ? conf.defaultGraphURI : "";
 			config.isVirtuoso = (conf.isVirtuoso.toString().toLowerCase() == "true") ? true : false;
 			config.useProxy = (conf.useProxy.toString().toLowerCase() == "true") ? true : false;
+			config.method = (conf.method != null) ? conf.method : "POST";
+			config.autocompleteLanguage = (conf.autocompleteLanguage != null && conf.autocompleteLanguage != "") ? conf.autocompleteLanguage : "en";
 			
 			if (conf.autocompleteURIs != undefined) {
 				if (config.autocompleteURIs == null) {
@@ -445,11 +477,13 @@
 											if (ep.endpointURI != null && ep.endpointURI != "") {
 												data += "<endpointURI>" + ep.endpointURI + "</endpointURI>";
 											}
+											data += "<dontAppendSPARQL>" + ep.dontAppendSPARQL + "</dontAppendSPARQL>";
 											if (ep.defaultGraphURI != null && ep.defaultGraphURI != "") {
 												data += "<defaultGraphURI>" + ep.defaultGraphURI + "</defaultGraphURI>";
 											}
 											data += "<isVirtuoso>" + ep.isVirtuoso + "</isVirtuoso>" +
-											"<useProxy>" + ep.useProxy + "</useProxy>";
+											"<useProxy>" + ep.useProxy + "</useProxy>" +
+											"<method>" + ep.method + "</method>";
 											
 											if (ep.autocompleteURIs != null && ep.autocompleteURIs.length > 0) {
 												
@@ -459,6 +493,8 @@
 												}
 												data += "</autocompleteURIs>";
 											}
+											
+											data += "<autocompleteLanguage>" + ep.autocompleteLanguage + "</autocompleteLanguage>";
 											
 											if (ep.ignoredProperties != null && ep.ignoredProperties.length > 0) {
 												

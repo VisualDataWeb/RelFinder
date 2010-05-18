@@ -25,7 +25,10 @@
 				A description of the SPARQL endpoint which will be displayed in the settings menu.
 				
 			endpointURI:
-				The URL of the SPARQL endpoint.  RelFinder will use this URL + '/sparql?' + a Query to request this endpoint. Please keep this in mind, when you define this value.
+				The URL of the SPARQL endpoint.  RelFinder will use this URL + '/sparql?' + a Query to request this endpoint. Please keep this in mind, when you define this value. You can prevent RelFinder from appending '/sparql?' to the endpoint URI by defining 'dontAppendSPARQL' as true. In this case, RelFinder will use URL + '?' + a Query to request this endpoint.
+			
+			dontAppendSPARQL:
+				Prevents RelFinder from appending '/sparql?' to the defined endpointURI. Default value is false.
 				
 			defaultGraphURI:
 				The default graph which should be used for the search. (normally not necessary)
@@ -35,12 +38,18 @@
 				
 			useProxy:
 				If the SPARQL server has NO crossdomain.xml, set this value = true, to forward all queries to the defined proxy server.
-				
+			
+			method:
+				HTTP method for SPARQL requests. Possible values are POST and GET. POST is default.
+			
 			autocompleteURIs:
 				A list of properties which will be use for autocomplete search and input disambiguation process.
 				
 					autocompleteURI:
 						URI of this property. In most cases you can find the resources by its label (http://www.w3.org/2000/01/rdf-schema#label)
+						
+			autocompleteLanguage:
+				!!! Only for Virtuoso !!! The language code, the auto complete / auto suggest function will use for filtering. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc.
 				
 			ignoredProperties:
 				Properties which should not be contained in the result graph.
@@ -75,12 +84,15 @@
 	      <abbreviation>dbp</abbreviation>
 	      <description>Linked Data version of Wikipedia.</description>
 	      <endpointURI>http://dbpedia.org/sparql</endpointURI>
+		  <dontAppendSPARQL>false</dontAppendSPARQL>
 	      <defaultGraphURI>http://dbpedia.org</defaultGraphURI>
 	      <isVirtuoso>true</isVirtuoso>
 	      <useProxy>false</useProxy>
+		  <method>POST</method>
 	      <autocompleteURIs>
 	        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
 	      </autocompleteURIs>
+		  <autocompleteLanguage>en</autocompleteLanguage>
 	      <ignoredProperties>
 	        <ignoredProperty>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</ignoredProperty>
 	        <ignoredProperty>http://www.w3.org/2004/02/skos/core#subject</ignoredProperty>
@@ -107,20 +119,23 @@
 
 <data>
   <proxy>
-    <url>http://relfinder.dbpedia.org/Proxy2.php</url>
+    <url>http://relfinder.semanticweb.org/Proxy2.php</url>
   </proxy>
   <endpoints>
     <endpoint>
       <name>DBpedia</name>
       <abbreviation>dbp</abbreviation>
       <description>Linked Data version of Wikipedia.</description>
-      <endpointURI>http://dbpedia.org/sparql</endpointURI>
+      <endpointURI>http://dbpedia.org/sparql/sparql</endpointURI>
+      <dontAppendSPARQL>true</dontAppendSPARQL>
       <defaultGraphURI>http://dbpedia.org</defaultGraphURI>
       <isVirtuoso>true</isVirtuoso>
       <useProxy>false</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <ignoredProperties>
         <ignoredProperty>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</ignoredProperty>
         <ignoredProperty>http://www.w3.org/2004/02/skos/core#subject</ignoredProperty>
@@ -147,11 +162,14 @@
       <abbreviation>lod</abbreviation>
       <description>Endpoint for the Linking Open Data project.</description>
       <endpointURI>http://lod.openlinksw.com/sparql</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>true</isVirtuoso>
       <useProxy>true</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <ignoredProperties>
         <ignoredProperty>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</ignoredProperty>
         <ignoredProperty>http://www.w3.org/2004/02/skos/core#subject</ignoredProperty>
@@ -173,18 +191,21 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
-	<endpoint>
+    <endpoint>
       <name>Linked Movie Data Base</name>
       <abbreviation>lmdb</abbreviation>
       <description>Aims at publishing the first open linked data dedicated to movies, with high quality and quantity of interlinks to other LOD data sources and movie-related websites.</description>
       <endpointURI>http://data.linkedmdb.org</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
         <autocompleteURI>http://xmlns.com/foaf/0.1/name</autocompleteURI>
         <autocompleteURI>http://xmlns.com/foaf/0.1/Person</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <linkURIs>
         <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
       </linkURIs>
@@ -195,11 +216,14 @@
       <abbreviation>dbt</abbreviation>
       <description>Provides linked data access for the Jamendo Creative Commons music platform, the Magnatune label, the BBC John Peel sessions, the MySpace data and the AudioScrobbler data. It also hosts a version of MusicBrainz powered by D2R, and interlinked with Lingvoj and DBpedia.</description>
       <endpointURI>http://bbc.openlinksw.com/sparql</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://xmlns.com/foaf/0.1/name</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <imageURIs>
         <imageURI>http://purl.org/ontology/mo/image</imageURI>
       </imageURIs>
@@ -211,16 +235,19 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
-	<endpoint>
+    <endpoint>
       <name>Linking Open Drug Data (LODD)</name>
       <abbreviation>lodd</abbreviation>
       <description>Endpoint for the Linking Open Drug Data project</description>
       <endpointURI>http://bio2rdf.semanticscience.org:8017/sparql</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <abstractURIs>
         <abstractURI>http://www4.wiwiss.fu-berlin.de/dailymed/resource/dailymed/description</abstractURI>
       </abstractURIs>
@@ -229,16 +256,19 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
-	<endpoint>
+    <endpoint>
       <name>DBLP Bibliography Database (Hannover)</name>
       <abbreviation>dblp</abbreviation>
       <description>Provides bibliographic information about scientific papers. Size of the data set: 800.000 articles and 400.000 authors, approx. 15 million triples.</description>
       <endpointURI>http://dblp.l3s.de/d2r/</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
       <useProxy>true</useProxy>
+      <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
       </autocompleteURIs>
+      <autocompleteLanguage>en</autocompleteLanguage>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
   </endpoints>
