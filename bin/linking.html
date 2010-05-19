@@ -33,15 +33,18 @@
       <li><span class="emph">abbreviation</span>: An abbreviation (or ID) for the dataset configuration. This can be used to load the RelFinder directly with this specific configuration. (For instance, <a href="http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb">http://relfinder.semanticweb.org/RelFinder.swf?id=lmdb</a> loads the RelFinder with the 'Linked Movie Data Base' configuration by default).</li>
       <li><span class="emph">description</span>: A  description of the dataset which will be displayed in the settings menu.<br />
       </li>
-      <li><span class="emph">endpointURI</span>: 				The URL of the SPARQL endpoint.  The RelFinder uses this URL + '/sparql?' to query the endpoint.<br />
+      <li><span class="emph">endpointURI</span>: 				The URL of the SPARQL endpoint.  The RelFinder uses this URL + '/sparql?' to query the endpoint.</li>
+      <li><span class="emph">dontAppendSPARQL</span>: Prevents the RelFinder from appending '/sparql?' to the defined endpointURI.<br />
       </li>
       <li><span class="emph">defaultGraphURI</span>: The URI of the default graph which should be used for the search (usually not necessary).<br />
       </li>
       <li><span class="emph">isVirtuoso</span>:
         If the SPARQL server is a &quot;Virtuoso&quot; server this value can be set to 'true'. The RelFinder will then use  Virtuoso specific commands for an improved autocompletion. If you are not sure better set this value to 'false'. That should always work.<br />
       </li>
-      <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value to 'true' in order to forward all queries to the defined proxy server. </li>
-      <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocompletion  and disambiguation features. (Usually, RDF label works fine - http://www.w3.org/2000/01/rdf-schema#label). <br />
+      <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value to 'true' in order to forward all queries to the defined proxy server.</li>
+      <li><span class="emph">method</span>: HTTP method for SPARQL requests. Possible values are POST and GET.</li>
+      <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocompletion  and disambiguation features. (Usually, RDF label works fine - http://www.w3.org/2000/01/rdf-schema#label).</li>
+      <li><span class="emph">autocompleteLanguage</span>: The language code that will be used for  autocomplete (default code is 'en' for English).<br />
       </li>
       <li><span class="emph">ignoredProperties</span>: URIs of properties that should not be included in the relationship search.</li>
       <li><span class="emph">abstractURIs</span>: URIs of  properties that provide short descriptions  for the info box. (If no value for the 1st property is found, the RelFinder continues with the second property, etc.)<br />
@@ -63,16 +66,19 @@
       &amp;abbreviation=dbp<br />
       &amp;description=Linked Data version of Wikipedia.<br />
       &amp;endpointURI=http://dbpedia.org/sparql<br />
-      &amp;defautlGraphURI=http://dbpedia.org<br />
-      &amp;isVirtuoso=true<br />
-      &amp;useProxy=false<br />
-      &amp;autocompleteURIs=http://www.w3.org/2000/01/rdf-schema#label<br />
-      &amp;ignoredProperties=http://dbpedia.org/property/wikiPageUsesTemplate, http://dbpedia.org/property/wikilink, http://dbpedia.org/property/wordnet_type, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/2004/02/skos/core#subject<br />
-      &amp;abstractURIs=http://dbpedia.org/property/abstract<br />
-      &amp;imageURIs=http://dbpedia.org/ontology/thumbnail, http://xmlns.com/foaf/0.1/depiction<br />
-      &amp;linkURIs=http://purl.org/ontology/mo/wikipedia, http://xmlns.com/foaf/0.1/homepage, http://xmlns.com/foaf/0.1/page<br />
-      &amp;maxRelationLegth=2<br />
-      </span></p>
+    &amp;dontAppendSPARQL=true</span><span class="color-code"><br />
+&amp;defautlGraphURI=http://dbpedia.org<br />
+&amp;isVirtuoso=true<br />
+&amp;useProxy=false<br />
+&amp;method=POST</span><br />
+<span class="color-code">&amp;autocompleteLanguage=en<br />
+&amp;autocompleteURIs=http://www.w3.org/2000/01/rdf-schema#label<br />
+&amp;ignoredProperties=http://dbpedia.org/property/wikiPageUsesTemplate, http://dbpedia.org/property/wikilink, http://dbpedia.org/property/wordnet_type, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/2004/02/skos/core#subject<br />
+&amp;abstractURIs=http://dbpedia.org/ontology/abstract<br />
+&amp;imageURIs=http://dbpedia.org/ontology/thumbnail, http://xmlns.com/foaf/0.1/depiction<br />
+&amp;linkURIs=http://purl.org/ontology/mo/wikipedia, http://xmlns.com/foaf/0.1/homepage, http://xmlns.com/foaf/0.1/page<br />
+&amp;maxRelationLegth=2<br />
+    </span></p>
   </div>
   <div id="footer"> <a href="http://www.interactivesystems.info" target="_blank" class="fltrt"><img alt="logo interactive systems" src="img/is-logo.png" /></a> <a href="http://dei.inf.uc3m.es" target="_blank" class="fltrt"><img alt="logo dei lab" src="img/dei-logo.png" /></a> <a href="http://www.vis.uni-stuttgart.de" target="_blank" class="fltrt"><img alt="logo visualization and interactive systems" src="img/vis-logo.png" /></a>
     <p>(c) 2009/10 by <span class="spamspan"> <span class="u">philipp.heim</span> [at] <span class="d">vis.uni-stuttgart.de</span> (<span class="t">Philipp Heim</span>)</span>, <span class="spamspan"> <span class="u">slohmann</span> [at] <span class="d">inf.uc3m.es</span> (<span class="t">Steffen Lohmann</span>)</span>, <span class="spamspan"> <span class="u">timo.stegemann</span> [at] <span class="d">uni-due.de</span> (<span class="t">Timo Stegemann</span>)</span> </p>

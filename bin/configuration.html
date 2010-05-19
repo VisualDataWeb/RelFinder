@@ -38,7 +38,7 @@
     <hr />
     <h4>2. Configuration File:</h4>
     <p>You can also create the XML file from scratch or modify an existing one with your preferred XML editor.</p>
-    <p>Here is how it looks like (or just <a href="http://relfinder.semanticweb.org/config/Config.xml">see the default file</a>):</p>
+    <p>Here is how it looks like (or just <a href="config/Config.xml">see the default file</a>):</p>
     <p class="source_code"><span class="color-code">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;<br />
       &lt;data&gt;<br />
       &lt;proxy&gt;<br />
@@ -48,17 +48,20 @@
       &lt;endpoint&gt;<br />
       &lt;name&gt;</span>DBpedia<span class="color-code">&lt;/name&gt;<br />
       &lt;abbreviation&gt;</span>dbp<span class="color-code">&lt;/abbreviation&gt;<br />
-      &lt;description&gt;</span>Linked Data version of Wikipedia...<span class="color-code">&lt;/description&gt;<br />
+      &lt;description&gt;</span>Linked Data version of Wikipedia.<span class="color-code">&lt;/description&gt;<br />
       &lt;endpointURI&gt;</span>http://dbpedia.org/sparql<span class="color-code">&lt;/endpointURI&gt;<br />
-      &lt;defaultGraphURI&gt;</span>http://dbpedia.org<span class="color-code">&lt;/defaultGraphURI&gt;<br />
+      &lt;dontAppendSPARQL&gt;</span>true<span class="color-code">&lt;/dontAppendSPARQL&gt;<br />
+&lt;defaultGraphURI&gt;</span>http://dbpedia.org<span class="color-code">&lt;/defaultGraphURI&gt;<br />
       &lt;isVirtuoso&gt;</span>true<span class="color-code">&lt;/isVirtuoso&gt;<br />
       &lt;useProxy&gt;</span>false<span class="color-code">&lt;/useProxy&gt;<br />
-      &lt;autocompleteURIs&gt;<br />
-      &lt;autocompleteURI&gt;</span>http://www.w3.org/2000/01/rdf-schema#label<span class="color-code">&lt;/autocompleteURI&gt;<br />
+      &lt;method&gt;</span>POST<span class="color-code">&lt;/method&gt;<br />
+&lt;autocompleteURIs&gt;<br />
+&lt;autocompleteURI&gt;</span>http://www.w3.org/2000/01/rdf-schema#label<span class="color-code">&lt;/autocompleteURI&gt;<br />
       ...</span><br />
       <span class="color-code">&lt;/autocompleteURIs&gt;<br />
+      &lt;autocompleteLanguage&gt;</span>en<span class="color-code">&lt;/autocompleteLanguage&gt;<br />
       &lt;ignoredProperties&gt;<br />
-      &lt;ignoredProperty&gt;</span>http://www.w3.org/1999/02/22-rdf-syntax-ns#type<span class="color-code">&lt;/ignoredProperty&gt;<br />
+&lt;ignoredProperty&gt;</span>http://www.w3.org/1999/02/22-rdf-syntax-ns#type<span class="color-code">&lt;/ignoredProperty&gt;<br />
       ...</span><br />
       <span class="color-code">&lt;/ignoredProperties&gt;<br />
       &lt;abstractURIs&gt;<br />
