@@ -149,7 +149,6 @@
 			}
 			query += "FILTER regex(?l, '" + input + "', 'i'). " +
 						"FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). " +
-						"FILTER (!isLiteral(?someobj)). " +
 						"} "; 
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
