@@ -49,7 +49,7 @@
 						URI of this property. In most cases you can find the resources by their label (http://www.w3.org/2000/01/rdf-schema#label)
 						
 			autocompleteLanguage:
-				The language code that is used in the autocomplete function. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc.
+				The language code, the auto complete feature will use for filtering (e.g., 'en' for English or 'de' for German). This feature is not supported by all endpoints. If you are not sure, leave it blank (default value).
 				
 			ignoredProperties:
 				Properties which should not be contained in the result graph.
@@ -174,7 +174,7 @@
         <autocompleteURI>http://xmlns.com/foaf/0.1/name</autocompleteURI>
         <autocompleteURI>http://xmlns.com/foaf/0.1/Person</autocompleteURI>
       </autocompleteURIs>
-      <autocompleteLanguage>en</autocompleteLanguage>
+      <autocompleteLanguage></autocompleteLanguage>
       <linkURIs>
         <linkURI>http://xmlns.com/foaf/0.1/page</linkURI>
       </linkURIs>
