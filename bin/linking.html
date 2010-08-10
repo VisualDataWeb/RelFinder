@@ -44,7 +44,8 @@
       <li><span class="emph">useProxy</span>: If the SPARQL server has NO crossdomain.xml set this value to 'true' in order to forward all queries to the defined proxy server.</li>
       <li><span class="emph">method</span>: HTTP method for SPARQL requests. Possible values are POST and GET.</li>
       <li><span class="emph">autocompleteURIs</span>: URIs of properties that should be used for autocompletion  and disambiguation features. (Usually, RDF label works fine - http://www.w3.org/2000/01/rdf-schema#label).</li>
-      <li><span class="emph">autocompleteLanguage</span>: The language code that will be used for  autocomplete (default code is 'en' for English).<br />
+      <li><span class="emph">autocompleteLanguage</span>:
+      The language code that will be used for autocomplete (e.g., 'en' for English or 'de' for German). A language code is usually not necessary.
       </li>
       <li><span class="emph">ignoredProperties</span>: URIs of properties that should not be included in the relationship search.</li>
       <li><span class="emph">abstractURIs</span>: URIs of  properties that provide short descriptions  for the info box. (If no value for the 1st property is found, the RelFinder continues with the second property, etc.)<br />
