@@ -11,7 +11,7 @@
 	
 	/**
 	 * ...
-	 * @author Timo Stegemann
+	 * @author Timo Stegemann (minor modifications by steffenl)
 	 */
 	public class Config extends EventDispatcher implements IConfig
 	{
@@ -48,7 +48,7 @@
 		
 		private var _method:String = "POST";
 		
-		private var _autocompleteLanguage:String = "en";
+		private var _autocompleteLanguage:String = "";
 		
 		public function Config(name:String = "", abbreviation:String = "", description:String = "",
 					endpointURI:String = "", defaultGraphURI:String = "", isVirtuoso:Boolean = false,
@@ -56,7 +56,7 @@
 					autocompleteURIs:ArrayCollection = null, abstarctURIs:ArrayCollection = null,
 					imageURIs:ArrayCollection = null, linkURIs:ArrayCollection = null,
 					maxRelationLength:int = 2, dontAppendSPARQL:Boolean = false, method:String = "POST",
-					autocompleteLanguage:String = "en",
+					autocompleteLanguage:String = "",
 					lookUp:ILookUp = null) {
 			
 			this.name = (name == null || name == "") ? "New Config" : name;

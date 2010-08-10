@@ -12,7 +12,7 @@
 	import mx.utils.ObjectUtil;
 	/**
 	 * ...
-	 * @author Timo Stegemann
+	 * @author Timo Stegemann (minor modifications by steffenl)
 	 */
 	public class ConfigUtil
 	{
@@ -367,7 +367,7 @@
 			config.isVirtuoso = (conf.isVirtuoso.toString().toLowerCase() == "true") ? true : false;
 			config.useProxy = (conf.useProxy.toString().toLowerCase() == "true") ? true : false;
 			config.method = (conf.method != null) ? conf.method : "POST";
-			config.autocompleteLanguage = (conf.autocompleteLanguage != null && conf.autocompleteLanguage != "") ? conf.autocompleteLanguage : "en";
+			config.autocompleteLanguage = (conf.autocompleteLanguage != null && conf.autocompleteLanguage != "") ? conf.autocompleteLanguage : "";
 			
 			if (conf.autocompleteURIs != undefined) {
 				if (config.autocompleteURIs == null) {

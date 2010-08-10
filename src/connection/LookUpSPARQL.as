@@ -13,7 +13,7 @@
 	
 	/**
 	 * ...
-	 * @author Timo Stegemann
+	 * @author Timo Stegemann (minor modifications by steffenl)
 	 */
 	public class LookUpSPARQL implements ILookUp
 	{
@@ -53,7 +53,7 @@
 			
 		}
 		
-		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
+		public function createCompleteIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = ""):String {
 			input = StringUtil.trim(input);
 			if (input.search(" ") < 0) {
 				return createSingleWordCompleteCountIndegQuery("'" + input + "'", limit, offset, lang);
@@ -63,7 +63,7 @@
 			}
 		}
 		
-		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
+		private function createMultipleWordsCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = ""):String {
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -75,7 +75,7 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . " +
+			/*query += "?l bif:contains \"" + input + "\" . " +
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
 						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
@@ -83,7 +83,17 @@
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
-						"ORDER BY DESC(?count) "; 
+						"ORDER BY DESC(?count) ";*/
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). ";
+			if (lang != "") {
+				query += "FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). ";
+			}
+			query += "FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) ";			
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
 			}
@@ -93,7 +103,7 @@
 			return query;
 		}
 		
-		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = "en"):String {
+		private function createSingleWordCompleteCountIndegQuery(input:String, limit:int = 0, offset:int = 0, lang:String = ""):String {
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
@@ -105,7 +115,7 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "?l bif:contains \"" + input + "\" . " +
+			/*query += "?l bif:contains \"" + input + "\" . " +
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " + 
 						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
 						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). " +
@@ -113,7 +123,17 @@
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
-						"ORDER BY DESC(?count) "
+						"ORDER BY DESC(?count) "*/
+			query += "?l bif:contains \"" + input + "\" . " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/Category:')). " +
+						"FILTER (!regex(str(?s), '^http://dbpedia.org/resource/List')). " +
+						"FILTER (!regex(str(?s), '^http://sw.opencyc.org/')). ";
+			if (lang != "") {
+				query += "FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). ";
+			}
+			query += "FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) ";						
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
 			}
@@ -134,7 +154,7 @@
 //		Filter regex(?l, 'Bruce', 'i') }
 //		 }
 //		GROUP BY ?s ?l 
-		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0, lang:String = "en"):String {
+		public function createStandardREGEXQuery(input:String, limit:int = 20, offset:int = 0, lang:String = ""):String {
 			input = StringUtil.trim(input);
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
@@ -147,9 +167,14 @@
 			}else {
 				query += "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l . "
 			}
-			query += "FILTER regex(?l, '" + input + "', 'i'). " +
+			/*query += "FILTER regex(?l, '" + input + "', 'i'). " +
 						"FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). " +
-						"} "; 
+						"} ";*/
+			query += "FILTER regex(?l, '" + input + "', 'i'). ";
+			if (lang != "") {
+				query += "FILTER (lang(?l) = '' || langMatches(lang(?l), '" + lang + "')). ";
+			}
+			query += "} ";		
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
 			}
@@ -211,7 +236,10 @@
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
-						"ORDER BY DESC(?count) "; 
+						"ORDER BY DESC(?count) ";
+			query += "FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) ";						
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
 			}
@@ -240,7 +268,10 @@
 						//"FILTER (lang(?l) = 'en'). " +
 						"FILTER (!isLiteral(?someobj)). " +
 						"} " +
-						"ORDER BY DESC(?count) "; 
+						"ORDER BY DESC(?count) ";
+			query += "FILTER (!isLiteral(?someobj)). " +
+						"} " +
+						"ORDER BY DESC(?count) ";						
 			if (limit != 0) {
 				query += "LIMIT " + limit.toString() + " ";
 			}

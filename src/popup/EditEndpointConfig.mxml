@@ -290,11 +290,10 @@ You should have received a copy of the GNU General Public License along with thi
 				</mx:HBox>
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Autocomplete Language:"
-					toolTip="The language code, the auto complete / auto suggest function will use for filtering. Default is 'en' for English. Other possibilities would be 'de' for German, 'fr' for French etc." >
+					toolTip="The language code, the auto complete feature will use for filtering (e.g., 'en' for English or 'de' for German). This feature is not supported by all endpoints. If you are not sure, leave it blank (default value).">
 				<mx:HBox width="100%">
 					<mx:TextInput id="inACLang" width="50" text="{config.autocompleteLanguage}" />
 				</mx:HBox>
-				
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Ignored Properties:"
 					toolTip="Properties which should not be contained in the result graph.">
