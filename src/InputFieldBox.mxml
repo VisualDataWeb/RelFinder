@@ -9,6 +9,8 @@
 			
 			import connection.model.ConnectionModel;
 			import flash.events.Event;
+			import flash.events.TimerEvent;
+			import flash.utils.Timer;
 			import global.GlobalString;
 			import global.ToolTipModel;
 			import mx.collections.ArrayCollection;
@@ -51,9 +53,12 @@
 			
 			protected var _dataProvider:ICollectionView = new ArrayCollection(new Array(new String("input0"), new String("input1")));
 			
+			private var searchTimer:Timer = new Timer(750, 1);
+			
 			private function init():void {
 				_dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, resizeHandler);
 				_dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, sizeUpdateHandler);
+				searchTimer.addEventListener(TimerEvent.TIMER, searchTimerCompleteHandler);
 				app().tn.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 				app().tn.addEventListener(FlexEvent.CREATION_COMPLETE, resizeHandler);
 			}
@@ -318,11 +323,15 @@
 				return _inputFieldRepeater as Repeater;
 			}
 			
+			private var _input:String = "";
+			private var _selectedItem:Object = null;
+			
 			// when the text in the search field is changed
-			private function handleAutoCompleteSearchChange(_selectedItem:Object):void {
+			private function handleAutoCompleteSearchChange(selectedItem:Object):void {
 				//trace("handleAutoCompleteSearchChange");
+				_selectedItem = selectedItem;
 				if (_selectedItem != null && _selectedItem.hasOwnProperty( "searchText" )){
-					var input:String = _selectedItem.searchText;
+					_input = _selectedItem.searchText;
 					
 					//Workaround Case-Sensitivity
 					//if (input.length == 1 && input.charAt() == input.charAt().toLowerCase()) {
@@ -332,21 +341,37 @@
 						//}
 					//}
 					
-					var directInput:Boolean = input.toLowerCase().indexOf("http://") == 0 || input.toLowerCase().indexOf("https://") == 0;
 					
-					if (input != null && input.length >= 2 && !directInput) {
+					
+					var directInput:Boolean = _input.toLowerCase().indexOf("http://") == 0 || _input.toLowerCase().indexOf("https://") == 0;
+					
+					if (_input != null && _input.length >= 2 && !directInput) {
 						var results:ArrayCollection = new ArrayCollection();
 						var searching:Object = new Object();
 						searching.label = GlobalString.SEARCHING;
 						results.addItem(searching);
 						_selectedItem.dataProvider = results;
 						_selectedItem.validateNow();
-						findAutoComplete(input, _selectedItem as AutoComplete);
+						
+						if (searchTimer.running) {
+							
+							searchTimer.reset();
+						}
+						
+						searchTimer.start();
+						
+						//findAutoComplete(input, _selectedItem as AutoComplete);
 					}else {
+						searchTimer.reset();
 						trace("direct input");
 					}
 				}
 			}
+			
+			public function searchTimerCompleteHandler(event:TimerEvent):void {
+				findAutoComplete(_input, _selectedItem as AutoComplete);
+			}
+			
 			
 			private function findAutoComplete(_typedText:String, target:AutoComplete):void {
 				ConnectionModel.getInstance().sparqlConfig.lookUp.run(_typedText, target);
@@ -481,7 +506,7 @@
 					if (dataProvider.length == 2) {
 						return app().tn.width - 48;
 					}else if (dataProvider.length > 2 && dataProvider.length < 10) {
-						return app().tn.width - 68 - 16; 
+						return app().tn.width - 68 - 16;
 					}else {
 						return app().tn.width - 75 - 16;
 					}
@@ -490,7 +515,7 @@
 				if (dataProvider.length == 2) {
 					return app().tn.width - 48;
 				}else if (dataProvider.length > 2 && dataProvider.length < 10) {
-					return app().tn.width - 68; 
+					return app().tn.width - 68;
 				}else {
 					return app().tn.width - 75;
 				}
@@ -510,12 +535,12 @@
 				<mx:HBox width="100%" verticalGap="2" horizontalGap="2"
 						mouseOver="acHBoxMouseOver(event)" mouseOut="acHBoxMouseOut(event)" mouseMove="acHBoxMouseMove(event)">
 					
-					<hc:AutoComplete id="_inputField" width="{inputFieldWidth}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart" 
-							prompt="Relations between what?" 
+					<hc:AutoComplete id="_inputField" width="{inputFieldWidth}" dataProvider="{new ArrayCollection()}" labelField="label" matchType="anyPart"
+							prompt="Relations between what?"
 							searchChange="handleAutoCompleteSearchChange(event.currentTarget)"
 							itemClick="{selectedItemClicked(event)}"
 							mouseOverSelectedItem="{mouseOverSelectedItemHandler(event)}" mouseOutSelectedItem="{mouseOutSelectedItemHandler(event)}"
-							isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus" 
+							isStrict="true" style="{ AutoComplete.STYLE_FACEBOOK }" backspaceAction="focus"
 							isBrowseable="false" isMultiSelect="false" allowDuplicates="false" areNewItemsEditable="true"
 							dropDownItemRenderer="AutoCompleteDDRenderer" />
 					
@@ -523,7 +548,7 @@
 				</mx:HBox>
 
 			</mx:FormItem>
-		</mx:Repeater> 
+		</mx:Repeater>
 	</mx:Form>
 	
 	<mx:HBox id="buttonBox" width="100%"  paddingRight="8" paddingLeft="40" >

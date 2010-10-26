@@ -1,20 +1,21 @@
 ﻿/**
  * Copyright (C) 2009 Philipp Heim, Sebastian Hellmann, Jens Lehmann, Steffen Lohmann and Timo Stegemann
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package connection 
+package connection
 {
 	import flash.events.Event;
 	import mx.collections.ArrayCollection;
 	import mx.core.mx_internal;
 	import mx.messaging.events.MessageEvent;
 	import mx.rpc.AsyncToken;
+	import mx.rpc.events.ResultEvent;
 	import mx.rpc.http.HTTPService;
 	
 	use namespace mx_internal;
@@ -31,10 +32,19 @@ package connection
 		
 		private var _parsingInformations:Object = null;
 		
-		public function SPARQLService(rootURL:String = null, destination:String = null) 
+		public function SPARQLService(rootURL:String = null, destination:String = null)
 		{
 			super(rootURL, destination);
+			addEventListener("result", eventWrapper);
 		}
+		
+		private function eventWrapper(event:ResultEvent):void {
+			var resultEvent:SPARQLResultEvent = SPARQLResultEvent.createEvent(event.result, sources, executenTime, parsingInformations, null, event.message);
+			resultEvent.headers = _responseHeaders;
+			dispatchEvent(resultEvent);
+		}
+		
+		
 		
 		public function get sources():ArrayCollection {
 			return _sources;
@@ -52,7 +62,7 @@ package connection
 			_parsingInformations = value;
 		}
 		
-		override public function send(parameters:Object = null):AsyncToken 
+		override public function send(parameters:Object = null):AsyncToken
 		{
 			_executenTime = new Date();
 			return super.send(parameters);
@@ -71,23 +81,26 @@ package connection
 		 *
 		 *  @private
 		 */
-		mx_internal override function resultHandler(event:MessageEvent):void
-		{
-			var token:AsyncToken = preHandle(event);
-			
+		//mx_internal override function resultHandler(event:MessageEvent):void
+		//{
+			//trace(event.message);
+			//
+			//var token:AsyncToken = preHandle(event);
+			//
 			//if the handler didn't give us something just bail
-			if (token == null)
-				return;
-				
-			if (processResult(event.message, token))
-			{
-				dispatchEvent(new Event(BINDING_RESULT));
-				var resultEvent:SPARQLResultEvent = SPARQLResultEvent.createEvent(_result, _sources, executenTime, _parsingInformations, token, event.message);
-				resultEvent.headers = _responseHeaders;
-				dispatchRpcEvent(resultEvent);
-			}
+			//if (token == null)
+				//return;
+				//
+			//if (processResult(event.message, token))
+			//{
+				//dispatchEvent(new Event(BINDING_RESULT));
+				//var resultEvent:SPARQLResultEvent = SPARQLResultEvent.createEvent(_result, _sources, executenTime, _parsingInformations, token, event.message);
+				//resultEvent.headers = _responseHeaders;
+				//dispatchRpcEvent(resultEvent);
+			//}
 			//no else, we assume process would have dispatched the faults if necessary
-		}
+		//}
+		
 	}
 	
 }
