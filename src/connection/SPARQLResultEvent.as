@@ -48,8 +48,17 @@ package connection
 		
 		public static function createEvent(result:Object = null, sources:ArrayCollection = null, executenTime:Date = null, parsingInformations:Object = null, token:AsyncToken = null, message:IMessage = null):SPARQLResultEvent
 		{
-			return new SPARQLResultEvent(SPARQLResultEvent.SPARQL_RESULT, sources, executenTime, parsingInformations, false, true, result, token, message);
-		}
+			// (added by Florian Dürr, Toni Feuchert, Mathias Schraps)
+			// add URI for SPARQL namespace if no URI is given by the endpoint
+			
+			var resultstring:String = new String(result);
+			resultstring = resultstring.replace("<sparql>", "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">");
+
+			return new SPARQLResultEvent(SPARQLResultEvent.SPARQL_RESULT, sources, executenTime, parsingInformations, false, true, resultstring, token, message);
+			
+			// OLD code:
+			// return new SPARQLResultEvent(SPARQLResultEvent.SPARQL_RESULT, sources, executenTime, parsingInformations, false, true, result, token, message);
+		}	
 		
 	}
 	
