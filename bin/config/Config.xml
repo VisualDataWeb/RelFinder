@@ -223,7 +223,7 @@
       <endpointURI>http://data.semanticweb.org</endpointURI>
       <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
-      <useProxy>false</useProxy>
+      <useProxy>true</useProxy>
       <method>POST</method>
       <autocompleteURIs>
         <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
