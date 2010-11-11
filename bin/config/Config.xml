@@ -119,7 +119,7 @@
 
 <data>
   <proxy>
-    <url>http://relfinder.semanticweb.org/Proxy2.php</url>
+    <url>http://relfinder.semanticweb.org/Proxy3.php</url>
   </proxy>
   <endpoints>
   
@@ -215,6 +215,32 @@
       </linkURIs>
       <maxRelationLength>2</maxRelationLength>
     </endpoint>
+	
+	<endpoint>
+      <name>Semantic Web Dog Food</name>
+      <abbreviation>swdf</abbreviation>
+      <description>Here you can browse and search information on papers that were presented, people who attended, and other things that have to do with the main conferences and workshops in the area of Semantic Web research.</description>
+      <endpointURI>http://data.semanticweb.org</endpointURI>
+      <dontAppendSPARQL>false</dontAppendSPARQL>
+      <isVirtuoso>false</isVirtuoso>
+      <useProxy>false</useProxy>
+      <method>POST</method>
+      <autocompleteURIs>
+        <autocompleteURI>http://www.w3.org/2000/01/rdf-schema#label</autocompleteURI>
+      </autocompleteURIs>
+      <autocompleteLanguage/>
+      <abstractURIs>
+        <abstractURI>http://swrc.ontoware.org/ontology#abstract</abstractURI>
+        <abstractURI>http://www.w3.org/2002/12/cal/ical#description</abstractURI>
+      </abstractURIs>
+      <imageURIs>
+        <imageURI>http://data.semanticweb.org/ns/swc/ontology#hasLogo</imageURI>
+      </imageURIs>
+      <linkURIs>
+        <linkURI>http://xmlns.com/foaf/0.1/homepage</linkURI>
+      </linkURIs>
+      <maxRelationLength>2</maxRelationLength>
+    </endpoint>	
 	
   </endpoints>
 </data>
