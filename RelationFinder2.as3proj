@@ -25,10 +25,12 @@
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
+    <option locale="" />
     <option loadConfig="" />
     <option optimize="True" />
     <option showActionScriptWarnings="True" />
     <option showBindingWarnings="True" />
+    <option showInvalidCSS="True" />
     <option showDeprecationWarnings="True" />
     <option showUnusedTypeSelectorWarnings="True" />
     <option strict="True" />
@@ -38,7 +40,9 @@
     <option verboseStackTraces="True" />
     <option linkReport="" />
     <option loadExterns="" />
+    <option staticLinkRSL="True" />
     <option additional="" />
+    <option compilerConstants="" />
     <option customSDK="" />
   </build>
   <!-- SWC Include Libraries -->

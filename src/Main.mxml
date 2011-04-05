@@ -151,7 +151,7 @@ You should have received a copy of the GNU General Public License along with thi
 			<mx:Text id="statusLabel" text="Status: Idle" selectable="false" fontWeight="bold"/>
 			<local:LoadingAnimation id="la" circleRadius="7" dotSize="2" numberOfDots="8"/>
 	</mx:ApplicationControlBar>
-	<mx:Button id="stopDelayed" label="stop delayed graph building" y="{statusBar.height + 10 + 5}" x="{mainVBox.width - stopDelayed.width - 10}"
+	<mx:Button id="stopDelayed" label="skip delayed graph building" y="{statusBar.height + 10 + 5}" x="{mainVBox.width - stopDelayed.width - 10}"
 			visible="{!(!la.isRotating() || !Graphmodel.getInstance().delayedDrawing)}" click="{Graphmodel.getInstance().delayedDrawing = false;}" 
 			height="20" paddingLeft="6" paddingRight="6" />
 	

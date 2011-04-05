@@ -1,0 +1,3 @@
+Required Flex/Flash versions for compilation of the RelFinder code:
+- Flex SDK 3.5
+- Flash Player 10
