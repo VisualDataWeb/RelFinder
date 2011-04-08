@@ -119,7 +119,7 @@
 
 <data>
   <proxy>
-    <url>http://relfinder.semanticweb.org/Proxy3.php</url>
+    <url>http://www.visualdataweb.org/relfinder/proxy.php</url>
   </proxy>
   <endpoints>
   
@@ -219,7 +219,7 @@
 	<endpoint>
       <name>Semantic Web Dog Food</name>
       <abbreviation>swdf</abbreviation>
-      <description>Here you can browse and search information on papers that were presented, people who attended, and other things that have to do with the main conferences and workshops in the area of Semantic Web research.</description>
+      <description>Metadata about Semantic Web conferences and workshops.</description>
       <endpointURI>http://data.semanticweb.org</endpointURI>
       <dontAppendSPARQL>false</dontAppendSPARQL>
       <isVirtuoso>false</isVirtuoso>
