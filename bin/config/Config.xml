@@ -144,6 +144,7 @@
         <ignoredProperty>http://dbpedia.org/property/wordnet_type</ignoredProperty>
         <ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
 		<ignoredProperty>http://www.w3.org/2002/07/owl#sameAs</ignoredProperty>
+		<ignoredProperty>http://purl.org/dc/terms/subject</ignoredProperty>
       </ignoredProperties>
       <abstractURIs>
         <abstractURI>http://dbpedia.org/ontology/abstract</abstractURI>
@@ -200,6 +201,8 @@
         <ignoredProperty>http://dbpedia.org/property/wikiPageUsesTemplate</ignoredProperty>
         <ignoredProperty>http://dbpedia.org/property/wordnet_type</ignoredProperty>
         <ignoredProperty>http://dbpedia.org/property/wikilink</ignoredProperty>
+		<ignoredProperty>http://www.w3.org/2002/07/owl#sameAs</ignoredProperty>
+		<ignoredProperty>http://purl.org/dc/terms/subject</ignoredProperty>		
       </ignoredProperties>
       <abstractURIs>
         <abstractURI>http://dbpedia.org/ontology/abstract</abstractURI>
