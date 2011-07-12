@@ -238,7 +238,7 @@ You should have received a copy of the GNU General Public License along with thi
 				<mx:TextInput id="inName" width="100%" text="{config.name}" />
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="ID:" 
-					toolTip="An abbreviation or ID for the endpoint configuration. This can be used to load RelFinder with this configuration as default (e.g. http://relfinder.semanticweb.org/RelFinder.swf?id=lod to load RelFinder with the 'Linking Open Data' configuration as default)." >
+					toolTip="An abbreviation or ID for the endpoint configuration. This can be used to load RelFinder with this configuration as default (e.g. http://www.visualdataweb.org/relfinder/RelFinder.swf?id=lmdb to load RelFinder with the 'Linked Movie Data Base' configuration as default)." >
 				<mx:TextInput id="inAbbreviation" width="100%" text="{config.abbreviation}" />
 			</mx:FormItem>
 			<mx:FormItem width="100%" label="Description:"
