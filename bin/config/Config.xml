@@ -19,7 +19,7 @@
 				Name of the SPARQL endpoint which will be displayed in the settings menu.
 				
 			abbreviation:
-				An abbreviation or ID for the endpoint configuration. This can be used to load RelFinder with this configuration as default (e.g. http://www.visualdataweb.org/relfinder/RelFinder.swf?id=lmdb to load RelFinder with the 'Linked Movie Data Base' configuration as default).
+				An abbreviation or ID for the endpoint configuration. This can be used to load RelFinder with this configuration as default (e.g. http://www.visualdataweb.org/relfinder/demo.swf?id=lmdb to load RelFinder with the 'Linked Movie Data Base' configuration as default).
 				
 			description:
 				A description of the SPARQL endpoint which will be displayed in the settings menu.
