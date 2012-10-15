@@ -67,7 +67,14 @@
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
 				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l }";
 				}
@@ -107,7 +114,14 @@
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?someobj ?p ?s . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
+				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
 				}
@@ -159,7 +173,14 @@
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
+				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
 				}
@@ -189,7 +210,14 @@
 			var query:String = "";
 			query = "SELECT ?s ?l WHERE { ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
+				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
 				}
@@ -221,7 +249,14 @@
 			var query:String = "";
 			query = "SELECT DISTINCT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
+				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
 				}
@@ -253,7 +288,14 @@
 			var query:String = "";
 			query = "SELECT ?s ?l count(?s) as ?count WHERE { ?s ?p ?someobj . ";
 			if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs != null && ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 0) {
-				query += "{ ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l } ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " ?s ?someprop ?l . ";
+					query += " { ";
+				}
+				query += " ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(0) + "> ?l ";
+				if (ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length > 1) {
+					query += " } ";
+				}
 				for (var i:int = 1; i < ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.length; i++) {
 					query += "UNION { ?s <" + ConnectionModel.getInstance().sparqlConfig.autocompleteURIs.getItemAt(i) + "> ?l } ";
 				}
