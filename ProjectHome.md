@@ -1,0 +1,3 @@
+RelFinder is a tool based on Adobe Flex that automatically reveals relationships within a set of known objects via arbitrary SPARQL endpoints and displays them as graph visualization. The relationships are found by an algorithm that can be applied to large RDF knowledge bases, such as DBpedia or the whole LOD-Cloud. Since the graph that visualizes the relationships can still become large, we added interactive features and filtering options to the user interface that enable a reduction of displayed nodes and facilitate understanding.
+
+A demo application of this approach is available under http://www.visualdataweb.org/
